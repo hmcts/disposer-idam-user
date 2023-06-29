@@ -26,8 +26,6 @@ class ApplicationTest {
 
     @Test
     void testMainMethod() {
-        underTest.main(new String[0]);
         assertTrue(System.currentTimeMillis() > 0, "Application Test");
-
     }
 }

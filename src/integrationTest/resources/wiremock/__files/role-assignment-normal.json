@@ -1,0 +1,60 @@
+{
+  "roleAssignmentResponse": [
+    {
+      "id": "4927e2ec-0923-4d26-830c-e7186877a7d3",
+      "actorIdType": "IDAM",
+      "actorId": "001",
+      "roleType": "ORGANISATION",
+      "roleName": "tribunal-caseworker",
+      "classification": "PUBLIC",
+      "grantType": "STANDARD",
+      "roleCategory": "LEGAL_OPERATIONS",
+      "readOnly": false,
+      "beginTime": "2021-01-01T00:00:00Z",
+      "endTime": "2023-01-01T00:00:00Z",
+      "created": "2021-01-28T18:17:06.568049Z",
+      "attributes": {
+        "primaryLocation": "123456",
+        "jurisdiction": "IA"
+      }
+    },
+    {
+      "id": "12b11bbc-1e08-4f19-a4c3-fb52e2454af0",
+      "actorIdType": "IDAM",
+      "actorId": "002",
+      "roleType": "CASE",
+      "roleName": "tribunal-caseworker",
+      "classification": "PUBLIC",
+      "grantType": "SPECIFIC",
+      "roleCategory": "LEGAL_OPERATIONS",
+      "readOnly": false,
+      "beginTime": "2021-01-01T00:00:00Z",
+      "endTime": "2023-01-01T00:00:00Z",
+      "created": "2021-01-28T18:17:06.56782Z",
+      "attributes": {
+        "caseId": "1607103938250138",
+        "jurisdiction": "IA",
+        "caseType": "Asylum"
+      }
+    },
+    {
+      "id": "987b3ce7-bc90-43f9-9999-bd68a2519f96",
+      "actorIdType": "IDAM",
+      "actorId": "010",
+      "roleType": "CASE",
+      "roleName": "tribunal-caseworker",
+      "classification": "PUBLIC",
+      "grantType": "CHALLENGED",
+      "roleCategory": "LEGAL_OPERATIONS",
+      "readOnly": false,
+      "beginTime": "2021-01-01T00:00:00Z",
+      "endTime": "2023-01-01T00:00:00Z",
+      "created": "2021-01-28T18:17:06.568122Z",
+      "attributes": {
+        "caseId": "1607103938250138",
+        "jurisdiction": "IA",
+        "caseType": "Asylum"
+      }
+    }
+  ]
+}
