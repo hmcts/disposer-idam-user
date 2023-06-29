@@ -10,24 +10,27 @@ spring:
     import: "optional:configtree:/mnt/secrets/disposer/"
   application:
     name: Idam user Disposer
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_OPTIONS:}
-#    username: ${DB_USER_NAME}
-#    password: ${DB_PASSWORD}
-#    properties:
-#      charSet: UTF-8
-#    hikari:
-#      minimumIdle: 2
-#      maximumPoolSize: 10
-#      idleTimeout: 10000
-#      poolName: {to-be-defined}HikariCP
-#      maxLifetime: 7200000
-#      connectionTimeout: 30000
-#  jpa:
-#    properties:
-#      hibernate:
-#        jdbc:
-#          lob:
-#            # silence the 'wall-of-text' - unnecessary exception throw about blob types
-#            non_contextual_creation: true
+
+idam:
+  api:
+    url: ${IDAM_API_URL:http://localhost:5000}
+    username: ${IDAM_USER_DISPOSER_SYSTEM_USER_USERNAME:user.disposer.idam.system.user@gmail.com}
+    password: ${IDAM_USER_DISPOSER_SYSTEM_USER_PASSWORD:Pa55word11}
+  s2s-auth:
+    name: ${IDAM_S2S_NAME:idam_user_disposer}
+    url: ${IDAM_S2S_URL:http://localhost:4502}
+    secret: ${IDAM_KEY_IDAM_USER_DISPOSER:AAAAAAAAAAAAAAAA}
+  client:
+    id: ${IDAM_USER_DISPOSER_CLIENT_ID:idam-user-disposer}
+    secret: ${IDAM_USER_DISPOSER_CLIENT_SECRET:idam-user-disposer-client-secret}
+    redirect_uri: ${IDAM_USER_DISPOSER_CLIENT_REDIRECT_URL:http://idam-user-disposer/oauth2redirect}
+    role_assignments_content_type: application/vnd.uk.gov.hmcts.role-assignment-service.post-assignment-query-request+json;charset=UTF-8;version=2.0
+    batch_size: ${IDAM_USER_DISPOSER_BATCH_SIZE:100}
+    requests_limit: ${IDAM_USER_DISPOSER_REQUESTS_LIMIT:10}
+    read_timeout: 60_000
+    connect_timeout: ${idam.client.read_timeout}
+    stale_users_path: /api/v2/staleUsers
+    role_assignments_path: /am/role-assignments/query
+
+service:
+  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
