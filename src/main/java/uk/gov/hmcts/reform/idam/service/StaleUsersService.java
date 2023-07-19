@@ -30,6 +30,8 @@ public class StaleUsersService {
     public static final String STALE_USERS_PATH = "/api/v2/staleUsers";
     public static final String ROLE_ASSIGNMENT_PATH = "/am/role-assignments/query";
     private static final String PAGE_NUMBER_PARAM = "pageNumber";
+    private static final String PAGE_SIZE_PARAM = "size";
+    private static final int REQUEST_NUMBER_LIMIT = 10;
 
     public static final String ROLE_ASSIGNMENTS_CONTENT_TYPE =
         "application/vnd.uk.gov.hmcts.role-assignment-service.post-assignment-query-request+json;"
@@ -43,6 +45,7 @@ public class StaleUsersService {
     public List<String> retrieveStaleUsers() {
         final Map<String, Object> queryParams = requestParams.getParams();
         queryParams.put(PAGE_NUMBER_PARAM, 1);
+        queryParams.put(PAGE_SIZE_PARAM, requestParams.getStaleUsersAmount());
         return requestStaleUsers(queryParams);
     }
 
@@ -71,8 +74,10 @@ public class StaleUsersService {
 
         final List<String> collected = new LinkedList<>();
         boolean hasMore;
+        int requestNumber = 0;
 
         do {
+            requestNumber++;
             final Response response = client.getRequest(
                 idamConfig.getIdamHost(),
                 STALE_USERS_PATH,
@@ -95,9 +100,9 @@ public class StaleUsersService {
                 hasMore = false;
                 log.error("Received bad response from stale users API call {}", response.getStatus());
             }
-        } while (hasMore);
+        } while (hasMore && requestNumber < REQUEST_NUMBER_LIMIT);
 
-        return collected;
+        return collected.stream().distinct().toList();
     }
 
 }

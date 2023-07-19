@@ -54,3 +54,4 @@ rest-client:
   service-authorisation-header-name: ServiceAuthorization
   read-timeout: 60_000
   connect-timeout: ${rest-client.read-timeout}
+  stale-users-size: ${IDAM_STALE_USERS_SIZE:100}

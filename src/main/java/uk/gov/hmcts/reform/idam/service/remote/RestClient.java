@@ -26,7 +26,6 @@ public class RestClient {
     private final RestConfig restConfig;
     private final Client client;
 
-
     public RestClient(final SecurityUtil securityUtil, final RestConfig restConfig) {
         this.securityUtil = securityUtil;
         this.restConfig = restConfig;
