@@ -15,7 +15,7 @@ plugins {
 
 pitest {
   pitestVersion.set('1.9.11')
-  junit5PluginVersion.set('0.15')
+  junit5PluginVersion.set('1.1.1')
   targetClasses = ['uk.gov.hmcts.reform.*']
   excludedClasses = [
           'uk.gov.hmcts.reform.idam.madeup.*'
