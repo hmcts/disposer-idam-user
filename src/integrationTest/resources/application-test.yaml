@@ -18,7 +18,8 @@ idam:
     secret-cs: AAAAAAAAAAAAAAAA
     name-cs: lau_frontend
   api:
-    url: http://localhost:4554
+    port: 4554
+    url: http://localhost:${idam.api.port}
   client:
     id: lau
     secret: 12345678

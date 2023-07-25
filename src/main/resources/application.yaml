@@ -13,7 +13,8 @@ spring:
 
 idam:
   api:
-    url: ${IDAM_API_URL:http://localhost:5000}
+    port: ${IDAM_API_PORT:5000}
+    url: ${IDAM_API_URL:http://localhost:${idam.api.port}}
     username: ${IDAM_USER_DISPOSER_SYSTEM_USER_USERNAME:user.disposer.idam.system.user@gmail.com}
     password: ${IDAM_USER_DISPOSER_SYSTEM_USER_PASSWORD:Pa55word11}
   s2s-auth:

@@ -1,0 +1,22 @@
+{
+  "roleAssignmentResponse": [
+    {
+      "id": "174f3cb6-600c-4c14-89fb-c25336d4a176",
+      "actorIdType": "IDAM",
+      "actorId": "13e31622-edea-493c-8240-9b780c9d6023",
+      "roleType": "ORGANISATION",
+      "roleName": "tribunal-caseworker",
+      "classification": "PUBLIC",
+      "grantType": "STANDARD",
+      "roleCategory": "LEGAL_OPERATIONS",
+      "readOnly": false,
+      "beginTime": "2021-01-01T00:00:00Z",
+      "endTime": "2023-01-01T00:00:00Z",
+      "created": "2021-01-28T18:17:06.568049Z",
+      "attributes": {
+        "primaryLocation": "123456",
+        "jurisdiction": "IA"
+      }
+    }
+  ]
+}

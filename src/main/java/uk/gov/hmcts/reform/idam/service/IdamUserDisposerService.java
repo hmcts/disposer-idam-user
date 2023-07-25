@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,13 +16,14 @@ public class IdamUserDisposerService {
     private final UserRoleService userRoleService;
 
     public List<String> run() {
-        List<String> staleUsers;
+        List<String> allRemovedStaleUserIds = new ArrayList<>();
         do {
-            staleUsers = staleUsersService.fetchStaleUsers();
-            staleUsers = userRoleService.filterUsersWithRoles(staleUsers);
-            staleUsers.forEach(user -> log.info("Stale users that would be passed to deletion {}", user));
+            List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
+            batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
+            batchStaleUserIds.forEach(user -> log.info("Stale users that would be passed to deletion {}", user));
+            allRemovedStaleUserIds.addAll(batchStaleUserIds);
         } while (!staleUsersService.hasFinished());
-        return staleUsers;
+        return allRemovedStaleUserIds;
     }
 
 }
