@@ -36,6 +36,7 @@ public class UserRoleService {
             idamConfig.getRoleAssignmentsPath(),
             headers,
             body);
+
         if (response.getStatus() == OK.value()) {
             var assignmentsResponse = response.readEntity(RoleAssignmentResponse.class);
             var assignments = assignmentsResponse
