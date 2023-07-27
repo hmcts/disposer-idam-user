@@ -35,7 +35,7 @@ public class AbstractSteps {
             // changing only the last three bits (001 to 025)
             wiremock.stubFor(
                 WireMock
-                    .get(WireMock.urlMatching(staleUsersPath + "\\?pageNumber=" + i))
+                    .get(WireMock.urlMatching(staleUsersPath + "\\?(.*)&?pageNumber=" + i + "(.*)"))
                     .willReturn(
                         WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")

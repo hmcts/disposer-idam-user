@@ -23,6 +23,7 @@ public class StaleUsersService {
     @SuppressWarnings("PMD.RedundantFieldInitializer")
     private boolean finished = false;
     private static final String PAGE_NUMBER_PARAM = "pageNumber";
+    private static final String BATCH_SIZE_PARAM = "size";
     private int currentPage = 1;
 
     private final ParameterResolver idamConfig;
@@ -36,7 +37,10 @@ public class StaleUsersService {
             idamConfig.getIdamHost(),
             idamConfig.getStaleUsersPath(),
             Map.of("Content-Type", "application/json"),
-            Map.of(PAGE_NUMBER_PARAM, currentPage)
+            Map.of(
+                PAGE_NUMBER_PARAM, currentPage,
+                BATCH_SIZE_PARAM, idamConfig.getBatchSize()
+            )
         );
 
         if (response.getStatus() == OK.value()) {
