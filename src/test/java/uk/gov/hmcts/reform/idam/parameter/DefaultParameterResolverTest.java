@@ -27,6 +27,8 @@ class DefaultParameterResolverTest {
 
     private static final String ROLE_ASSIGNMENTS_PATH = "roleAssignmentsPath";
 
+    private static final String DELETE_USER_PATH = "deleteUserPath";
+
     private final DefaultParameterResolver resolver = new DefaultParameterResolver();
 
     @BeforeEach
@@ -41,6 +43,7 @@ class DefaultParameterResolverTest {
         ReflectionTestUtils.setField(resolver, CONNECT_TIMEOUT, 60_000);
         ReflectionTestUtils.setField(resolver, STALE_USERS_PATH, "/staleUsers");
         ReflectionTestUtils.setField(resolver, ROLE_ASSIGNMENTS_PATH, "/roleAssignments/path");
+        ReflectionTestUtils.setField(resolver, DELETE_USER_PATH, "/delete/user");
     }
 
     @Test
@@ -91,5 +94,10 @@ class DefaultParameterResolverTest {
     @Test
     void shouldGetRoleAssignmentsPath() {
         assertThat(resolver.getRoleAssignmentsPath()).isEqualTo("/roleAssignments/path");
+    }
+
+    @Test
+    void shouldGetDeleteUserPath() {
+        assertThat(resolver.getDeleteUserPath()).isEqualTo("/delete/user");
     }
 }

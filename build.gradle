@@ -15,7 +15,7 @@ plugins {
 
 pitest {
   pitestVersion.set('1.9.11')
-  junit5PluginVersion.set('1.1.1')
+  junit5PluginVersion.set('1.1.2')
   targetClasses = ['uk.gov.hmcts.reform.*']
   excludedClasses = [
     'uk.gov.hmcts.reform.idam.madeup.*'
@@ -149,6 +149,8 @@ pmd {
   ruleSets = []
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
+
+project.tasks['jacocoTestReport'].dependsOn test, integration
 
 jacocoTestReport {
   executionData(test, integration)

@@ -38,4 +38,6 @@ public class DefaultParameterResolver implements ParameterResolver {
     @Value("${idam.client.role_assignments_path}")
     private String roleAssignmentsPath;
 
+    @Value("${idam.client.delete_user_path}")
+    private String deleteUserPath;
 }

@@ -32,6 +32,7 @@ idam:
     connect_timeout: ${idam.client.read_timeout}
     stale_users_path: /api/v2/staleUsers
     role_assignments_path: /am/role-assignments/query
+    delete_user_path: /api/v2/users/
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

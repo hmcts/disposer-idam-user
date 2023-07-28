@@ -21,4 +21,7 @@ public interface ParameterResolver {
     String getStaleUsersPath();
 
     String getRoleAssignmentsPath();
+
+    String getDeleteUserPath();
+
 }

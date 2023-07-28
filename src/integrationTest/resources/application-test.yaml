@@ -34,13 +34,3 @@ targetInstance: ${TEST_URL:http://localhost:4550}
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
-
-
-logging:
-  level:
-    root: TRACE
-    com:
-      github:
-        tomakehurst:
-          wiremock: TRACE
-
