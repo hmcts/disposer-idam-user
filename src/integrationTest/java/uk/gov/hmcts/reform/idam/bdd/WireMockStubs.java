@@ -8,10 +8,12 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static feign.form.ContentProcessor.CONTENT_TYPE_HEADER;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-public class AbstractSteps {
+public class WireMockStubs {
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
     @Value("${idam.client.stale_users_path}")
@@ -22,6 +24,9 @@ public class AbstractSteps {
 
     @Value("${idam.client.role_assignments_content_type}")
     private String roleAssignmentsContentType;
+
+    @Value("${idam.client.delete_user_path}")
+    private String deleteUserPath;
 
     public void setupWireMock() {
         setupAuthorizationStub();
@@ -35,7 +40,8 @@ public class AbstractSteps {
             // changing only the last three bits (001 to 025)
             wiremock.stubFor(
                 WireMock
-                    .get(WireMock.urlMatching(staleUsersPath + "\\?(.*)&?pageNumber=" + i + "(.*)"))
+                    .get(WireMock.urlPathEqualTo(staleUsersPath))
+                    .withQueryParam("pageNumber", equalTo(String.valueOf(i)))
                     .willReturn(
                         WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")
@@ -44,7 +50,6 @@ public class AbstractSteps {
             );
 
             // pretend that 001, 002, 010 and 023 still have assigned roles
-
             wiremock.stubFor(
                 WireMock
                     .post(WireMock.urlPathEqualTo(roleAssignmentsPath))
@@ -60,6 +65,13 @@ public class AbstractSteps {
                     )
             );
         }
+
+        // delete endpoint
+        wiremock.stubFor(
+            WireMock
+                .delete(WireMock.urlPathMatching(deleteUserPath + "([0-9a-zA-Z-]+)"))
+                .willReturn(WireMock.aResponse().withStatus(NO_CONTENT.value()))
+        );
     }
 
     private String getMatchingActorId(int pageNumber) {

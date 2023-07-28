@@ -3,4 +3,4 @@ Feature: User disposer
 
   Scenario: Stale user disposer is finding stale users
     Given User disposer runs
-    Then it should collect users to dispose
+    Then it should dispose users without roles

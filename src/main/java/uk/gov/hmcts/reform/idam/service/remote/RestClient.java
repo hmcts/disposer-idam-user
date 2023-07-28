@@ -54,6 +54,11 @@ public class RestClient {
         return target.post(Entity.json(body));
     }
 
+    public Response deleteRequest(final String host, final String path) {
+        final var target = createWebTarget(host, path, null, null);
+        return target.delete();
+    }
+
     private Invocation.Builder createWebTarget(
         final String host,
         final String path,

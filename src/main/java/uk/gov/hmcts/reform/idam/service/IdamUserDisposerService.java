@@ -14,13 +14,15 @@ public class IdamUserDisposerService {
 
     private final StaleUsersService staleUsersService;
     private final UserRoleService userRoleService;
+    private final DeleteUserService deleteUserService;
 
     public List<String> run() {
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         do {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
-            batchStaleUserIds.forEach(user -> log.info("Stale users that would be passed to deletion {}", user));
+            deleteUserService.deleteUsers(batchStaleUserIds);
+            batchStaleUserIds.forEach(user -> log.info("Stale users that has been passed to deletion {}", user));
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
         } while (!staleUsersService.hasFinished());
         return allRemovedStaleUserIds;
