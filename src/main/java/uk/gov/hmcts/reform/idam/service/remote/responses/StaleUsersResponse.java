@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StaleUsersResponse {
+
     @JsonProperty("staleUsers")
     private List<String> staleUsers;
 
