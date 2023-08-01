@@ -2,7 +2,10 @@ package uk.gov.hmcts.reform.idam.bdd;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.http.Request;
+import com.github.tomakehurst.wiremock.http.Response;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
@@ -13,6 +16,7 @@ import static feign.form.ContentProcessor.CONTENT_TYPE_HEADER;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
+@Slf4j
 public class WireMockStubs {
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
@@ -29,6 +33,9 @@ public class WireMockStubs {
     private String deleteUserPath;
 
     public void setupWireMock() {
+
+        wiremock.addMockServiceRequestListener(
+            WireMockStubs::requestReceived);
         setupAuthorizationStub();
         setupIdamApiStubs();
     }
@@ -72,6 +79,13 @@ public class WireMockStubs {
                 .delete(WireMock.urlPathMatching(deleteUserPath + "([0-9a-zA-Z-]+)"))
                 .willReturn(WireMock.aResponse().withStatus(NO_CONTENT.value()))
         );
+    }
+
+    protected static void requestReceived(Request request, Response response) {
+        log.trace("WireMock request at URL: {}", request.getAbsoluteUrl());
+        log.trace("WireMock request headers: \n{}", request.getHeaders());
+        log.trace("WireMock response body: \n{}", response.getBodyAsString());
+        log.trace("WireMock response headers: \n{}", response.getHeaders());
     }
 
     private String getMatchingActorId(int pageNumber) {

@@ -12,7 +12,6 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-//import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
