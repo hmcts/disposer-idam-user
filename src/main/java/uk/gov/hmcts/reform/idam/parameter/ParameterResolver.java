@@ -8,20 +8,8 @@ public interface ParameterResolver {
 
     String getIdamPassword();
 
-    String getRoleAssignmentsContentType();
-
     int getBatchSize();
 
     int getRequestsLimit();
-
-    int getReadTimeout();
-
-    int getConnectTimeout();
-
-    String getStaleUsersPath();
-
-    String getRoleAssignmentsPath();
-
-    String getDeleteUserPath();
 
 }
