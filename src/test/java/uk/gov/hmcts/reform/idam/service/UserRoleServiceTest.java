@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.idam.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,11 +30,6 @@ class UserRoleServiceTest {
 
     @InjectMocks
     private UserRoleService userRoleService;
-
-    @BeforeEach
-    void setUp() {
-        when(idamConfig.getRoleAssignmentsContentType()).thenReturn("application/json");
-    }
 
     @Test
     void shouldFilterUsersWithRoles() {

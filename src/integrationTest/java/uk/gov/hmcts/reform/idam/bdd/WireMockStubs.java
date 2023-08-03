@@ -6,8 +6,8 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
+import uk.gov.hmcts.reform.idam.util.Constants;
 
 import java.util.List;
 
@@ -19,18 +19,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @Slf4j
 public class WireMockStubs {
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
-
-    @Value("${idam.client.stale_users_path}")
-    private String staleUsersPath;
-
-    @Value("${idam.client.role_assignments_path}")
-    private String roleAssignmentsPath;
-
-    @Value("${idam.client.role_assignments_content_type}")
-    private String roleAssignmentsContentType;
-
-    @Value("${idam.client.delete_user_path}")
-    private String deleteUserPath;
 
     public void setupWireMock() {
 
@@ -47,7 +35,7 @@ public class WireMockStubs {
             // changing only the last three bits (001 to 025)
             wiremock.stubFor(
                 WireMock
-                    .get(WireMock.urlPathEqualTo(staleUsersPath))
+                    .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
                     .withQueryParam("pageNumber", equalTo(String.valueOf(i)))
                     .willReturn(
                         WireMock.aResponse()
@@ -59,7 +47,7 @@ public class WireMockStubs {
             // pretend that 001, 002, 010 and 023 still have assigned roles
             wiremock.stubFor(
                 WireMock
-                    .post(WireMock.urlPathEqualTo(roleAssignmentsPath))
+                    .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_PATH))
                     .withRequestBody(WireMock.matchingJsonPath(
                                          "$.queryRequests.actorId",
                                          WireMock.containing(getMatchingActorId(i))
@@ -68,7 +56,7 @@ public class WireMockStubs {
                     .willReturn(
                         WireMock.aResponse()
                             .withBodyFile("roleAssignmentsResponse" + i + ".json")
-                            .withHeader("Content-Type", roleAssignmentsContentType)
+                            .withHeader("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
                     )
             );
         }
@@ -76,7 +64,7 @@ public class WireMockStubs {
         // delete endpoint
         wiremock.stubFor(
             WireMock
-                .delete(WireMock.urlPathMatching(deleteUserPath + "([0-9a-zA-Z-]+)"))
+                .delete(WireMock.urlPathMatching(Constants.DELETE_USER_PATH + "/([0-9a-zA-Z-]+)"))
                 .willReturn(WireMock.aResponse().withStatus(NO_CONTENT.value()))
         );
     }

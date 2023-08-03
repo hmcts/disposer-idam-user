@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryR
 import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequests;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
+import uk.gov.hmcts.reform.idam.util.Constants;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class UserRoleService {
             .build();
 
         final RoleAssignmentResponse response = client.getRoleAssignments(
-            Map.of("Content-Type", idamConfig.getRoleAssignmentsContentType()),
+            Map.of("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE),
             body
         );
 

@@ -17,27 +17,10 @@ public class DefaultParameterResolver implements ParameterResolver {
     @Value("${idam.api.password}")
     private String idamPassword;
 
-    @Value("${idam.client.role_assignments_content_type}")
-    private String roleAssignmentsContentType;
-
     @Value("${idam.client.batch_size}")
     private int batchSize;
 
     @Value("${idam.client.requests_limit}")
     private int requestsLimit;
 
-    @Value("${idam.client.read_timeout}")
-    private int readTimeout;
-
-    @Value("${idam.client.connect_timeout}")
-    private int connectTimeout;
-
-    @Value("${idam.client.stale_users_path}")
-    private String staleUsersPath;
-
-    @Value("${idam.client.role_assignments_path}")
-    private String roleAssignmentsPath;
-
-    @Value("${idam.client.delete_user_path}")
-    private String deleteUserPath;
 }

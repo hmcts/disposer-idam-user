@@ -4,8 +4,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
+import uk.gov.hmcts.reform.idam.util.Constants;
 
 import java.util.List;
 
@@ -19,9 +19,6 @@ public class UserDisposerSteps extends WireMockStubs {
 
     @Autowired
     private IdamUserDisposerService service;
-
-    @Value("${idam.client.delete_user_path}")
-    private String deleteUserPath;
 
     private List<String> idamUserIds;
 
@@ -51,17 +48,26 @@ public class UserDisposerSteps extends WireMockStubs {
             "13e31622-edea-493c-8240-9b780c9d6020",
             "13e31622-edea-493c-8240-9b780c9d6025"
         );
-        wiremock.verify(0, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6001")));
-        wiremock.verify(0, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6002")));
-        wiremock.verify(0, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6010")));
-        wiremock.verify(0, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6023")));
+        String deleteUserPath = Constants.DELETE_USER_PATH;
+        wiremock.verify(0, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6001")));
+        wiremock.verify(0, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6002")));
+        wiremock.verify(0, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6010")));
+        wiremock.verify(0, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6023")));
 
-        wiremock.verify(1, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6003")));
-        wiremock.verify(1, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6011")));
-        wiremock.verify(1, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6021")));
-        wiremock.verify(1, deleteRequestedFor(urlPathEqualTo(deleteUserPath + "13e31622-edea-493c-8240-9b780c9d6024")));
+        wiremock.verify(1, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6003")));
+        wiremock.verify(1, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6011")));
+        wiremock.verify(1, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6021")));
+        wiremock.verify(1, deleteRequestedFor(
+            urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6024")));
 
-        wiremock.verify(21, deleteRequestedFor(urlPathMatching(deleteUserPath + "([0-9a-zA-Z-]+)")));
+        wiremock.verify(21, deleteRequestedFor(urlPathMatching(deleteUserPath + "/([0-9a-zA-Z-]+)")));
     }
 
 }
