@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +19,16 @@ public class UserDisposerSteps extends WireMockStubs {
     @Autowired
     private IdamUserDisposerService service;
 
-    private List<String> idamUserIds;
-
-    @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
-    @Before
-    public void setUp() {
+    @Given("IdAM api works fine")
+    public void idamApiWorksFine() {
+        wiremock.resetScenarios();
         setupWireMock();
-    }
-
-    @Given("User disposer runs")
-    public void userDisposerRuns() {
-        idamUserIds = service.run();
+        setupIdamApiStubsForSuccess();
     }
 
     @Then("it should dispose users without roles")
     public void itShouldDisposeUsersWithoutRoles() {
+        List<String> idamUserIds = service.run();
         assertThat(idamUserIds).isNotEmpty();
         assertThat(idamUserIds).doesNotContain(
             "13e31622-edea-493c-8240-9b780c9d6001",

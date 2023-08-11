@@ -4,8 +4,10 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.idam.util.Constants;
 
@@ -18,6 +20,10 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Slf4j
 public class WireMockStubs {
+
+    @Value("${dummy-jwt}")
+    private String dummyJwtToken;
+
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
     public void setupWireMock() {
@@ -25,10 +31,9 @@ public class WireMockStubs {
         wiremock.addMockServiceRequestListener(
             WireMockStubs::requestReceived);
         setupAuthorizationStub();
-        setupIdamApiStubs();
     }
 
-    private void setupIdamApiStubs() {
+    public void setupIdamApiStubsForSuccess() {
         for (int i = 0; i < 3; i++) {
             // add 25 user ids with uuid
             // "13e31622-edea-493c-8240-9b780c9d6001"
@@ -69,9 +74,51 @@ public class WireMockStubs {
         );
     }
 
+    public void setIdamApiStubToReturn403() {
+
+        String scenarioName = "FORBIDDEN";
+        String state = "FORBIDDEN FIRED";
+
+        wiremock.stubFor(
+            WireMock
+                .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
+                .inScenario(scenarioName)
+                .whenScenarioStateIs(Scenario.STARTED)
+                .willSetStateTo(state)
+                .willReturn(
+                    WireMock.forbidden()
+                )
+        );
+
+        String body = "{\"content\": [], \"totalPages\": 1, \"totalElements\": 0, \"last\": true}";
+        wiremock.stubFor(
+            WireMock
+                .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
+
+                .inScenario(scenarioName)
+                .whenScenarioStateIs(state)
+                .willReturn(
+                    WireMock.jsonResponse(body, 200)
+                )
+
+        );
+    }
+
+    public void setIdamApiStubToReturn500() {
+        wiremock.stubFor(
+            WireMock
+                .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
+                .willReturn(
+                    WireMock.serverError()
+                )
+        );
+
+    }
+
     protected static void requestReceived(Request request, Response response) {
         log.trace("WireMock request at URL: {}", request.getAbsoluteUrl());
         log.trace("WireMock request headers: \n{}", request.getHeaders());
+        log.trace("WireMock response status: ", response.getStatus());
         log.trace("WireMock response body: \n{}", response.getBodyAsString());
         log.trace("WireMock response headers: \n{}", response.getHeaders());
     }
@@ -101,6 +148,16 @@ public class WireMockStubs {
                         .withStatus(200)
                         .withBody(getUserInfoAsJson())
                 )
+        );
+
+        wiremock.stubFor(
+            WireMock.post(WireMock.urlPathEqualTo("/o/token"))
+                .willReturn(WireMock.jsonResponse("{}", 200))
+        );
+
+        wiremock.stubFor(
+            WireMock.post(WireMock.urlPathEqualTo("/lease"))
+                .willReturn(WireMock.aResponse().withBody(dummyJwtToken))
         );
     }
 

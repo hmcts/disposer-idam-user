@@ -30,9 +30,8 @@ public class SecurityUtil {
     }
 
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     @Scheduled(fixedRate = 55, timeUnit = TimeUnit.MINUTES)
-    private void generateTokens() {
+    public void generateTokens() {
         generateIdamToken();
         generateServiceToken();
     }
@@ -41,37 +40,20 @@ public class SecurityUtil {
         try {
             serviceAuthToken = authTokenGenerator.generate();
         } catch (final Exception exception) {
-            log.error("User disposer is unable to generate service auth token due to error - {}",
-                      exception.getMessage(),
-                      exception
-            );
-            throw new ServiceAuthTokenGenerationException(
-                String.format(
-                    "User disposer is unable to generate service auth token due to error - %s",
-                    exception.getMessage()),
-                exception);
+            String msg = String.format(
+                    "Unable to generate service auth token due to error - %s", exception.getMessage());
+            log.error(msg, exception);
+            throw new ServiceAuthTokenGenerationException(msg, exception);
         }
     }
 
     private void generateIdamToken() {
         try {
-            idamClientToken = idamClient.getAccessToken(
-                null,
-                null
-            );
+            idamClientToken = idamClient.getAccessToken(null, null);
         } catch (final Exception exception) {
-            log.error(
-                "User disposer is unable to generate IDAM token due to error - {}",
-                exception.getMessage(),
-                exception
-            );
-            throw new IdamAuthTokenGenerationException(
-                String.format(
-                    "User disposer is unable to generate IDAM token due to error - %s",
-                    exception.getMessage()
-                ),
-                exception
-            );
+            String msg = String.format("Unable to generate IDAM token due to error - %s", exception.getMessage());
+            log.error(msg, exception);
+            throw new IdamAuthTokenGenerationException(msg, exception);
         }
 
     }

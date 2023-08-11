@@ -1,36 +1,6 @@
 #Application specific properties
-api-error-messages:
-  bad_request: Invalid Request
-  created: Successfully created
-  accepted: Success
-  internal_error: Unknown error occurred
-api-required-header-keys:
-  co-relationid: X-Correlation-Id
-api-schema-file:
-  submitanswer-schema: JsonSchema/submitAnswersSchema.json
-api-version-number: 1
-
-#Application specific unit test properties
-
 idam:
   s2s-auth:
-    url: http://localhost:4554
-    secret-cs: AAAAAAAAAAAAAAAA
-    name-cs: lau_frontend
-  api:
-    port: 4554
-    url: http://localhost:${idam.api.port}
-  client:
-    id: lau
-    secret: 12345678
-    redirect_uri: http://localhost:3451/oauth2redirect
+    url: http://localhost:5000
 
-
-authorised.services: idam-user
-authorised.roles: cft-audit-investigator,cft-service-logs
-
-
-targetInstance: ${TEST_URL:http://localhost:4550}
-
-service:
-  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+dummy-jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c

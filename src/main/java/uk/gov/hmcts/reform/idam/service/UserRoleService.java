@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequest;
 import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequests;
@@ -20,16 +21,26 @@ public class UserRoleService {
 
     private final RoleAssignmentClient roleAssignmentClient;
 
+    @Retry(retryAttempts = 2)
     public List<String> filterUsersWithRoles(List<String> staleUsers) {
+        if (staleUsers.isEmpty()) {
+            return List.of();
+        }
         var roleAssignmentQuery = UserRoleAssignmentQueryRequest.builder().userIds(staleUsers).build();
         UserRoleAssignmentQueryRequests body = UserRoleAssignmentQueryRequests.builder()
             .queryRequests(roleAssignmentQuery)
             .build();
 
-        final RoleAssignmentResponse response = roleAssignmentClient.getRoleAssignments(
-            Map.of("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE),
-            body
-        );
+        final RoleAssignmentResponse response;
+        try {
+            response = roleAssignmentClient.getRoleAssignments(
+                Map.of("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE),
+                body
+            );
+        } catch (Exception e) {
+            log.error("UserRoleService.getRoleAssignemnts threw exception: {}", e.getMessage(), e);
+            throw e;
+        }
 
         var assignments = response
             .getRoleAssignments()
