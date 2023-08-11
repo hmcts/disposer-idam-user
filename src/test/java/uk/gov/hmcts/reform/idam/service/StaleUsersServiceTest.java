@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class StaleUsersServiceTest {
 
     @Mock
-    IdamClient client;
+    IdamClient idamClient;
 
     @Mock
     private ParameterResolver idamConfig;
@@ -45,11 +45,11 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("2"));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(client.getStaleUsers(any())).thenReturn(response);
+        when(idamClient.getStaleUsers(any())).thenReturn(response);
 
         List<String> staleUsers = staleUsersService.fetchStaleUsers();
         assertThat(staleUsers).hasSize(2);
-        verify(client, times(1)).getStaleUsers(any());
+        verify(idamClient, times(1)).getStaleUsers(any());
         assertThat(staleUsersService.hasFinished()).isFalse();
     }
 

@@ -27,7 +27,13 @@ public class DeleteUserService {
     }
 
     private void deleteUser(String userId) {
-        Response response = idamClient.deleteUser(userId);
+        final Response response;
+        try {
+            response = idamClient.deleteUser(userId);
+        } catch (Exception e) {
+            log.error("DeleteUserService.deleteUser threw exception: {}", e.getMessage(), e);
+            throw e;
+        }
 
         if (response.status() != NO_CONTENT.value()) {
             String msg = String.format("User with id '%s' deletion failed", userId);

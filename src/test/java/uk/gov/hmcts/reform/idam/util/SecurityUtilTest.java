@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
@@ -38,13 +37,11 @@ class SecurityUtilTest {
         when(tokenGenerator.generate()).thenReturn(TOKEN);
         when(idamClient.getAccessToken(null, null)).thenReturn("Bearer 1234");
 
-
-        ReflectionTestUtils.invokeMethod(securityUtil, "generateTokens");
+        securityUtil.generateTokens();
 
         assertThat(securityUtil.getServiceAuthorization()).isEqualTo(TOKEN);
         assertThat(securityUtil.getIdamClientToken()).isEqualTo(ACCESS_TOKEN);
     }
-
 
     @Test
     void shouldThrowServiceAuthTokenGenerationException() {
@@ -53,12 +50,10 @@ class SecurityUtilTest {
 
         ServiceAuthTokenGenerationException thrown = assertThrows(
             ServiceAuthTokenGenerationException.class,
-            () -> ReflectionTestUtils.invokeMethod(securityUtil, "generateTokens")
+            () -> securityUtil.generateTokens()
         );
 
-        assertThat(thrown.getMessage())
-            .contains("User disposer is unable to generate service auth token due to error -");
-
+        assertThat(thrown.getMessage()).contains("Unable to generate service auth token due to error -");
     }
 
     @Test
@@ -68,11 +63,10 @@ class SecurityUtilTest {
 
         IdamAuthTokenGenerationException thrown = assertThrows(
             IdamAuthTokenGenerationException.class,
-            () -> ReflectionTestUtils.invokeMethod(securityUtil, "generateTokens")
+            () -> securityUtil.generateTokens()
         );
 
-        assertThat(thrown.getMessage())
-            .contains("User disposer is unable to generate IDAM token due to error -");
+        assertThat(thrown.getMessage()).contains("Unable to generate IDAM token due to error -");
     }
 
 }
