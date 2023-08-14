@@ -18,9 +18,6 @@ class IdamUserDisposerServiceTest {
     private StaleUsersService staleUsersService;
 
     @Mock
-    private UserRoleService userRoleService;
-
-    @Mock
     private DeleteUserService deleteUserService;
 
     @InjectMocks
@@ -31,7 +28,6 @@ class IdamUserDisposerServiceTest {
         when(staleUsersService.hasFinished()).thenReturn(true);
         service.run();
         verify(staleUsersService, times(1)).fetchStaleUsers();
-        verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());
     }
 
@@ -40,7 +36,6 @@ class IdamUserDisposerServiceTest {
         when(staleUsersService.hasFinished()).thenReturn(false).thenReturn(false).thenReturn(true);
         service.run();
         verify(staleUsersService, times(3)).fetchStaleUsers();
-        verify(userRoleService, times(3)).filterUsersWithRoles(any());
         verify(deleteUserService, times(3)).deleteUsers(any());
     }
 
