@@ -14,10 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 public class StaleUsersResponse {
 
-    @JsonProperty("staleUsers")
-    private List<String> staleUsers;
+    @JsonProperty("content")
+    private List<UserContent> content;
 
-    @JsonProperty("moreRecords")
-    private Boolean moreRecords;
+    @JsonProperty("last")
+    private Boolean isLast;
 
 }
