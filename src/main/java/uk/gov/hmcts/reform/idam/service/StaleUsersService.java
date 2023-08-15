@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
+import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 
 import java.util.List;
 import java.util.Map;
@@ -17,15 +18,14 @@ public class StaleUsersService {
 
     @SuppressWarnings("PMD.RedundantFieldInitializer")
     private boolean finished = false;
-    private static final String PAGE_NUMBER_PARAM = "pageNumber";
+    private static final String PAGE_NUMBER_PARAM = "page";
     private static final String BATCH_SIZE_PARAM = "size";
-    private int currentPage = 1;
+    private int currentPage;
 
     private final IdamClient client;
     private final ParameterResolver idamConfig;
 
     public List<String> fetchStaleUsers() {
-        boolean hasMore;
         StaleUsersResponse staleUsersResponse = client.getStaleUsers(
             Map.of(
                 PAGE_NUMBER_PARAM, currentPage,
@@ -33,11 +33,15 @@ public class StaleUsersService {
             )
         );
 
-        hasMore = staleUsersResponse.getMoreRecords() != null && staleUsersResponse.getMoreRecords();
-        finished = !hasMore;
+        finished = staleUsersResponse.getIsLast();
         currentPage += 1;
 
-        return staleUsersResponse.getStaleUsers();
+        return staleUsersResponse
+                .getContent()
+                .stream()
+                .filter(item -> item.getRoles().size() < 1)
+                .map(UserContent::getId)
+                .toList();
     }
 
     public boolean hasFinished() {

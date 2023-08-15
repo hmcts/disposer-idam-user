@@ -22,43 +22,27 @@ public class WireMockStubs {
 
     public void setupWireMock() {
 
-        wiremock.addMockServiceRequestListener(
-            WireMockStubs::requestReceived);
+        wiremock.addMockServiceRequestListener(WireMockStubs::requestReceived);
         setupAuthorizationStub();
         setupIdamApiStubs();
     }
 
     private void setupIdamApiStubs() {
-        for (int i = 1; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             // add 25 user ids with uuid
             // "13e31622-edea-493c-8240-9b780c9d6001"
             // changing only the last three bits (001 to 025)
             wiremock.stubFor(
                 WireMock
                     .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
-                    .withQueryParam("pageNumber", equalTo(String.valueOf(i)))
+                    .withQueryParam("page", equalTo(String.valueOf(i)))
                     .willReturn(
                         WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")
-                            .withBodyFile("staleUsersPage" + i + ".json")
+                                .withBodyFile("staleUsersPage" + (i + 1) + ".json")
                     )
             );
 
-            // pretend that 001, 002, 010 and 023 still have assigned roles
-            wiremock.stubFor(
-                WireMock
-                    .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_PATH))
-                    .withRequestBody(WireMock.matchingJsonPath(
-                                         "$.queryRequests.actorId",
-                                         WireMock.containing(getMatchingActorId(i))
-                                     )
-                    )
-                    .willReturn(
-                        WireMock.aResponse()
-                            .withBodyFile("roleAssignmentsResponse" + i + ".json")
-                            .withHeader("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
-                    )
-            );
         }
 
         // delete endpoint
@@ -75,12 +59,6 @@ public class WireMockStubs {
         log.trace("WireMock response body: \n{}", response.getBodyAsString());
         log.trace("WireMock response headers: \n{}", response.getHeaders());
     }
-
-    private String getMatchingActorId(int pageNumber) {
-        // UUID is from wiremock/__files/staleUsersPage{1,2,3}.json
-        return "13e31622-edea-493c-8240-9b780c9d60" + (pageNumber - 1) + "1";
-    }
-
 
     private void setupAuthorizationStub() {
         wiremock.stubFor(
@@ -116,6 +94,4 @@ public class WireMockStubs {
             )
         );
     }
-
-
 }

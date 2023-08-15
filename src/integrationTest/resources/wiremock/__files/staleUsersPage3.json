@@ -1,10 +1,22 @@
 {
-  "staleUsers": [
-    "13e31622-edea-493c-8240-9b780c9d6021",
-    "13e31622-edea-493c-8240-9b780c9d6022",
-    "13e31622-edea-493c-8240-9b780c9d6023",
-    "13e31622-edea-493c-8240-9b780c9d6024",
-    "13e31622-edea-493c-8240-9b780c9d6025"
+  "content": [
+    {"id": "13e31622-edea-493c-8240-9b780c9d6021", "forename": "Jonh011", "surname": "Smith011", "email": "john011.smith011@example.org", "roles": []},
+    {"id": "13e31622-edea-493c-8240-9b780c9d6022", "forename": "Jonh012", "surname": "Smith012", "email": "john012.smith012@example.org", "roles": []},
+    {"id": "13e31622-edea-493c-8240-9b780c9d6023", "forename": "Jonh013", "surname": "Smith013", "email": "john013.smith013@example.org", "roles": ["tribunal-caseworker"]},
+    {"id": "13e31622-edea-493c-8240-9b780c9d6024", "forename": "Jonh014", "surname": "Smith014", "email": "john014.smith014@example.org", "roles": []},
+    {"id": "13e31622-edea-493c-8240-9b780c9d6025", "forename": "Jonh015", "surname": "Smith015", "email": "john015.smith015@example.org", "roles": []}
   ],
-  "moreRecords": false
+  "pageable": {
+    "sort": {
+      "sorted":false,
+      "unsorted": true,
+      "empty": true
+    },
+    "pageNumber": 2,
+    "pageSize": 10,
+    "offset": 20
+  },
+  "totalPages": 3,
+  "totalElements": 25,
+  "last": true
 }

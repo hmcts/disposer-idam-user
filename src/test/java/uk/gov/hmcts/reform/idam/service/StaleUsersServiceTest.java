@@ -9,7 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
+import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +40,10 @@ class StaleUsersServiceTest {
 
     @Test
     void shouldMakeRequestOnFetchStaleUsers() {
-        StaleUsersResponse response = new StaleUsersResponse(List.of("1", "2"), true);
+        List<UserContent> userContentList = new LinkedList<>();
+        userContentList.add(makeUser("1"));
+        userContentList.add(makeUser("2"));
+        StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
         when(client.getStaleUsers(any())).thenReturn(response);
 
@@ -46,6 +51,13 @@ class StaleUsersServiceTest {
         assertThat(staleUsers).hasSize(2);
         verify(client, times(1)).getStaleUsers(any());
         assertThat(staleUsersService.hasFinished()).isFalse();
+    }
+
+    private UserContent makeUser(String userId) {
+        return UserContent.builder()
+                .id(userId)
+                .roles(List.of())
+                .build();
     }
 
 }
