@@ -11,12 +11,6 @@ public class DefaultParameterResolver implements ParameterResolver {
     @Value("${idam.api.url}")
     private String idamHost;
 
-    @Value("${idam.api.username}")
-    private String idamUsername;
-
-    @Value("${idam.api.password}")
-    private String idamPassword;
-
     @Value("${idam.client.batch_size}")
     private int batchSize;
 

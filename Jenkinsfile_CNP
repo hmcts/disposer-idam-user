@@ -15,6 +15,8 @@ GradleBuilder builder = new GradleBuilder(this, product)
 def secrets = [
         'disposer-${env}': [
                 secret('app-insights-connection-string', 'app-insights-connection-string'),
+                secret('idam-client-secret', 'DISPOSER_IDAM_USER_CLIENT_SECRET'),
+                secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER')
         ]
 ]
 
@@ -85,5 +87,24 @@ withPipeline(type, product, component) {
               reportName           : "disposer-idam-user Functional Test Report"
       ]
     }
+
+    afterAlways('akschartsinstall') {
+      // Set required environment variables to run functional tests apart from one in vaults.
+      env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+      env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
+
+      echo "Just waiting a while to ensure that the pod has run the job"
+      sh "sleep 120s"
+
+      // Execute functional tests
+      echo "Verifying that functional test data was processed correctly"
+      try {
+        builder.gradle('functional')
+      } finally {
+        junit '**/test-results/**/*.xml'
+      }
+    }
   }
+
+
 

@@ -14,7 +14,7 @@ public class AuthRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        template.header("Authorization", securityUtil.getIdamClientToken());
+        //template.header("Authorization", securityUtil.getIdamClientToken());
         template.header("ServiceAuthorization", securityUtil.getServiceAuthorization());
     }
 }

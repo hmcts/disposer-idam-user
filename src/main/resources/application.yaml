@@ -15,18 +15,16 @@ idam:
   api:
     port: ${IDAM_API_PORT:5000}
     url: ${IDAM_API_URL:http://localhost:${idam.api.port}}
-    username: ${IDAM_USER_DISPOSER_SYSTEM_USER_USERNAME:user.disposer.idam.system.user@gmail.com}
-    password: ${IDAM_USER_DISPOSER_SYSTEM_USER_PASSWORD:Pa55word11}
   s2s-auth:
-    name: ${IDAM_S2S_NAME:idam_user_disposer}
-    url: ${IDAM_S2S_URL:http://localhost:4502}
-    secret: ${IDAM_KEY_IDAM_USER_DISPOSER:AAAAAAAAAAAAAAAA}
+    name: ${S2S_NAME:disposer-idam-user}
+    url: ${S2S_URL:http://localhost:4502}
+    secret: ${S2S_SECRET_DISPOSER_IDAM_USER:AAAAAAAAAAAAAAAA}
   client:
-    id: ${IDAM_USER_DISPOSER_CLIENT_ID:idam-user-disposer}
-    secret: ${IDAM_USER_DISPOSER_CLIENT_SECRET:idam-user-disposer-client-secret}
-    redirect_uri: ${IDAM_USER_DISPOSER_CLIENT_REDIRECT_URL:http://idam-user-disposer/oauth2redirect}
-    batch_size: ${IDAM_USER_DISPOSER_BATCH_SIZE:100}
-    requests_limit: ${IDAM_USER_DISPOSER_REQUESTS_LIMIT:10}
+    id: ${DISPOSER_IDAM_USER_CLIENT_ID:disposer-idam-user}
+    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
+    redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
+    batch_size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
+    requests_limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:10}
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

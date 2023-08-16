@@ -4,10 +4,6 @@ public interface ParameterResolver {
 
     String getIdamHost();
 
-    String getIdamUsername();
-
-    String getIdamPassword();
-
     int getBatchSize();
 
     int getRequestsLimit();
