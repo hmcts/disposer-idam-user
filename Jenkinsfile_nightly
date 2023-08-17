@@ -20,7 +20,7 @@ def secrets = [
   'disposer-${env}': [
     secret('app-insights-connection-string', 'app-insights-connection-string'),
     secret('idam-client-secret', 'DISPOSER_IDAM_USER_CLIENT_SECRET'),
-    secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER'),
+    secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER')
   ]
 ]
 
