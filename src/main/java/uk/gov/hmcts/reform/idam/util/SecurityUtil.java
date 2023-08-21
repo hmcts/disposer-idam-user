@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class SecurityUtil {
-
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamClient idamClient;
     private final ParameterResolver parameterResolver;
