@@ -19,5 +19,4 @@ public class StaleUsersResponse {
 
     @JsonProperty("last")
     private Boolean isLast;
-
 }

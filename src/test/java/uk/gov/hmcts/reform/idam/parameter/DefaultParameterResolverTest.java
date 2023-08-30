@@ -15,7 +15,7 @@ class DefaultParameterResolverTest {
 
     private static final String REQUESTS_LIMIT = "requestsLimit";
 
-    private final DefaultParameterResolver resolver = new DefaultParameterResolver();
+    private final ParameterResolver resolver = new ParameterResolver();
 
     @BeforeEach
     public void initMock() {

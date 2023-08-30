@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.idam.service.remote;
+package uk.gov.hmcts.reform.idam.service.remote.client;
 
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,8 +19,8 @@ public interface IdamClient {
     StaleUsersResponse getStaleUsers(@RequestParam Map<String, Object> queryParams);
 
     @DeleteMapping(
-        value = Constants.DELETE_USER_PATH + "/{userId}",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+            value = Constants.STALE_USERS_PATH + "/{userId}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     Response deleteUser(@PathVariable(name = "userId") String userId);
 }

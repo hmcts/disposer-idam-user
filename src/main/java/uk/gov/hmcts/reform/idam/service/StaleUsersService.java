@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
-import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 
@@ -23,13 +23,13 @@ public class StaleUsersService {
     private int currentPage;
 
     private final IdamClient client;
-    private final ParameterResolver idamConfig;
+    private final ParameterResolver parameterResolver;
 
     public List<String> fetchStaleUsers() {
         StaleUsersResponse staleUsersResponse = client.getStaleUsers(
             Map.of(
                 PAGE_NUMBER_PARAM, currentPage,
-                BATCH_SIZE_PARAM, idamConfig.getBatchSize()
+                BATCH_SIZE_PARAM, parameterResolver.getBatchSize()
             )
         );
 
@@ -39,7 +39,6 @@ public class StaleUsersService {
         return staleUsersResponse
                 .getContent()
                 .stream()
-                .filter(item -> item.getRoles().size() < 1)
                 .map(UserContent::getId)
                 .toList();
     }

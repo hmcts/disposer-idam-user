@@ -35,8 +35,6 @@ class SecurityUtilTest {
 
     @Test
     void shouldGetServiceAuthorization() {
-        ReflectionTestUtils.setField(securityUtil, "parameterResolver", parameterResolver);
-
         when(tokenGenerator.generate()).thenReturn(TOKEN);
         when(idamClient.getAccessToken(null, null)).thenReturn("Bearer 1234");
 
@@ -50,8 +48,6 @@ class SecurityUtilTest {
 
     @Test
     void shouldThrowServiceAuthTokenGenerationException() {
-
-        ReflectionTestUtils.setField(securityUtil, "parameterResolver", parameterResolver);
         doThrow(new ServiceAuthTokenGenerationException(TOKEN))
             .when(tokenGenerator).generate();
 
@@ -67,9 +63,6 @@ class SecurityUtilTest {
 
     @Test
     void shouldThrowIdamAuthTokenGenerationException() {
-
-        ReflectionTestUtils.setField(securityUtil, "parameterResolver", parameterResolver);
-
         doThrow(new IdamAuthTokenGenerationException(TOKEN))
             .when(idamClient).getAccessToken(null, null);
 
