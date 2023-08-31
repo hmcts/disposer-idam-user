@@ -48,7 +48,7 @@ public class UserDisposerSteps extends WireMockStubs {
             "13e31622-edea-493c-8240-9b780c9d6020",
             "13e31622-edea-493c-8240-9b780c9d6025"
         );
-        String deleteUserPath = Constants.DELETE_USER_PATH;
+        String deleteUserPath = Constants.STALE_USERS_PATH;
         wiremock.verify(0, deleteRequestedFor(
             urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6001")));
         wiremock.verify(0, deleteRequestedFor(

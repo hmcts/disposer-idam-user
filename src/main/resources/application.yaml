@@ -23,8 +23,13 @@ idam:
     id: ${DISPOSER_IDAM_USER_CLIENT_ID:disposer-idam-user}
     secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
     redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
-    batch_size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
-    requests_limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:10}
+
+stale-users:
+  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
+  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:10}
+
+ccd:
+  role.assignment.host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

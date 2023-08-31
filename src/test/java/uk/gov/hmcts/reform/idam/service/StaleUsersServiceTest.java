@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
-import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 
@@ -41,8 +41,8 @@ class StaleUsersServiceTest {
     @Test
     void shouldMakeRequestOnFetchStaleUsers() {
         List<UserContent> userContentList = new LinkedList<>();
-        userContentList.add(makeUser("1"));
-        userContentList.add(makeUser("2"));
+        userContentList.add(new UserContent("1"));
+        userContentList.add(new UserContent("2"));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
         when(client.getStaleUsers(any())).thenReturn(response);
@@ -51,13 +51,6 @@ class StaleUsersServiceTest {
         assertThat(staleUsers).hasSize(2);
         verify(client, times(1)).getStaleUsers(any());
         assertThat(staleUsersService.hasFinished()).isFalse();
-    }
-
-    private UserContent makeUser(String userId) {
-        return UserContent.builder()
-                .id(userId)
-                .roles(List.of())
-                .build();
     }
 
 }

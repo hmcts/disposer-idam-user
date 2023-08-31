@@ -9,7 +9,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 import java.util.List;
 

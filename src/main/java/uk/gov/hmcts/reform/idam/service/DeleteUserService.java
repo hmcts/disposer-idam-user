@@ -4,7 +4,7 @@ import feign.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.exception.IdamApiException;
-import uk.gov.hmcts.reform.idam.service.remote.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 import java.util.List;
 

@@ -1,11 +1,20 @@
 package uk.gov.hmcts.reform.idam.parameter;
 
-public interface ParameterResolver {
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-    String getIdamHost();
+@Component
+@Getter
+public class ParameterResolver {
 
-    int getBatchSize();
+    @Value("${idam.api.url}")
+    private String idamHost;
 
-    int getRequestsLimit();
+    @Value("${stale-users.batch.size}")
+    private int batchSize;
+
+    @Value("${stale-users.requests.limit}")
+    private int requestsLimit;
 
 }

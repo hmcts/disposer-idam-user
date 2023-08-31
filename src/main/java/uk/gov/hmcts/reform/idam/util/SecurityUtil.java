@@ -8,7 +8,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
 import uk.gov.hmcts.reform.idam.exception.ServiceAuthTokenGenerationException;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 public class SecurityUtil {
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamClient idamClient;
-    private final ParameterResolver parameterResolver;
 
     private String idamClientToken;
     private String serviceAuthToken;
