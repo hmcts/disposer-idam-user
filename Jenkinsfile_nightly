@@ -16,7 +16,27 @@ def type = "java"
 def product = "disposer"
 def component = "disposer-idam-user"
 
+def secrets = [
+  'disposer-${env}': [
+    secret('app-insights-connection-string', 'app-insights-connection-string'),
+    secret('idam-client-secret', 'DISPOSER_IDAM_USER_CLIENT_SECRET'),
+    secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER')
+  ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [ $class: 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    name: secretName,
+    version: '',
+    envVariable: envVar
+  ]
+}
+
 withNightlyPipeline(type, product, component) {
+  // Set required environment variables to run functional tests apart from one in vaults.
+  env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+  env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
 
   enableAksStagingDeployment()
   disableLegacyDeployment()

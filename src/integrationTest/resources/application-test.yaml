@@ -18,7 +18,8 @@ idam:
     secret-cs: AAAAAAAAAAAAAAAA
     name-cs: lau_frontend
   api:
-    url: http://localhost:4554
+    port: 4554
+    url: http://localhost:${idam.api.port}
   client:
     id: lau
     secret: 12345678
@@ -30,3 +31,6 @@ authorised.roles: cft-audit-investigator,cft-service-logs
 
 
 targetInstance: ${TEST_URL:http://localhost:4550}
+
+service:
+  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
