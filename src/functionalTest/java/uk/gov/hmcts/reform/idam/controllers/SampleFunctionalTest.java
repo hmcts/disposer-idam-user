@@ -21,7 +21,7 @@ class SampleFunctionalTest {
     private String testUrl;
 
     @Value("$DISPOSER_IDAM_USER_CLIENT_SECRET")
-    private String client_secret;
+    private String clientSecret;
 
     @Value("$S2S_SECRET_DISPOSER_IDAM_USER")
     private String s2sSecret;
@@ -43,7 +43,7 @@ class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));
-        log.info("IDAM_USER_CLIENT_SECRET : " + client_secret);
+        log.info("IDAM_USER_CLIENT_SECRET : " + clientSecret);
         log.info("S2S_SECRET_DISPOSER_IDAM_USER : " + s2sSecret);
     }
 }
