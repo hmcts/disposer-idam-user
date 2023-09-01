@@ -2,7 +2,7 @@ version: 2
 updates:
   - package-ecosystem: gradle
     directory: "/"
+    schedule:
+      interval: daily
+>>>>>>> 83b08240eff36771805559cdafb1f90baf46c19a
     open-pull-requests-limit: 5
-    ignore:
-      - dependency-name: "*"
-        update-types: [ "version-update:semver-patch" ]
