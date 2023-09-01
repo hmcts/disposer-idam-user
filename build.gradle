@@ -266,6 +266,9 @@ dependencies {
     implementation("org.springframework.security:spring-security-rsa:1.1.1")
   }
 
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '11.0.0-M11'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '11.0.0-M11'
+
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 
