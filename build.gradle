@@ -261,7 +261,12 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', {
+    exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
+    exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
+  }
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.13'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.13'
   implementation (group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign') {
     implementation("org.springframework.security:spring-security-rsa:1.1.1")
   }
