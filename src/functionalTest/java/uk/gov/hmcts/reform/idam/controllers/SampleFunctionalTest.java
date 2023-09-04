@@ -43,7 +43,7 @@ class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));
-        log.info("IDAM_USER_CLIENT_SECRET : " + clientSecret);
-        log.info("S2S_SECRET_DISPOSER_IDAM_USER : " + s2sSecret);
+        Assertions.assertEquals("8HP03XWNB32FHP3G",clientSecret);
+        Assertions.assertEquals("TL4OUYLKBO7ZV3X4",s2sSecret);
     }
 }
