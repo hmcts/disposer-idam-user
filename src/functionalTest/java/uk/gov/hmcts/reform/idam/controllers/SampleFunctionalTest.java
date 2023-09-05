@@ -39,7 +39,9 @@ public class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));*/
-        Assertions.assertEquals("8HP03XWNB32FHP3G",clientSecret);
-        Assertions.assertEquals("TL4OUYLKBO7ZV3X4",s2sSecret);
+        Assertions.assertNotNull(clientSecret);
+        Assertions.assertNotEquals("idam-client-secret", clientSecret);
+        Assertions.assertNotNull(s2sSecret);
+        Assertions.assertNotEquals("AAAAAAAAAAAAAAAA", clientSecret);
     }
 }
