@@ -16,10 +16,10 @@ public class SampleFunctionalTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
-    @Value("$DISPOSER_IDAM_USER_CLIENT_SECRET")
+    @Value("${DISPOSER_IDAM_USER_CLIENT_SECRET}")
     private String clientSecret;
 
-    @Value("$S2S_SECRET_DISPOSER_IDAM_USER")
+    @Value("${S2S_SECRET_DISPOSER_IDAM_USER}")
     private String s2sSecret;
 
     @BeforeEach
