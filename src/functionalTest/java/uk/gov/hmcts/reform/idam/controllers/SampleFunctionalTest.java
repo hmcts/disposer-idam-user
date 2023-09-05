@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Slf4j
@@ -18,14 +16,11 @@ public class SampleFunctionalTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
-    /*@Value("${idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET}")
+    @Value("${idam.client.secret}")
     private String clientSecret;
 
-    @Value("${idam.s2s-auth.S2S_SECRET_DISPOSER_IDAM_USER}")
-    private String s2sSecret;*/
-
-    @Autowired
-    private Environment environment;
+    @Value("${idam.s2s-auth.secret}")
+    private String s2sSecret;
 
     @BeforeEach
     public void setUp() {
@@ -44,8 +39,6 @@ public class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));*/
-        String clientSecret = environment.getProperty("idam.client.secret");
-        String s2sSecret = environment.getProperty("idam.s2s-auth.secret");
         Assertions.assertNotNull(clientSecret);
         Assertions.assertNotEquals("idam-client-secret", clientSecret);
         Assertions.assertNotNull(s2sSecret);
