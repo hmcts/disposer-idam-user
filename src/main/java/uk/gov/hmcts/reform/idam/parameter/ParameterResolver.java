@@ -11,6 +11,9 @@ public class ParameterResolver {
     @Value("${idam.api.url}")
     private String idamHost;
 
+    @Value("${idam.s2s-auth.secret}")
+    private String s2sSecret;
+
     @Value("${stale-users.batch.size}")
     private int batchSize;
 

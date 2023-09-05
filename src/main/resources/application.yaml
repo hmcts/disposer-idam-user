@@ -32,4 +32,4 @@ ccd:
   role.assignment.host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
 
 service:
-  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+  enabled: true
