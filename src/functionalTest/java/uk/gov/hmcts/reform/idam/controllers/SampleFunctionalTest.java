@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.core.env.Environment;
 
-@TestPropertySource("classpath:application-functional.yaml")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Slf4j
 public class SampleFunctionalTest {
@@ -18,11 +18,14 @@ public class SampleFunctionalTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
-    @Value("${idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET}")
+    /*@Value("${idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET}")
     private String clientSecret;
 
     @Value("${idam.s2s-auth.S2S_SECRET_DISPOSER_IDAM_USER}")
-    private String s2sSecret;
+    private String s2sSecret;*/
+
+    @Autowired
+    private Environment environment;
 
     @BeforeEach
     public void setUp() {
@@ -41,7 +44,9 @@ public class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));*/
-        Assertions.assertNotNull(clientSecret);
+        String clientSecret = environment.getProperty("idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET");
+        String s2sSecret = environment.getProperty("idam.s2s-auth.S2S_SECRET_DISPOSER_IDAM_USERT");
+        Assertions.assertNotNull(environment.getProperty("idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET"));
         Assertions.assertNotEquals("idam-client-secret", clientSecret);
         Assertions.assertNotNull(s2sSecret);
         Assertions.assertNotEquals("AAAAAAAAAAAAAAAA", clientSecret);
