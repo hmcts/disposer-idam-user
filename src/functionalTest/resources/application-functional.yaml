@@ -1,0 +1,2 @@
+service:
+  enabled: ${DISPOSER_IDAM_USER_ENABLED:true}
