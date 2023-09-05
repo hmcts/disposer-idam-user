@@ -44,9 +44,9 @@ public class SampleFunctionalTest {
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));*/
-        String clientSecret = environment.getProperty("idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET");
-        String s2sSecret = environment.getProperty("idam.s2s-auth.S2S_SECRET_DISPOSER_IDAM_USERT");
-        Assertions.assertNotNull(environment.getProperty("idam.client.DISPOSER_IDAM_USER_CLIENT_SECRET"));
+        String clientSecret = environment.getProperty("idam.client.secret");
+        String s2sSecret = environment.getProperty("idam.s2s-auth.secret");
+        Assertions.assertNotNull(clientSecret);
         Assertions.assertNotEquals("idam-client-secret", clientSecret);
         Assertions.assertNotNull(s2sSecret);
         Assertions.assertNotEquals("AAAAAAAAAAAAAAAA", clientSecret);
