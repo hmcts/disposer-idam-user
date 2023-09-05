@@ -1,5 +1,14 @@
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:true}
-idam.api.s2s-auth.secret: ${S2S_SECRET_DISPOSER_IDAM_USER:TL4OUYLKBO7ZV3X4}
-idam.api.client.secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:8HP03XWNB32FHP3G}
-idam.api.url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
+idam:
+  api:
+    port: ${IDAM_API_PORT:5000}
+    url: ${IDAM_API_URL:http://localhost:${idam.api.port}}
+  s2s-auth:
+    name: ${S2S_NAME:disposer-idam-user}
+    url: ${S2S_URL:http://localhost:4502}
+    secret: ${S2S_SECRET_DISPOSER_IDAM_USER:AAAAAAAAAAAAAAAA}
+  client:
+    id: ${DISPOSER_IDAM_USER_CLIENT_ID:disposer-idam-user}
+    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
+    redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
