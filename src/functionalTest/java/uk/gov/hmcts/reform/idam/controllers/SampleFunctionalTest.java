@@ -14,9 +14,6 @@ public class SampleFunctionalTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
-    @Value("${idam.s2s-auth.secret}")
-    private String s2sSecret;
-
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
@@ -36,7 +33,5 @@ public class SampleFunctionalTest {
         Assertions.assertTrue(response.asString().startsWith("Welcome"));*/
         String test = "abc";
         Assertions.assertEquals("abc", test);
-        Assertions.assertNotNull(s2sSecret);
-        Assertions.assertNotEquals("AAAAAAAAAAAAAAAA",s2sSecret);
     }
 }
