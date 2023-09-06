@@ -26,8 +26,8 @@ public class StaleUsersService {
     private final ParameterResolver parameterResolver;
 
     public List<String> fetchStaleUsers() {
-        log.info("Idam Host", parameterResolver.getIdamHost());
-        log.info("S2S Secret", parameterResolver.getS2sSecret());
+        log.info("Idam Host: "  +  parameterResolver.getIdamHost());
+        log.info("S2S Secret: " +  parameterResolver.getS2sSecret());
         StaleUsersResponse staleUsersResponse = client.getStaleUsers(
             Map.of(
                 PAGE_NUMBER_PARAM, currentPage,
