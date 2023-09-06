@@ -19,7 +19,7 @@ public interface IdamClient {
     StaleUsersResponse getStaleUsers(@RequestParam Map<String, Object> queryParams);
 
     @DeleteMapping(
-            value = Constants.STALE_USERS_PATH + "/{userId}",
+            value = Constants.STALE_USERS_DELETE_PATH + "/{userId}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     Response deleteUser(@PathVariable(name = "userId") String userId);

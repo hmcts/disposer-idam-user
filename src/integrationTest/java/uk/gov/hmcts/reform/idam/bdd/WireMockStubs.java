@@ -64,7 +64,7 @@ public class WireMockStubs {
         // delete endpoint
         wiremock.stubFor(
             WireMock
-                .delete(WireMock.urlPathMatching(Constants.STALE_USERS_PATH + "/([0-9a-zA-Z-]+)"))
+                .delete(WireMock.urlPathMatching(Constants.STALE_USERS_DELETE_PATH + "/([0-9a-zA-Z-]+)"))
                 .willReturn(WireMock.aResponse().withStatus(NO_CONTENT.value()))
         );
     }

@@ -1,9 +1,11 @@
 package uk.gov.hmcts.reform.idam.util;
 
-@SuppressWarnings("PMD.ConstantsInInterface")
+@SuppressWarnings({"PMD.ConstantsInInterface", "java:S1075"})
 public interface Constants {
 
     String STALE_USERS_PATH = "/api/v1/staleUsers";
+
+    String STALE_USERS_DELETE_PATH = "/api/v2/users";
 
     String ROLE_ASSIGNMENTS_PATH = "/am/role-assignments/query";
 
