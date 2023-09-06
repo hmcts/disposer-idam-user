@@ -17,7 +17,4 @@ public class ParameterResolver {
     @Value("${stale-users.requests.limit}")
     private int requestsLimit;
 
-    @Value("${idam.s2s-auth.secret}")
-    private String s2sSecret;
-
 }
