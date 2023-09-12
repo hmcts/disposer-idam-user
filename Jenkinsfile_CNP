@@ -15,7 +15,9 @@ def secrets = [
         'disposer-${env}': [
                 secret('app-insights-connection-string', 'app-insights-connection-string'),
                 secret('idam-client-secret', 'DISPOSER_IDAM_USER_CLIENT_SECRET'),
-                secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER')
+                secret('s2s-secret-disposer-idam-user', 'S2S_SECRET_DISPOSER_IDAM_USER'),
+                secret('idam-citizen-disposer-system-user-username', 'IDAM_CLIENT_USERNAME'),
+                secret('idam-citizen-disposer-system-user-password', 'IDAM_CLIENT_PASSWORD')
         ]
 ]
 
@@ -87,6 +89,7 @@ withPipeline(type, product, component) {
       // Set required environment variables to run functional tests apart from one in vaults.
       env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
       env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
+      env.ROLE_ASSIGNMENT_HOST = 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
 
       echo "Just waiting a while to ensure that the pod has run the job"
       sh "sleep 120s"

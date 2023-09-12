@@ -1,16 +1,3 @@
-springdoc:
-  packagesToScan: uk.gov.hmcts.reform.demo.controllers
-  writer-with-order-by-keys: true
-
-#If you use a database then uncomment below lines and update db properties accordingly
-spring:
-  main:
-    web-application-type: none
-  config:
-    import: "optional:configtree:/mnt/secrets/disposer/"
-  application:
-    name: Idam user Disposer
-
 idam:
   api:
     port: ${IDAM_API_PORT:5000}
@@ -26,16 +13,14 @@ idam:
     password: ${IDAM_CLIENT_PASSWORD:Password12}
     redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
 
-stale-users:
-  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
-  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
-  roles: citizen
-
 ccd:
   role.assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
 
-
+stale-users:
+  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:5000}
+  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
+  roles: disposer-test-role
 
 service:
-  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+  enabled: false

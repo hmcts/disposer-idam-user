@@ -16,24 +16,28 @@ import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 public class IdamTokenGenerator {
 
     public static final String BEARER = "Bearer ";
-    public static final String CLIENT_CREDENTIALS_GRANT = "client_credentials";
-    public static final String SCOPE = "archive-user view-archived-user delete-archived-user";
+    public static final String ROLE_ASSIGNMENTS_GRANT_TYPE = "password";
+    public static final String IDAM_GRANT_TYPE = "client_credentials";
+    public static final String IDAM_SCOPE = "archive-user view-archived-user delete-archived-user";
+    public static final String ROLE_ASSIGNMENT_SCOPE = "profile roles";
+
 
     private final IdamClient idamClient;
     private final ParameterResolver parameterResolver;
 
     private String idamClientToken = "token";
+    private String roleAssignmentsClientToken = "token";
 
     public void generateIdamToken() {
         try {
             TokenResponse tokenResponse = idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
-                null,
-                CLIENT_CREDENTIALS_GRANT,
-                null,
-                null,
-                SCOPE
+                    parameterResolver.getClientId(),
+                    parameterResolver.getClientSecret(),
+                    null,
+                    IDAM_GRANT_TYPE,
+                    parameterResolver.getClientUserName(),
+                    parameterResolver.getClientPassword(),
+                    IDAM_SCOPE
             );
             idamClientToken = tokenResponse.accessToken;
 
@@ -44,7 +48,32 @@ public class IdamTokenGenerator {
         }
     }
 
+    public void generateRoleAssignmentIdamToken() {
+        try {
+            TokenResponse tokenResponse = idamClient.getToken(
+                    parameterResolver.getClientId(),
+                    parameterResolver.getClientSecret(),
+                    parameterResolver.getRedirectUri(),
+                    ROLE_ASSIGNMENTS_GRANT_TYPE,
+                    parameterResolver.getClientUserName(),
+                    parameterResolver.getClientPassword(),
+                    ROLE_ASSIGNMENT_SCOPE
+            );
+            roleAssignmentsClientToken = tokenResponse.accessToken;
+
+        } catch (final Exception exception) {
+            String msg = String.format("Unable to generate Role Assignment IDAM token due to error - %s",
+                    exception.getMessage());
+            log.error(msg, exception);
+            throw new IdamAuthTokenGenerationException(msg, exception);
+        }
+    }
+
     public String getIdamAuthorizationHeader() {
         return BEARER + idamClientToken;
+    }
+
+    public String getRoleAssignmentAuthorizationHeader() {
+        return BEARER + roleAssignmentsClientToken;
     }
 }

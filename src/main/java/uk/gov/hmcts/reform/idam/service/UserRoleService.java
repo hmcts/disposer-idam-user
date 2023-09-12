@@ -5,16 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
-import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequest;
-import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequests;
+import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsPostRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
-import uk.gov.hmcts.reform.idam.util.Constants;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
 
 import java.util.List;
 import java.util.Map;
+
+import static uk.gov.hmcts.reform.idam.util.Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE;
 
 @Service
 @RequiredArgsConstructor
@@ -30,20 +30,18 @@ public class UserRoleService {
         if (staleUsers.isEmpty()) {
             return List.of();
         }
-        var roleAssignmentQuery = UserRoleAssignmentQueryRequest.builder().userIds(staleUsers).build();
-        UserRoleAssignmentQueryRequests body = UserRoleAssignmentQueryRequests.builder()
-            .queryRequests(roleAssignmentQuery)
-            .build();
 
+        var request = new RoleAssignmentsPostRequest(staleUsers);
         final RoleAssignmentResponse response;
+
         try {
             response = roleAssignmentClient.getRoleAssignments(
                 Map.of(
-                    "Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE,
-                    "Authorization", idamTokenGenerator.getIdamAuthorizationHeader(),
+                    "Content-Type", ROLE_ASSIGNMENTS_CONTENT_TYPE,
+                    "Authorization", idamTokenGenerator.getRoleAssignmentAuthorizationHeader(),
                     "ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken()
                 ),
-                body
+                request
             );
         } catch (Exception e) {
             log.error("UserRoleService.getRoleAssignemnts threw exception: {}", e.getMessage(), e);

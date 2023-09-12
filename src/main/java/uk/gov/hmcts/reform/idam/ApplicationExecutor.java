@@ -19,7 +19,9 @@ public class ApplicationExecutor implements ApplicationRunner {
     private final IdamUserDisposerService service;
 
     @Override
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public void run(ApplicationArguments args) {
+
         if (isServiceEnabled) {
             log.info("Starting the Idam-Disposer job...");
             service.run();
