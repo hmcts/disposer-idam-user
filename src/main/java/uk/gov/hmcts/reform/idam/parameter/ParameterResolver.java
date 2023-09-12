@@ -17,4 +17,11 @@ public class ParameterResolver {
     @Value("${stale-users.requests.limit}")
     private int requestsLimit;
 
+    @Value("${idam.client.id}")
+    private String clientId;
+
+    @Value("${idam.client.secret}")
+    private String clientSecret;
+
+
 }
