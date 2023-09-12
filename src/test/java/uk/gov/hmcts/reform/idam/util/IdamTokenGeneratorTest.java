@@ -13,10 +13,11 @@ import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.CLIENT_CREDENTIALS_GRANT;
-import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.SCOPE;
+import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.IDAM_GRANT_TYPE;
+import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.IDAM_SCOPE;
+import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.ROLE_ASSIGNMENTS_GRANT_TYPE;
+import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.ROLE_ASSIGNMENT_SCOPE;
 
 @ExtendWith(MockitoExtension.class)
 class IdamTokenGeneratorTest {
@@ -33,27 +34,29 @@ class IdamTokenGeneratorTest {
     void setUp() {
         when(parameterResolver.getClientId()).thenReturn("ClientId");
         when(parameterResolver.getClientSecret()).thenReturn("Client secret");
+        when(parameterResolver.getClientUserName()).thenReturn("username");
+        when(parameterResolver.getClientPassword()).thenReturn("password");
     }
 
     @Test
     void shouldGetIdamToken() {
         String token = "accessToken";
         TokenResponse tokenResponse = new TokenResponse(
-            token,
-            null,
-            null,
-            null,
-            null,
-            null
+                token,
+                null,
+                null,
+                null,
+                null,
+                null
         );
         when(idamClient.getToken(
-            "ClientId",
-            "Client secret",
-            null,
-            CLIENT_CREDENTIALS_GRANT,
-            null,
-            null,
-            SCOPE
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                IDAM_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                IDAM_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generateIdamToken();
         assertThat(idamTokenGenerator.getIdamClientToken()).isEqualTo(token);
@@ -63,21 +66,21 @@ class IdamTokenGeneratorTest {
     void shouldGetTokenPrefixedWithBearer() {
         String token = "accessToken";
         TokenResponse tokenResponse = new TokenResponse(
-            token,
-            null,
-            null,
-            null,
-            null,
-            null
+                token,
+                null,
+                null,
+                null,
+                null,
+                null
         );
         when(idamClient.getToken(
-            "ClientId",
-            "Client secret",
-            null,
-            CLIENT_CREDENTIALS_GRANT,
-            null,
-            null,
-            SCOPE
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                IDAM_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                IDAM_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generateIdamToken();
         assertThat(idamTokenGenerator.getIdamAuthorizationHeader()).isEqualTo("Bearer " + token);
@@ -85,21 +88,89 @@ class IdamTokenGeneratorTest {
 
     @Test
     void shouldThrowIdamAuthTokenGenerationException() {
-        doThrow(new IdamAuthTokenGenerationException("message")).when(idamClient).getToken(
-            "ClientId",
-            "Client secret",
-            null,
-            CLIENT_CREDENTIALS_GRANT,
-            null,
-            null,
-            SCOPE
-        );
+        when(idamClient.getToken(
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                IDAM_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                IDAM_SCOPE
+        )).thenThrow(new IdamAuthTokenGenerationException("message"));
+
         IdamAuthTokenGenerationException thrown = assertThrows(
-            IdamAuthTokenGenerationException.class,
-            () -> idamTokenGenerator.generateIdamToken()
+                IdamAuthTokenGenerationException.class,
+                () -> idamTokenGenerator.generateIdamToken()
         );
 
         assertThat(thrown.getMessage()).contains("Unable to generate IDAM token due to error -");
     }
 
+    @Test
+    void shouldGetRoleAssignmentIdamToken() {
+        String token = "accessToken";
+        TokenResponse tokenResponse = new TokenResponse(
+                token,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        when(idamClient.getToken(
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                ROLE_ASSIGNMENT_SCOPE
+        )).thenReturn(tokenResponse);
+        idamTokenGenerator.generateRoleAssignmentIdamToken();
+        assertThat(idamTokenGenerator.getRoleAssignmentsClientToken()).isEqualTo(token);
+    }
+
+    @Test
+    void shouldGetRoleAssignmentsTokenPrefixedWithBearer() {
+        String token = "accessToken";
+        TokenResponse tokenResponse = new TokenResponse(
+                token,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        when(idamClient.getToken(
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                ROLE_ASSIGNMENT_SCOPE
+        )).thenReturn(tokenResponse);
+        idamTokenGenerator.generateRoleAssignmentIdamToken();
+        assertThat(idamTokenGenerator.getRoleAssignmentAuthorizationHeader()).isEqualTo("Bearer " + token);
+    }
+
+    @Test
+    void shouldThrowIdamAuthTokenGenerationForRoleAssignmentsException() {
+        when(idamClient.getToken(
+                parameterResolver.getClientId(),
+                parameterResolver.getClientSecret(),
+                null,
+                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                parameterResolver.getClientUserName(),
+                parameterResolver.getClientPassword(),
+                ROLE_ASSIGNMENT_SCOPE
+        )).thenThrow(new IdamAuthTokenGenerationException("message"));
+
+        IdamAuthTokenGenerationException thrown = assertThrows(
+                IdamAuthTokenGenerationException.class,
+                () -> idamTokenGenerator.generateRoleAssignmentIdamToken()
+        );
+
+        assertThat(thrown.getMessage()).contains("Unable to generate Role Assignment IDAM token due to error -");
+    }
 }

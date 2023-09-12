@@ -21,6 +21,7 @@ public class SecurityUtil {
     @Scheduled(fixedRate = 55, timeUnit = TimeUnit.MINUTES)
     public void generateTokens() {
         idamTokenGenerator.generateIdamToken();
+        idamTokenGenerator.generateRoleAssignmentIdamToken();
         serviceTokenGenerator.generateServiceToken();
     }
 }

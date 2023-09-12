@@ -9,7 +9,7 @@ import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @Slf4j
@@ -41,8 +41,12 @@ public class DeleteUserService {
             throw e;
         }
 
-        if (response.status() != NO_CONTENT.value()) {
-            String msg = String.format("User with id '%s' deletion failed", userId);
+        if (response.status() != OK.value()) {
+            String msg = String.format(
+                "User with id '%s' deletion failed (response status %s)",
+                userId,
+                response.status()
+            );
             log.error(msg);
             throw new IdamApiException(msg);
         }

@@ -25,4 +25,13 @@ public class ParameterResolver {
 
     @Value("${stale-users.roles}")
     private String idamRoleToDelete;
+
+    @Value("${idam.client.username}")
+    private String clientUserName;
+
+    @Value("${idam.client.password}")
+    private String clientPassword;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUri;
 }

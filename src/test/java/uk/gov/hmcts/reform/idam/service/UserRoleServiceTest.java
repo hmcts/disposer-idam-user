@@ -37,7 +37,7 @@ class UserRoleServiceTest {
 
     @Test
     void shouldFilterUsersWithRoles() {
-        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Bearer 123456");
+        when(idamTokenGenerator.getRoleAssignmentAuthorizationHeader()).thenReturn("Bearer 123456");
         when(serviceTokenGenerator.getServiceAuthToken()).thenReturn("Bearer 123456");
         List<RoleAssignment> assignments = List.of(makeRoleAssignment("user-1"), makeRoleAssignment("user-2"));
         var entity = new RoleAssignmentResponse();
@@ -53,7 +53,7 @@ class UserRoleServiceTest {
 
     @Test
     void shouldReturnAllOnEmptyAssignments() {
-        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Bearer 123456");
+        when(idamTokenGenerator.getRoleAssignmentAuthorizationHeader()).thenReturn("Bearer 123456");
         when(serviceTokenGenerator.getServiceAuthToken()).thenReturn("Bearer 123456");
         var roleAssignmentResponse = new RoleAssignmentResponse();
         roleAssignmentResponse.setRoleAssignments(List.of());

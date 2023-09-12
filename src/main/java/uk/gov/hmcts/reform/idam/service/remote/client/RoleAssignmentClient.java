@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryRequests;
+import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsPostRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
 
 import java.util.Map;
@@ -17,6 +17,6 @@ public interface RoleAssignmentClient {
     @PostMapping(ROLE_ASSIGNMENTS_PATH)
     RoleAssignmentResponse getRoleAssignments(
             @RequestHeader Map<String, String> headers,
-            @RequestBody UserRoleAssignmentQueryRequests body
+            @RequestBody RoleAssignmentsPostRequest body
     );
 }
