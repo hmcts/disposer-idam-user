@@ -6,10 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.IdamClient;
+import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
 import uk.gov.hmcts.reform.idam.exception.ServiceAuthTokenGenerationException;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,15 +29,21 @@ class SecurityUtilTest {
 
     private static final String TOKEN = "123456789";
     private static final String ACCESS_TOKEN = "Bearer 1234";
+    public static final String IDAM_TOKEN = "1234";
+    public static final String CLIENT_CREDENTIALS_GRANT = "client_credentials";
+    public static final String SCOPE = "archive-user view-archived-user delete-archived-user";
 
     @InjectMocks
     private SecurityUtil securityUtil;
 
     @Test
     void shouldGetServiceAuthorization() {
+        TokenResponse tokenResponse = new TokenResponse(
+            IDAM_TOKEN,null,null,null,null,null);
         when(tokenGenerator.generate()).thenReturn(TOKEN);
-        when(idamClient.getAccessToken(null, null)).thenReturn("Bearer 1234");
-
+        when(idamClient.getToken(null, null, null,
+                                 CLIENT_CREDENTIALS_GRANT, null, null,
+                                 SCOPE)).thenReturn(tokenResponse);
         securityUtil.generateTokens();
 
         assertThat(securityUtil.getServiceAuthorization()).isEqualTo(TOKEN);
@@ -45,6 +52,12 @@ class SecurityUtilTest {
 
     @Test
     void shouldThrowServiceAuthTokenGenerationException() {
+        TokenResponse tokenResponse = new TokenResponse(
+            IDAM_TOKEN,null,null,null,null,null);
+        when(idamClient.getToken(null, null, null,
+                                 CLIENT_CREDENTIALS_GRANT, null, null,
+                                 SCOPE))
+            .thenReturn(tokenResponse);
         doThrow(new ServiceAuthTokenGenerationException(TOKEN))
             .when(tokenGenerator).generate();
 
@@ -59,7 +72,9 @@ class SecurityUtilTest {
     @Test
     void shouldThrowIdamAuthTokenGenerationException() {
         doThrow(new IdamAuthTokenGenerationException(TOKEN))
-            .when(idamClient).getAccessToken(null, null);
+            .when(idamClient).getToken(null, null, null,
+                                 CLIENT_CREDENTIALS_GRANT, null, null,
+                                 SCOPE);
 
         IdamAuthTokenGenerationException thrown = assertThrows(
             IdamAuthTokenGenerationException.class,
