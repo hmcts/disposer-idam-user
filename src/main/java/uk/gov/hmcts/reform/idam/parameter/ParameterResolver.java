@@ -14,9 +14,6 @@ public class ParameterResolver {
     @Value("${stale-users.batch.size}")
     private int batchSize;
 
-    @Value("${stale-users.requests.limit}")
-    private int requestsLimit;
-
     @Value("${idam.client.id}")
     private String clientId;
 

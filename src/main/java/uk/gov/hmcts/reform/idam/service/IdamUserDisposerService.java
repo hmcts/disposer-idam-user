@@ -22,7 +22,7 @@ public class IdamUserDisposerService {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
             deleteUserService.deleteUsers(batchStaleUserIds);
-            batchStaleUserIds.forEach(user -> log.info("Stale users that has been passed to deletion {}", user));
+            log.info("Stale users that has been passed to deletion {}", batchStaleUserIds);
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
         } while (!staleUsersService.hasFinished());
         return allRemovedStaleUserIds;
