@@ -1,4 +1,4 @@
-# Spring Boot application template
+# Spring Boot application template 
 
 ## Purpose
 
