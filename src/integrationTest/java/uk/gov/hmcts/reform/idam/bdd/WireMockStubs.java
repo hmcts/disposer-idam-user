@@ -24,12 +24,16 @@ public class WireMockStubs {
     @Value("${dummy-jwt}")
     private String dummyJwtToken;
 
+    @Value("${wiremock-debug:false}")
+    private boolean debugging;
+
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
     public void setupWireMock() {
-
-        wiremock.addMockServiceRequestListener(
-            WireMockStubs::requestReceived);
+        if (debugging) {
+            wiremock.addMockServiceRequestListener(
+                WireMockStubs::requestReceived);
+        }
         setupAuthorizationStub();
     }
 
@@ -94,13 +98,11 @@ public class WireMockStubs {
         wiremock.stubFor(
             WireMock
                 .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
-
                 .inScenario(scenarioName)
                 .whenScenarioStateIs(state)
                 .willReturn(
                     WireMock.jsonResponse(body, 200)
                 )
-
         );
     }
 
@@ -112,7 +114,6 @@ public class WireMockStubs {
                     WireMock.serverError()
                 )
         );
-
     }
 
     protected static void requestReceived(Request request, Response response) {
