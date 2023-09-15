@@ -14,11 +14,12 @@ public class ParameterResolver {
     @Value("${stale-users.batch.size}")
     private int batchSize;
 
+    @Value("${stale-users.requests.limit}")
+    private int requestLimit;
+
     @Value("${idam.client.id}")
     private String clientId;
 
     @Value("${idam.client.secret}")
     private String clientSecret;
-
-
 }

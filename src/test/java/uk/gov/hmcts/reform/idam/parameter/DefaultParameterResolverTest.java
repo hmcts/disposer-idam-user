@@ -29,4 +29,9 @@ class DefaultParameterResolverTest {
     void shouldGetBatchSize() {
         assertThat(resolver.getBatchSize()).isEqualTo(100);
     }
+
+    @Test
+    void shouldRequesLimit() {
+        assertThat(resolver.getBatchSize()).isEqualTo(100);
+    }
 }
