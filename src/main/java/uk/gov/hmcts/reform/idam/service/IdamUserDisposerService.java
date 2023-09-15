@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,26 @@ public class IdamUserDisposerService {
     private final StaleUsersService staleUsersService;
     private final UserRoleService userRoleService;
     private final DeleteUserService deleteUserService;
+    private final ParameterResolver parameterResolver;
 
     public List<String> run() {
         List<String> allRemovedStaleUserIds = new ArrayList<>();
-        do {
+        int requestLimit = parameterResolver.getRequestLimit();
+
+        while (requestLimit > 0) {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
             deleteUserService.deleteUsers(batchStaleUserIds);
-            log.info("Stale users that has been passed to deletion {}", batchStaleUserIds);
+            log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
-        } while (!staleUsersService.hasFinished());
+
+            if (staleUsersService.hasFinished()) {
+                break;
+            }
+
+            requestLimit--;
+        }
+
         return allRemovedStaleUserIds;
     }
 

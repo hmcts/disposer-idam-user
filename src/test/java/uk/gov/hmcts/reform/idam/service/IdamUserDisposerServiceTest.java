@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -23,12 +24,16 @@ class IdamUserDisposerServiceTest {
     @Mock
     private DeleteUserService deleteUserService;
 
+    @Mock
+    private ParameterResolver parameterResolver;
+
     @InjectMocks
     private IdamUserDisposerService service;
 
     @Test
     void shouldRunAtLeastOnce() {
         when(staleUsersService.hasFinished()).thenReturn(true);
+        when(parameterResolver.getRequestLimit()).thenReturn(10);
         service.run();
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
@@ -38,10 +43,21 @@ class IdamUserDisposerServiceTest {
     @Test
     void shouldRunMultipleTimes() {
         when(staleUsersService.hasFinished()).thenReturn(false).thenReturn(false).thenReturn(true);
+        when(parameterResolver.getRequestLimit()).thenReturn(10);
         service.run();
         verify(staleUsersService, times(3)).fetchStaleUsers();
         verify(userRoleService, times(3)).filterUsersWithRoles(any());
         verify(deleteUserService, times(3)).deleteUsers(any());
+    }
+
+    @Test
+    void shouldStopWhenRequestLimitIsReached() {
+        when(staleUsersService.hasFinished()).thenReturn(false).thenReturn(false).thenReturn(true);
+        when(parameterResolver.getRequestLimit()).thenReturn(1);
+        service.run();
+        verify(staleUsersService, times(1)).fetchStaleUsers();
+        verify(userRoleService, times(1)).filterUsersWithRoles(any());
+        verify(deleteUserService, times(1)).deleteUsers(any());
     }
 
 }
