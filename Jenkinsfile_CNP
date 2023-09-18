@@ -2,7 +2,6 @@
 
 @Library("Infrastructure")
 
-import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
@@ -48,7 +47,6 @@ withPipeline(type, product, component) {
     //enableFortifyScan()
 
     onPR() {
-      def githubApi = new GithubAPI(this)
       loadVaultSecrets(secrets)
     }
 
@@ -102,6 +100,3 @@ withPipeline(type, product, component) {
       }
     }
   }
-
-
-
