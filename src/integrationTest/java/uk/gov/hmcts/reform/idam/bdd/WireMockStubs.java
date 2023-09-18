@@ -73,15 +73,15 @@ public class WireMockStubs {
         // delete endpoint
         wiremock.stubFor(
             WireMock
-                .delete(WireMock.urlPathMatching(Constants.STALE_USERS_DELETE_PATH + "/([0-9a-zA-Z-]+)"))
+                .delete(WireMock.urlPathMatching(Constants.STALE_USERS_PATH + "/([0-9a-zA-Z-]+)"))
                 .willReturn(WireMock.aResponse().withStatus(NO_CONTENT.value()))
         );
     }
 
-    public void setIdamApiStubToReturn403() {
+    public void setIdamApiStubToReturn401() {
 
-        String scenarioName = "FORBIDDEN";
-        String state = "FORBIDDEN FIRED";
+        String scenarioName = "UNAUTHORIZED";
+        String state = "UNAUTHORIZED FIRED";
 
         wiremock.stubFor(
             WireMock
@@ -90,7 +90,7 @@ public class WireMockStubs {
                 .whenScenarioStateIs(Scenario.STARTED)
                 .willSetStateTo(state)
                 .willReturn(
-                    WireMock.forbidden()
+                    WireMock.unauthorized()
                 )
         );
 
@@ -151,9 +151,11 @@ public class WireMockStubs {
                 )
         );
 
+        String jsonBody = "{\"access_token\": \"" + dummyJwtToken + "\"}";
+
         wiremock.stubFor(
             WireMock.post(WireMock.urlPathEqualTo("/o/token"))
-                .willReturn(WireMock.jsonResponse("{}", 200))
+                .willReturn(WireMock.jsonResponse(jsonBody, 200))
         );
 
         wiremock.stubFor(

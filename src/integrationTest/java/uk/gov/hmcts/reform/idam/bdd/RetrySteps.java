@@ -14,11 +14,11 @@ public class RetrySteps extends WireMockStubs {
     @Autowired
     private IdamUserDisposerService service;
 
-    @Given("IdAM api responds with 403")
-    public void idamApiRespondsWith403() {
+    @Given("IdAM api responds with 401")
+    public void idamApiRespondsWith401() {
         wiremock.resetRequests();
         setupWireMock();
-        setIdamApiStubToReturn403();
+        setIdamApiStubToReturn401();
     }
 
     @Given("IdAM api responds with 500")

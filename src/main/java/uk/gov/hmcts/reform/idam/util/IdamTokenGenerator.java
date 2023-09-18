@@ -22,7 +22,7 @@ public class IdamTokenGenerator {
     private final IdamClient idamClient;
     private final ParameterResolver parameterResolver;
 
-    private String idamClientToken;
+    private String idamClientToken = "token";
 
     public void generateIdamToken() {
         try {
@@ -35,12 +35,16 @@ public class IdamTokenGenerator {
                 null,
                 SCOPE
             );
-            idamClientToken = BEARER + tokenResponse.accessToken;
+            idamClientToken = tokenResponse.accessToken;
 
         } catch (final Exception exception) {
             String msg = String.format("Unable to generate IDAM token due to error - %s", exception.getMessage());
             log.error(msg, exception);
             throw new IdamAuthTokenGenerationException(msg, exception);
         }
+    }
+
+    public String getIdamAuthorizationHeader() {
+        return BEARER + idamClientToken;
     }
 }

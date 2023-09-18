@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.BEARER;
 import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.CLIENT_CREDENTIALS_GRANT;
 import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.SCOPE;
 
@@ -57,7 +56,31 @@ class IdamTokenGeneratorTest {
             SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generateIdamToken();
-        assertThat(idamTokenGenerator.getIdamClientToken()).isEqualTo(BEARER + token);
+        assertThat(idamTokenGenerator.getIdamClientToken()).isEqualTo(token);
+    }
+
+    @Test
+    void shouldGetTokenPrefixedWithBearer() {
+        String token = "accessToken";
+        TokenResponse tokenResponse = new TokenResponse(
+            token,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        when(idamClient.getToken(
+            "ClientId",
+            "Client secret",
+            null,
+            CLIENT_CREDENTIALS_GRANT,
+            null,
+            null,
+            SCOPE
+        )).thenReturn(tokenResponse);
+        idamTokenGenerator.generateIdamToken();
+        assertThat(idamTokenGenerator.getIdamAuthorizationHeader()).isEqualTo("Bearer " + token);
     }
 
     @Test
