@@ -52,12 +52,12 @@ class MethodRetryAspectTest {
     }
 
     @Test
-    void testRetryCatches403() throws Throwable {
+    void testRetryCatches401() throws Throwable {
         Request request = Request.create(Request.HttpMethod.GET, "url", new HashMap<>(), null, new RequestTemplate());
         byte[] body = {};
 
         when(proceedingJoinPoint.proceed())
-            .thenThrow(new FeignException.Forbidden("Forbidden", request, body, null))
+            .thenThrow(new FeignException.Unauthorized("Unauthorized", request, body, null))
             .thenReturn(new Object());
 
         methodRetryAspect.retry(proceedingJoinPoint);

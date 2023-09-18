@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
+import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class StaleUsersService {
     private int currentPage;
 
     private final IdamClient client;
+    private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
     @Retry(retryAttempts = 2)
@@ -31,6 +33,7 @@ public class StaleUsersService {
         final StaleUsersResponse staleUsersResponse;
         try {
             staleUsersResponse = client.getStaleUsers(
+                idamTokenGenerator.getIdamAuthorizationHeader(),
                 Map.of(
                     PAGE_NUMBER_PARAM, currentPage,
                     BATCH_SIZE_PARAM, parameterResolver.getBatchSize()

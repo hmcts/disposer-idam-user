@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
+import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ class DeleteUserServiceTest {
     @Mock
     private IdamClient client;
 
+    @Mock
+    IdamTokenGenerator idamTokenGenerator;
+
     @Captor
     ArgumentCaptor<String> pathCaptor;
 
@@ -36,11 +40,12 @@ class DeleteUserServiceTest {
     @Test
     void shouldMakeDeleteRequest() {
         Response response = mock(Response.class);
+        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer 123456");
         when(response.status()).thenReturn(NO_CONTENT.value());
-        when(client.deleteUser(anyString())).thenReturn(response);
+        when(client.deleteUser(anyString(), anyString())).thenReturn(response);
         List<String> staleUserIds = List.of("a", "b", "c");
         deleteUserService.deleteUsers(staleUserIds);
-        verify(client, times(3)).deleteUser(pathCaptor.capture());
+        verify(client, times(3)).deleteUser(anyString(), pathCaptor.capture());
         assertThat(pathCaptor.getAllValues()).isEqualTo(staleUserIds);
     }
 }

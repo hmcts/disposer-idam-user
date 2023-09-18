@@ -10,6 +10,8 @@ import uk.gov.hmcts.reform.idam.service.remote.requests.UserRoleAssignmentQueryR
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
 import uk.gov.hmcts.reform.idam.util.Constants;
+import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.Map;
 public class UserRoleService {
 
     private final RoleAssignmentClient roleAssignmentClient;
+    private final IdamTokenGenerator idamTokenGenerator;
+    private final ServiceTokenGenerator serviceTokenGenerator;
 
     @Retry(retryAttempts = 2)
     public List<String> filterUsersWithRoles(List<String> staleUsers) {
@@ -34,7 +38,11 @@ public class UserRoleService {
         final RoleAssignmentResponse response;
         try {
             response = roleAssignmentClient.getRoleAssignments(
-                Map.of("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE),
+                Map.of(
+                    "Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE,
+                    "Authorization", idamTokenGenerator.getIdamAuthorizationHeader(),
+                    "ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken()
+                ),
                 body
             );
         } catch (Exception e) {

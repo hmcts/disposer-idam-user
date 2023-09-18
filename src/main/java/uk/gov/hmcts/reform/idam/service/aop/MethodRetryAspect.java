@@ -35,7 +35,7 @@ public class MethodRetryAspect {
                 result = joinPoint.proceed();
                 successful = true;
             } catch (FeignException fe) {
-                if (retryAttempts >= 0 && fe.status() == HttpStatus.SC_FORBIDDEN) {
+                if (retryAttempts >= 0 && fe.status() == HttpStatus.SC_UNAUTHORIZED) {
                     securityUtil.generateTokens();
                 } else {
                     log.error("IdamClient threw exception", fe);

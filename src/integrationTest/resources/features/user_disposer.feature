@@ -6,7 +6,7 @@ Feature: User disposer
     Then it should dispose users without roles
 
   Scenario: Feign client makes multiple calls on Forbidden response
-    Given IdAM api responds with 403
+    Given IdAM api responds with 401
     Then it should retry making IdAM call
 
   Scenario: Application raises exception on 500 error
