@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -13,4 +15,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserContent {
     private String id;
+    private List<String> roles;
 }

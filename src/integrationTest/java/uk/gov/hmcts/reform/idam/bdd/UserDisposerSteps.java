@@ -71,8 +71,10 @@ public class UserDisposerSteps extends WireMockStubs {
             urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6021")));
         wiremock.verify(1, deleteRequestedFor(
             urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6024")));
+        wiremock.verify(1, deleteRequestedFor(
+                urlPathEqualTo(deleteUserPath + "/13e31622-edea-493c-8240-9b780c9d6025")));
 
-        wiremock.verify(21, deleteRequestedFor(urlPathMatching(deleteUserPath + "/([0-9a-zA-Z-]+)")));
+        wiremock.verify(14, deleteRequestedFor(urlPathMatching(deleteUserPath + "/([0-9a-zA-Z-]+)")));
     }
 
 }

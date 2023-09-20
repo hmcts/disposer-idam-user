@@ -50,6 +50,8 @@ public class StaleUsersService {
         return staleUsersResponse
                 .getContent()
                 .stream()
+                .filter(user -> user.getRoles() != null && user.getRoles().stream()
+                        .anyMatch(parameterResolver.getIdamRoleToDelete()::equalsIgnoreCase))
                 .map(UserContent::getId)
                 .toList();
     }
