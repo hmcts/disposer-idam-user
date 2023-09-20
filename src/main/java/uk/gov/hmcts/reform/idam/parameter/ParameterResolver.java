@@ -22,4 +22,7 @@ public class ParameterResolver {
 
     @Value("${idam.client.secret}")
     private String clientSecret;
+
+    @Value("${stale-users.roles}")
+    private String idamRoleToDelete;
 }

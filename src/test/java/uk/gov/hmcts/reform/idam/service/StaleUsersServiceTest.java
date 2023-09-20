@@ -12,9 +12,11 @@ import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,7 +32,7 @@ class StaleUsersServiceTest {
     IdamClient idamClient;
 
     @Mock
-    private ParameterResolver idamConfig;
+    private ParameterResolver parameterResolver;
 
     @Mock
     private IdamTokenGenerator idamTokenGenerator;
@@ -40,23 +42,46 @@ class StaleUsersServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(idamConfig.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getIdamRoleToDelete()).thenReturn("citizen");
     }
 
     @Test
     void shouldMakeRequestOnFetchStaleUsers() {
         List<UserContent> userContentList = new LinkedList<>();
-        userContentList.add(new UserContent("1"));
-        userContentList.add(new UserContent("2"));
+        userContentList.add(new UserContent("1", Arrays.asList("citizen", "defendant")));
+        userContentList.add(new UserContent("2", Arrays.asList("defendant")));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         List<String> staleUsers = staleUsersService.fetchStaleUsers();
-        assertThat(staleUsers).hasSize(2);
+        assertThat(staleUsers).hasSize(1);
         verify(idamClient, times(1)).getStaleUsers(anyString(), any());
         assertThat(staleUsersService.hasFinished()).isFalse();
+    }
+
+    @Test
+    void shouldFilterStaleUsersByCitizenAccount() {
+        final List<UserContent> userContentList = new LinkedList<>();
+        userContentList.add(new UserContent("1", Arrays.asList("citizen", "defendant")));
+        userContentList.add(new UserContent("2", Arrays.asList("defendant")));
+        userContentList.add(new UserContent("3", Arrays.asList("citizen")));
+        userContentList.add(new UserContent("4", Arrays.asList("CitIZen", "judge")));
+        userContentList.add(new UserContent("5", null));
+        userContentList.add(new UserContent("6", emptyList()));
+
+        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
+
+        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
+        when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
+
+        final List<String> staleUsers = staleUsersService.fetchStaleUsers();
+        assertThat(staleUsers).hasSize(3);
+        assertThat(staleUsers.get(0)).isEqualTo("1");
+        assertThat(staleUsers.get(1)).isEqualTo("3");
+        assertThat(staleUsers.get(2)).isEqualTo("4");
     }
 
 }

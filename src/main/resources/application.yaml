@@ -27,9 +27,11 @@ idam:
 stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
+  roles: citizen
 
 ccd:
   role.assignment.host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
+
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
