@@ -7,6 +7,12 @@
     </notes>
     <cve>CVE-2016-1000027</cve>
   </suppress>
+  <suppress>
+    <notes>False Positives
+      https://spring.io/security/cve-2023-34047 affects GraphQL library that we don't use
+    </notes>
+    <cve>CVE-2023-34047</cve>
+  </suppress>
   <!--End of false positives section -->
 
   <!--Please add all the temporary suppression under the below section-->
