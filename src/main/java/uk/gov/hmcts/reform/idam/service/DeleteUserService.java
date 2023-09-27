@@ -29,7 +29,7 @@ public class DeleteUserService {
         }
     }
 
-    private void deleteUser(String userId) {
+    public void deleteUser(String userId) {
         final Response response;
         try {
             response = idamClient.deleteUser(

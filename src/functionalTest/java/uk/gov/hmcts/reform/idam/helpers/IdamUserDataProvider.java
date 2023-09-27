@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
@@ -19,8 +18,6 @@ import java.util.UUID;
 public class IdamUserDataProvider {
 
     private final IdamTokenGenerator idamTokenGenerator;
-    private final Environment env;
-
 
     @Value("${idam.api.url}")
     private String idamApi = "https://idam-api.aat.platform.hmcts.net";
@@ -31,10 +28,11 @@ public class IdamUserDataProvider {
     private static final String CREATE_USER_PATH = "testing-support/accounts";
     private static final String RETIRE_USER_PATH_TMPL = "api/v1/staleUsers/%s/retire";
 
-    public void setup() {
+    public String setup() {
         RestAssured.baseURI = idamApi;
         String userId = createUser();
         retireUser(userId);
+        return userId;
     }
 
     private String createUser() {
