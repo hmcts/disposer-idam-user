@@ -3,11 +3,14 @@ package uk.gov.hmcts.reform.idam;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.idam.helpers.IdamUserDataProvider;
+import uk.gov.hmcts.reform.idam.helpers.RoleAssignmentProvider;
+import uk.gov.hmcts.reform.idam.service.DeleteUserService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 
 import java.util.List;
@@ -24,17 +27,49 @@ class UserDeletionFunctionalTest {
     private IdamUserDataProvider idamUserDataProvider;
 
     @Inject
+    RoleAssignmentProvider roleAssignmentProvider;
+
+    @Inject
+    DeleteUserService deleteUserService;
+
+    @Inject
     private IdamUserDisposerService userDisposerService;
 
-    @BeforeEach
-    public void setup() {
-        idamUserDataProvider.setup();
+    private String userWithRole;
+
+    @Test
+    @DirtiesContext
+    void givenStaleUserExistsThenDisposerShouldBeAbleToDeleteThatUser() {
+        String userId = idamUserDataProvider.setup();
+        List<String> deletedStaleUsers = userDisposerService.run();
+        assertThat(deletedStaleUsers).hasSize(1);
+        assertThat(deletedStaleUsers.get(0)).isEqualTo(userId);
     }
 
     @Test
-    void givenARetiredStaleUserExistsThenDisposerShouldBeAbleToDeleteThatUser() {
+    @DirtiesContext
+    void givenStaleUserHasRolesThenDisposerShouldNotDeleteThatUser() {
+        userWithRole = idamUserDataProvider.setup();
+        roleAssignmentProvider.setup(userWithRole);
         List<String> deletedStaleUsers = userDisposerService.run();
-        assertThat(deletedStaleUsers).hasSize(1);
+        assertThat(deletedStaleUsers).isEmpty();
     }
 
+    @Test
+    @DirtiesContext
+    void givenOneStaleUserHasRoleAnotherDoesntOneShouldBeDeleted() {
+        userWithRole = idamUserDataProvider.setup();
+        roleAssignmentProvider.setup(userWithRole);
+        String userIdNoRole = idamUserDataProvider.setup();
+        List<String> deletedStaleUsers = userDisposerService.run();
+        assertThat(deletedStaleUsers).hasSize(1);
+        assertThat(deletedStaleUsers.get(0)).isEqualTo(userIdNoRole);
+    }
+
+    @AfterEach
+    public void teardown() {
+        if (userWithRole != null) {
+            deleteUserService.deleteUser(userWithRole);
+        }
+    }
 }
