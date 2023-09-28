@@ -35,7 +35,7 @@ public class IdamUserDisposerService {
 
             requestLimit--;
         }
-
+        log.info("Total number of deleted stale users: {}", allRemovedStaleUserIds.size());
         return allRemovedStaleUserIds;
     }
 
