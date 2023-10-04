@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -27,6 +28,9 @@ class IdamUserDisposerServiceTest {
     @Mock
     private ParameterResolver parameterResolver;
 
+    @Mock
+    private SecurityUtil securityUtil;
+
     @InjectMocks
     private IdamUserDisposerService service;
 
@@ -35,6 +39,7 @@ class IdamUserDisposerServiceTest {
         when(staleUsersService.hasFinished()).thenReturn(true);
         when(parameterResolver.getRequestLimit()).thenReturn(10);
         service.run();
+        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());
@@ -45,6 +50,7 @@ class IdamUserDisposerServiceTest {
         when(staleUsersService.hasFinished()).thenReturn(false).thenReturn(false).thenReturn(true);
         when(parameterResolver.getRequestLimit()).thenReturn(10);
         service.run();
+        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(3)).fetchStaleUsers();
         verify(userRoleService, times(3)).filterUsersWithRoles(any());
         verify(deleteUserService, times(3)).deleteUsers(any());
@@ -55,6 +61,7 @@ class IdamUserDisposerServiceTest {
         when(staleUsersService.hasFinished()).thenReturn(false).thenReturn(false).thenReturn(true);
         when(parameterResolver.getRequestLimit()).thenReturn(1);
         service.run();
+        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());

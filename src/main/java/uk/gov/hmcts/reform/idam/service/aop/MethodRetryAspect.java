@@ -36,6 +36,9 @@ public class MethodRetryAspect {
                 successful = true;
             } catch (FeignException fe) {
                 if (retryAttempts >= 0 && fe.status() == HttpStatus.SC_UNAUTHORIZED) {
+                    log.info("Method {} with {} arguments threw FeignException ",
+                        joinPoint.getSignature(),
+                        joinPoint.getArgs());
                     securityUtil.generateTokens();
                 } else {
                     log.error("IdamClient threw exception", fe);
