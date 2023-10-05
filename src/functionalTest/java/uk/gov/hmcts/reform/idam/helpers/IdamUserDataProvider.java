@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.UUID;
 
@@ -18,6 +19,8 @@ import java.util.UUID;
 public class IdamUserDataProvider {
 
     private final IdamTokenGenerator idamTokenGenerator;
+
+    private final SecurityUtil securityUtil;
 
     @Value("${idam.api.url}")
     private String idamApi = "https://idam-api.aat.platform.hmcts.net";
@@ -30,6 +33,7 @@ public class IdamUserDataProvider {
 
     public String setup() {
         RestAssured.baseURI = idamApi;
+        securityUtil.generateTokens();
         String userId = createUser();
         retireUser(userId);
         return userId;
