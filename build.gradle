@@ -10,7 +10,6 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.48.0'
   id 'org.sonarqube' version '4.4.1.3373'
   id 'info.solidsoft.pitest' version '1.15.0'
-  id 'net.serenity-bdd.serenity-gradle-plugin' version "4.0.14"
 }
 
 pitest {
@@ -103,14 +102,6 @@ tasks.withType(JavaCompile) {
 // https://github.com/gradle/gradle/issues/16791
 tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
-}
-
-tasks.withType(Test) {
-  useJUnitPlatform()
-
-  testLogging {
-    exceptionFormat = 'full'
-  }
 }
 
 test {
@@ -284,8 +275,6 @@ dependencies {
   testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: versions.cucumber
   testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: versions.cucumber
   testImplementation group: 'io.cucumber', name: 'cucumber-java', version: versions.cucumber
-  testImplementation group: 'org.testcontainers', name: 'testcontainers', version: versions.testcontainers
-  testImplementation group: 'org.testcontainers', name: 'postgresql', version: versions.testcontainers
   testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: '3.0.1'
   testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
