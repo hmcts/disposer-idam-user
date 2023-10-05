@@ -18,8 +18,9 @@ public class SecurityUtil {
 
     private final IdamTokenGenerator idamTokenGenerator;
 
-    @Scheduled(fixedRate = 55, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 55, fixedRate = 55, timeUnit = TimeUnit.MINUTES)
     public void generateTokens() {
+        log.info("Security Util Generate token has been called");
         idamTokenGenerator.generateIdamToken();
         idamTokenGenerator.generateRoleAssignmentIdamToken();
         serviceTokenGenerator.generateServiceToken();
