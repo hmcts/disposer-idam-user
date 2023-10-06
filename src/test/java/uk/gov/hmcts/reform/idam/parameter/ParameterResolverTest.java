@@ -6,7 +6,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultParameterResolverTest {
+@SuppressWarnings("PMD.TooManyMethods")
+class ParameterResolverTest {
 
     private static final String IDAM_API_URL = "idamHost";
 
@@ -20,6 +21,7 @@ class DefaultParameterResolverTest {
     private static final String CLIENT_USER_NAME = "clientUserName";
     private static final String CLIENT_PASSWORD = "clientPassword";
     private static final String REDIRECT_URI = "redirectUri";
+    private static final String IS_SIMULATION_MODE = "isSimulation";
 
     private final ParameterResolver resolver = new ParameterResolver();
 
@@ -34,6 +36,7 @@ class DefaultParameterResolverTest {
         ReflectionTestUtils.setField(resolver, CLIENT_USER_NAME, "user@example.org");
         ReflectionTestUtils.setField(resolver, CLIENT_PASSWORD, "client password");
         ReflectionTestUtils.setField(resolver, REDIRECT_URI, "redirect.uri");
+        ReflectionTestUtils.setField(resolver, IS_SIMULATION_MODE, true);
 
     }
 
@@ -80,5 +83,10 @@ class DefaultParameterResolverTest {
     @Test
     void shouldGetRedirectUri() {
         assertThat(resolver.getRedirectUri()).isEqualTo("redirect.uri");
+    }
+
+    @Test
+    void shouldGetIsSimulationMode() {
+        assertThat(resolver.getIsSimulation()).isEqualTo(true);
     }
 }

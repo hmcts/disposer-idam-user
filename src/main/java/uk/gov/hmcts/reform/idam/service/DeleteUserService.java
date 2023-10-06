@@ -1,9 +1,11 @@
 package uk.gov.hmcts.reform.idam.service;
 
 import feign.Response;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.exception.IdamApiException;
+import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
@@ -13,19 +15,19 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class DeleteUserService {
 
     private final IdamClient idamClient;
     private final IdamTokenGenerator idamTokenGenerator;
+    private final ParameterResolver parameterResolver;
 
-    public DeleteUserService(IdamClient idamClient, IdamTokenGenerator idamTokenGenerator) {
-        this.idamClient = idamClient;
-        this.idamTokenGenerator = idamTokenGenerator;
-    }
 
     public void deleteUsers(List<String> batchStaleUserIds) {
-        for (String userId : batchStaleUserIds) {
-            deleteUser(userId);
+        if (!parameterResolver.getIsSimulation()) {
+            for (String userId : batchStaleUserIds) {
+                deleteUser(userId);
+            }
         }
     }
 
