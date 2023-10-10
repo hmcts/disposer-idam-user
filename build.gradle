@@ -81,20 +81,6 @@ sourceSets {
   }
 }
 
-configurations {
-  cucumberRuntime {
-    extendsFrom testImplementation
-  }
-  functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom runtimeOnly
-
-  integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntimeOnly.extendsFrom runtimeOnly
-
-  smokeTestImplementation.extendsFrom testImplementation
-  smokeTestRuntimeOnly.extendsFrom runtimeOnly
-}
-
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
@@ -107,6 +93,26 @@ tasks.withType(JavaExec).configureEach {
 test {
   useJUnitPlatform()
   failFast = true
+}
+
+configurations {
+  cucumberRuntime {
+    extendsFrom testImplementation
+  }
+  functionalTestImplementation.extendsFrom testImplementation
+  functionalTestRuntimeOnly.extendsFrom runtimeOnly
+
+  integrationTestImplementation.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+
+  smokeTestImplementation.extendsFrom testImplementation
+  smokeTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+task unit(type: Test, description: 'Runs the unit tests.', group: 'Verification') {
+  testClassesDirs = sourceSets.test.output.classesDirs
+  classpath = sourceSets.test.runtimeClasspath
+  useJUnitPlatform()
 }
 
 task functional(type: Test) {
@@ -122,7 +128,7 @@ task integration(type: Test) {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
-  mustRunAfter test
+  mustRunAfter unit
 }
 
 check.dependsOn integration
@@ -280,11 +286,13 @@ dependencies {
 
   testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: versions.gradlePitest
   testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: '0.5'
+  testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.0.0'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
 
   integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner'
+
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 

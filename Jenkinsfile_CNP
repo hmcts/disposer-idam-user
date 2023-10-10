@@ -32,30 +32,43 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 
 withPipeline(type, product, component) {
+  // Set required environment variables to run functional tests apart from one in vaults.
+  env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+  env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
+  env.ROLE_ASSIGNMENT_HOST = 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
+
+
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  nonServiceApp()
+  syncBranchesWithMaster(branchesToSync)
+  enableSlackNotifications('#disposer-builds')
+  loadVaultSecrets(secrets)
+  //enableFortifyScan()
+
   afterAlways('test') {
-    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
+    junit 'build/test-results/test/**/*.xml'
+    archiveArtifacts 'build/reports/tests/test/index.html'
+
+    publishHTML target: [
+            allowMissing         : true,
+            alwaysLinkToLastBuild: true,
+            keepAll              : true,
+            reportDir            : "build/reports/tests/test",
+            reportFiles          : "index.html",
+            reportName           : "disposer-idam-user Test Report"
+    ]
+
+    publishHTML target: [
+            allowMissing         : true,
+            alwaysLinkToLastBuild: true,
+            keepAll              : true,
+            reportDir            : "build/reports/jacoco",
+            reportFiles          : "index.html",
+            reportName           : "disposer-idam-user Code Coverage Report"
+    ]
   }
 
-    afterAlways('test') {
-      builder.gradle('integration')
-    }
-    enableAksStagingDeployment()
-    disableLegacyDeployment()
-    nonServiceApp()
-    syncBranchesWithMaster(branchesToSync)
-    enableSlackNotifications('#disposer-builds')
-    //enableFortifyScan()
-
-    onPR() {
-      loadVaultSecrets(secrets)
-    }
-
-    onNonPR() {
-      echo "Loading secrets"
-      loadVaultSecrets(secrets)
-    }
 
     afterAlways('functionalTest:preview') {
       junit 'build/test-results/functional/**/*.xml'

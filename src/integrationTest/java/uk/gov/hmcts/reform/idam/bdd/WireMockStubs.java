@@ -117,11 +117,11 @@ public class WireMockStubs {
     }
 
     protected static void requestReceived(Request request, Response response) {
-        log.trace("WireMock request at URL: {}", request.getAbsoluteUrl());
-        log.trace("WireMock request headers: \n{}", request.getHeaders());
-        log.trace("WireMock response status: {}", response.getStatus());
-        log.trace("WireMock response body: \n{}", response.getBodyAsString());
-        log.trace("WireMock response headers: \n{}", response.getHeaders());
+        log.warn("WireMock request at URL: {}", request.getAbsoluteUrl());
+        log.warn("WireMock request headers: \n{}", request.getHeaders());
+        log.warn("WireMock response status: {}", response.getStatus());
+        log.warn("WireMock response body: \n{}", response.getBodyAsString());
+        log.warn("WireMock response headers: \n{}", response.getHeaders());
     }
 
     private String getMatchingActorId(int page) {

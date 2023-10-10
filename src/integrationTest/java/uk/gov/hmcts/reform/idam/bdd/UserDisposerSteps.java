@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class UserDisposerSteps extends WireMockStubs {
 
     @Autowired
     private ParameterResolver parameterResolver;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @Given("IdAM api works fine and simulation mode is {string}")
     public void idamApiWorksFine(final String simulationMode) {
