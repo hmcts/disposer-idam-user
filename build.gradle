@@ -248,7 +248,7 @@ def versions = [
 dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.1'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.0'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.1.1'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-web', version: '3.4.17'
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
   }
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.13'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.13'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.14'
   implementation (group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign') {
     implementation("org.springframework.security:spring-security-rsa:1.1.1")
   }
