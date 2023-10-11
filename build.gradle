@@ -260,7 +260,7 @@ dependencies {
     exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
     exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
   }
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.13'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.1.14'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.14'
   implementation (group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign') {
     implementation("org.springframework.security:spring-security-rsa:1.1.1")
