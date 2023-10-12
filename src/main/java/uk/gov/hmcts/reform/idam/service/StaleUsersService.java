@@ -47,11 +47,14 @@ public class StaleUsersService {
         finished = staleUsersResponse.getIsLast();
         currentPage += 1;
 
+        String roleToDelete = parameterResolver.getIdamRoleToDelete();
+
         return staleUsersResponse
                 .getContent()
                 .stream()
-                .filter(user -> user.getRoles() != null && user.getRoles().stream()
-                        .anyMatch(parameterResolver.getIdamRoleToDelete()::equalsIgnoreCase))
+                .filter(user -> user.getRoles() != null
+                    && user.getRoles().size() == 1
+                    && user.getRoles().get(0).toLowerCase().equalsIgnoreCase(roleToDelete))
                 .map(UserContent::getId)
                 .toList();
     }

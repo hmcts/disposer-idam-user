@@ -49,8 +49,8 @@ class StaleUsersServiceTest {
     @Test
     void shouldMakeRequestOnFetchStaleUsers() {
         List<UserContent> userContentList = new LinkedList<>();
-        userContentList.add(new UserContent("1", Arrays.asList("citizen", "defendant")));
-        userContentList.add(new UserContent("2", Arrays.asList("defendant")));
+        userContentList.add(new UserContent("1", List.of("citizen")));
+        userContentList.add(new UserContent("2", List.of("defendant")));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
@@ -66,11 +66,12 @@ class StaleUsersServiceTest {
     void shouldFilterStaleUsersByCitizenAccount() {
         final List<UserContent> userContentList = new LinkedList<>();
         userContentList.add(new UserContent("1", Arrays.asList("citizen", "defendant")));
-        userContentList.add(new UserContent("2", Arrays.asList("defendant")));
-        userContentList.add(new UserContent("3", Arrays.asList("citizen")));
-        userContentList.add(new UserContent("4", Arrays.asList("CitIZen", "judge")));
-        userContentList.add(new UserContent("5", null));
-        userContentList.add(new UserContent("6", emptyList()));
+        userContentList.add(new UserContent("2", List.of("defendant")));
+        userContentList.add(new UserContent("3", List.of("citizen")));
+        userContentList.add(new UserContent("4", List.of("CitIZen")));
+        userContentList.add(new UserContent("5", Arrays.asList("CitIZen", "judge")));
+        userContentList.add(new UserContent("6", null));
+        userContentList.add(new UserContent("7", emptyList()));
 
         final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
@@ -78,10 +79,9 @@ class StaleUsersServiceTest {
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         final List<String> staleUsers = staleUsersService.fetchStaleUsers();
-        assertThat(staleUsers).hasSize(3);
-        assertThat(staleUsers.get(0)).isEqualTo("1");
-        assertThat(staleUsers.get(1)).isEqualTo("3");
-        assertThat(staleUsers.get(2)).isEqualTo("4");
+        assertThat(staleUsers).hasSize(2);
+        assertThat(staleUsers.get(0)).isEqualTo("3");
+        assertThat(staleUsers.get(1)).isEqualTo("4");
     }
 
 }

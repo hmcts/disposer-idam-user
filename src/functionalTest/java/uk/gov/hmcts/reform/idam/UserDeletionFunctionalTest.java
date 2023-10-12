@@ -48,7 +48,7 @@ class UserDeletionFunctionalTest {
 
     @Test
     @DirtiesContext
-    void givenStaleUserHasRolesThenDisposerShouldNotDeleteThatUser() {
+    void givenStaleUserHasAmRolesThenDisposerShouldNotDeleteThatUser() {
         userWithRole = idamUserDataProvider.setup();
         roleAssignmentProvider.setup(userWithRole);
         List<String> deletedStaleUsers = userDisposerService.run();
@@ -57,7 +57,7 @@ class UserDeletionFunctionalTest {
 
     @Test
     @DirtiesContext
-    void givenOneStaleUserHasRoleAnotherDoesntOneShouldBeDeleted() {
+    void givenOneStaleUserHasAmRoleAnotherDoesntOneShouldBeDeleted() {
         userWithRole = idamUserDataProvider.setup();
         roleAssignmentProvider.setup(userWithRole);
         String userIdNoRole = idamUserDataProvider.setup();
