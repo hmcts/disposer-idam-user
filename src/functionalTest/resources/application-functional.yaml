@@ -20,6 +20,7 @@ ccd:
 stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:5000}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
+  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   roles: disposer-test-role
 
 service:
