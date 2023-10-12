@@ -57,9 +57,9 @@ sourceSets {
     java {
       compileClasspath += main.output
       runtimeClasspath += main.output
-      srcDirs = ['src/functionalTest/java']
+      srcDir file('src/functionalTest/java')
     }
-    resources.srcDirs = ['src/functionalTest/resources']
+    resources.srcDir file('src/functionalTest/resources')
   }
 
   integrationTest {
