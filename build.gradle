@@ -57,9 +57,9 @@ sourceSets {
     java {
       compileClasspath += main.output
       runtimeClasspath += main.output
-      srcDirs = ['src/functionalTest/java']
+      srcDir file('src/functionalTest/java')
     }
-    resources.srcDirs = ['src/functionalTest/resources']
+    resources.srcDir file('src/functionalTest/resources')
   }
 
   integrationTest {
@@ -197,16 +197,6 @@ dependencyCheck {
     // Disable scanning of .NET related binaries
     assemblyEnabled = false
   }
-  /*skipConfigurations = [
-    "checkstyle",
-    "compileOnly",
-    "pmd",
-    "integrationTest",
-    "functionalTest",
-    "smokeTest",
-    "contractTestRuntimeClasspath",
-    "contractTestCompileClasspath"
-  ]*/
 }
 
 dependencyManagement {
@@ -290,6 +280,9 @@ dependencies {
 
   integrationTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+
+  functionalTestImplementation sourceSets.main.runtimeClasspath
+  functionalTestImplementation sourceSets.test.runtimeClasspath
 }
 
 application {
