@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.ArrayList;
@@ -19,26 +20,33 @@ public class IdamUserDisposerService {
     private final DeleteUserService deleteUserService;
     private final ParameterResolver parameterResolver;
     private final SecurityUtil securityUtil;
+    private final LoggingSummaryUtils loggingSummaryUtils;
 
     public List<String> run() {
+        long disposerStartTime = System.currentTimeMillis();
         securityUtil.generateTokens();
+        List<String> allProcessedStaleUserIds = new ArrayList<>();
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
 
         while (requestLimit > 0) {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
+            allProcessedStaleUserIds.addAll(batchStaleUserIds);
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
             deleteUserService.deleteUsers(batchStaleUserIds);
             log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
-
+            
             if (staleUsersService.hasFinished()) {
                 break;
             }
 
             requestLimit--;
         }
-        log.info("Total number of deleted stale users: {}", allRemovedStaleUserIds.size());
+        long disposerEndTime = System.currentTimeMillis();
+        loggingSummaryUtils.logSummary(disposerStartTime, disposerEndTime, allProcessedStaleUserIds.size(),
+                                       allRemovedStaleUserIds.size());
+
         return allRemovedStaleUserIds;
     }
 
