@@ -46,7 +46,7 @@ withNightlyPipeline(type, product, component) {
   disableLegacyDeployment()
   nonServiceApp()
   enableMutationTest()
-  //enableFullFunctionalTest()
+  enableFullFunctionalTest()
   enableSlackNotifications('#disposer-builds')
   //enableFortifyScan()
 
