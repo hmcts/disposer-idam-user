@@ -25,7 +25,7 @@ public class StaleUsersService {
     private static final String PAGE_NUMBER_PARAM = "page";
     private static final String BATCH_SIZE_PARAM = "size";
     private int currentPage;
-    public int totalStaleUsers;
+    private int totalStaleUsers;
 
     private final IdamClient client;
     private final IdamTokenGenerator idamTokenGenerator;
