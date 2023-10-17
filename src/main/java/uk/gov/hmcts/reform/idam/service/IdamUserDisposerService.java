@@ -25,18 +25,16 @@ public class IdamUserDisposerService {
     public List<String> run() {
         long disposerStartTime = System.currentTimeMillis();
         securityUtil.generateTokens();
-        List<String> allProcessedStaleUserIds = new ArrayList<>();
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
 
         while (requestLimit > 0) {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
-            allProcessedStaleUserIds.addAll(batchStaleUserIds);
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
             deleteUserService.deleteUsers(batchStaleUserIds);
             log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
-            
+
             if (staleUsersService.hasFinished()) {
                 break;
             }
@@ -44,7 +42,7 @@ public class IdamUserDisposerService {
             requestLimit--;
         }
         long disposerEndTime = System.currentTimeMillis();
-        loggingSummaryUtils.logSummary(disposerStartTime, disposerEndTime, allProcessedStaleUserIds.size(),
+        loggingSummaryUtils.logSummary(disposerStartTime, disposerEndTime, staleUsersService.getTotalStaleUsers(),
                                        allRemovedStaleUserIds.size());
 
         return allRemovedStaleUserIds;
