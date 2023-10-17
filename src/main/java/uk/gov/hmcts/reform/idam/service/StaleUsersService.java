@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.idam.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 @Slf4j
 public class StaleUsersService {
 
@@ -23,6 +25,7 @@ public class StaleUsersService {
     private static final String PAGE_NUMBER_PARAM = "page";
     private static final String BATCH_SIZE_PARAM = "size";
     private int currentPage;
+    public int totalStaleUsers;
 
     private final IdamClient client;
     private final IdamTokenGenerator idamTokenGenerator;
@@ -46,6 +49,7 @@ public class StaleUsersService {
 
         finished = staleUsersResponse.getIsLast();
         currentPage += 1;
+        totalStaleUsers += staleUsersResponse.getContent().size();
 
         return staleUsersResponse
                 .getContent()
