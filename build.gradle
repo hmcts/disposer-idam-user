@@ -293,9 +293,6 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-
-  functionalTestCompileOnly group: 'org.apiguardian', name: 'apiguardian-api', version: versions.apiGuardian
-  integrationTestCompileOnly group: 'org.apiguardian', name: 'apiguardian-api', version: versions.apiGuardian
 }
 
 application {
