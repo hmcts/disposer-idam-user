@@ -32,11 +32,6 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 
 withPipeline(type, product, component) {
-    afterAlways('test') {
-      // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-      steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-      steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
-    }
 
     afterAlways('test') {
       builder.gradle('integration')
@@ -48,6 +43,21 @@ withPipeline(type, product, component) {
     enableSlackNotifications('#disposer-builds')
     //enableFortifyScan()
     loadVaultSecrets(secrets)
+
+    afterAlways('test') {
+
+      junit 'build/test-results/test/**/*.xml'
+      archiveArtifacts 'build/reports/tests/test/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/test",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Test Report"
+      ]
+    }
 
     afterAlways('akschartsinstall') {
       // Set required environment variables to run functional tests apart from one in vaults.
@@ -64,7 +74,35 @@ withPipeline(type, product, component) {
         builder.gradle('functional')
       echo "Verifying that functional test run completed"
       } finally {
-        //junit '**/test-results/**/*.xml'
+        junit '**/test-results/**/*.xml'
       }
+    }
+
+    afterAlways('functionalTest:preview') {
+      junit 'build/test-results/functional/**/*.xml'
+      archiveArtifacts 'build/reports/tests/functional/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Functional Test Report"
+      ]
+    }
+
+    afterAlways('functionalTest:aat') {
+      junit 'build/test-results/functional/**/*.xml'
+      archiveArtifacts 'build/reports/tests/functional/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Functional Test Report"
+      ]
     }
   }
