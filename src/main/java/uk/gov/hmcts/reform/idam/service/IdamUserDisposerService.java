@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.ArrayList;
@@ -19,8 +20,10 @@ public class IdamUserDisposerService {
     private final DeleteUserService deleteUserService;
     private final ParameterResolver parameterResolver;
     private final SecurityUtil securityUtil;
+    private final LoggingSummaryUtils loggingSummaryUtils;
 
     public List<String> run() {
+        long disposerStartTime = System.currentTimeMillis();
         securityUtil.generateTokens();
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
@@ -38,7 +41,10 @@ public class IdamUserDisposerService {
 
             requestLimit--;
         }
-        log.info("Total number of deleted stale users: {}", allRemovedStaleUserIds.size());
+        long disposerEndTime = System.currentTimeMillis();
+        loggingSummaryUtils.logSummary(disposerStartTime, disposerEndTime, staleUsersService.getTotalStaleUsers(),
+                                       allRemovedStaleUserIds.size());
+
         return allRemovedStaleUserIds;
     }
 

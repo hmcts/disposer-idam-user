@@ -32,29 +32,6 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 
 withPipeline(type, product, component) {
-  afterAlways('test') {
-
-    junit 'build/test-results/test/**/*.xml'
-    archiveArtifacts 'build/reports/tests/test/index.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/test",
-      reportFiles          : "index.html",
-      reportName           : "disposer-idam-user Test Report"
-    ]
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/jacoco",
-      reportFiles          : "index.html",
-      reportName           : "disposer-idam-user Code Coverage Report"
-    ]
-  }
 
     afterAlways('test') {
       builder.gradle('integration')
@@ -67,31 +44,18 @@ withPipeline(type, product, component) {
     //enableFortifyScan()
     loadVaultSecrets(secrets)
 
-    afterAlways('functionalTest:preview') {
-      junit 'build/test-results/functional/**/*.xml'
-      archiveArtifacts 'build/reports/tests/functional/index.html'
+    afterAlways('test') {
+
+      junit 'build/test-results/test/**/*.xml'
+      archiveArtifacts 'build/reports/tests/test/index.html'
 
       publishHTML target: [
-              allowMissing         : true,
-              alwaysLinkToLastBuild: true,
-              keepAll              : true,
-              reportDir            : "build/reports/tests/functional",
-              reportFiles          : "index.html",
-              reportName           : "disposer-idam-user Functional Test Report"
-      ]
-    }
-
-    afterAlways('functionalTest:aat') {
-      junit 'build/test-results/functional/**/*.xml'
-      archiveArtifacts 'build/reports/tests/functional/index.html'
-
-      publishHTML target: [
-              allowMissing         : true,
-              alwaysLinkToLastBuild: true,
-              keepAll              : true,
-              reportDir            : "build/reports/tests/functional",
-              reportFiles          : "index.html",
-              reportName           : "disposer-idam-user Functional Test Report"
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/test",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Test Report"
       ]
     }
 
@@ -108,8 +72,37 @@ withPipeline(type, product, component) {
       echo "Verifying that functional test data was processed correctly"
       try {
         builder.gradle('functional')
+      echo "Verifying that functional test run completed"
       } finally {
         junit '**/test-results/**/*.xml'
       }
+    }
+
+    afterAlways('functionalTest:preview') {
+      junit 'build/test-results/functional/**/*.xml'
+      archiveArtifacts 'build/reports/tests/functional/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Functional Test Report"
+      ]
+    }
+
+    afterAlways('functionalTest:aat') {
+      junit 'build/test-results/functional/**/*.xml'
+      archiveArtifacts 'build/reports/tests/functional/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "disposer-idam-user Functional Test Report"
+      ]
     }
   }
