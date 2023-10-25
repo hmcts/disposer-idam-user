@@ -1,0 +1,24 @@
+{
+  "roleRequest" : {
+    "assignerId" : "37d4eab7-e14c-404e-8cd1-55cd06b2fc07",
+    "process" : "businessProcess1",
+    "reference" : "ed474902-05f8-4358-bafb-b3afb0cc5d57",
+    "replaceExisting" : true
+  },
+  "requestedRoles" : [ {
+    "actorId" : "",
+    "roleType" : "ORGANISATION",
+    "grantType" : "STANDARD",
+    "actorIdType" : "IDAM",
+    "roleName" : "judge",
+    "roleCategory" : "JUDICIAL",
+    "classification" : "PUBLIC",
+    "readOnly" : false,
+    "beginTime" : "2023-01-01T00:00:00Z",
+    "endTime" : "2028-01-01T00:00:00Z",
+    "attributes" : {
+      "jurisdiction" : "IA",
+      "contractType" : "Salaried"
+    }
+  } ]
+}

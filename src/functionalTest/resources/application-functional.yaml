@@ -1,0 +1,27 @@
+idam:
+  api:
+    port: ${IDAM_API_PORT:5000}
+    url: ${IDAM_API_URL:http://localhost:${idam.api.port}}
+  s2s-auth:
+    name: ${S2S_NAME:disposer-idam-user}
+    url: ${S2S_URL:http://localhost:4502}
+    secret: ${S2S_SECRET_DISPOSER_IDAM_USER:AAAAAAAAAAAAAAAA}
+  client:
+    id: ${DISPOSER_IDAM_USER_CLIENT_ID:disposer-idam-user}
+    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
+    username: ${IDAM_CLIENT_USERNAME:disposertest@test.com}
+    password: ${IDAM_CLIENT_PASSWORD:Password12}
+    redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
+
+ccd:
+  role.assignment:
+    host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
+
+stale-users:
+  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:5000}
+  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
+  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
+  roles: disposer-test-role
+
+service:
+  enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
