@@ -3,10 +3,5 @@ updates:
   - package-ecosystem: gradle
     directory: "/"
     schedule:
-      interval: weekly
-      day: "thursday"
-      time: "18:00"
+      interval: daily
     open-pull-requests-limit: 5
-    ignore:
-      - dependency-name: "*"
-        update-types: [ "version-update:semver-patch" ]
