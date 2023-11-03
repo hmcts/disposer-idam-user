@@ -1,10 +1,10 @@
 package uk.gov.hmcts.reform.idam.service;
 
 import feign.Response;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.exception.IdamApiException;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
@@ -15,13 +15,15 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DeleteUserService {
 
     private final IdamClient idamClient;
     private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
+    @Getter
+    private int failedDeletions;
 
     public void deleteUsers(List<String> batchStaleUserIds) {
         if (!parameterResolver.getIsSimulation()) {
@@ -40,7 +42,8 @@ public class DeleteUserService {
             );
         } catch (Exception e) {
             log.error("DeleteUserService.deleteUser threw exception: {}", e.getMessage(), e);
-            throw e;
+            failedDeletions++;
+            return;
         }
 
         if (response.status() != OK.value()) {
@@ -50,7 +53,7 @@ public class DeleteUserService {
                 response.status()
             );
             log.error(msg);
-            throw new IdamApiException(msg);
+            failedDeletions++;
         }
     }
 }

@@ -42,8 +42,13 @@ public class IdamUserDisposerService {
             requestLimit--;
         }
         long disposerEndTime = System.currentTimeMillis();
-        loggingSummaryUtils.logSummary(disposerStartTime, disposerEndTime, staleUsersService.getTotalStaleUsers(),
-                                       allRemovedStaleUserIds.size());
+        loggingSummaryUtils.logSummary(
+            disposerStartTime,
+            disposerEndTime,
+            staleUsersService.getTotalStaleUsers(),
+            allRemovedStaleUserIds.size(),
+            deleteUserService.getFailedDeletions()
+        );
 
         return allRemovedStaleUserIds;
     }

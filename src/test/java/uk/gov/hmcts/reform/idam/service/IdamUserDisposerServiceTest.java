@@ -60,8 +60,8 @@ class IdamUserDisposerServiceTest {
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());
-        verify(loggingSummaryUtils, times(1)).logSummary(anyLong(),anyLong(),
-                              eq(3),eq(2));
+        verify(loggingSummaryUtils, times(1))
+            .logSummary(anyLong(), anyLong(), eq(3), eq(2), eq(0));
     }
 
     @Test
@@ -81,8 +81,8 @@ class IdamUserDisposerServiceTest {
         verify(staleUsersService, times(3)).fetchStaleUsers();
         verify(userRoleService, times(3)).filterUsersWithRoles(any());
         verify(deleteUserService, times(3)).deleteUsers(any());
-        verify(loggingSummaryUtils, times(1)).logSummary(anyLong(),anyLong(),
-                           eq(9),eq(6));
+        verify(loggingSummaryUtils, times(1))
+            .logSummary(anyLong(), anyLong(), eq(9),eq(6), eq(0));
     }
 
     @Test
@@ -102,8 +102,8 @@ class IdamUserDisposerServiceTest {
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());
-        verify(loggingSummaryUtils, times(1)).logSummary(anyLong(),anyLong(),
-                              eq(3),eq(2));
+        verify(loggingSummaryUtils, times(1))
+            .logSummary(anyLong(), anyLong(), eq(3), eq(2), eq(0));
     }
 
 }
