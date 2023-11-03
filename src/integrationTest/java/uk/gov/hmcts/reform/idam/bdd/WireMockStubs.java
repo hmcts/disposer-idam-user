@@ -116,6 +116,14 @@ public class WireMockStubs {
         );
     }
 
+    public void setIdamApiStubToReturnErrorOnEndpoint(int errorCode, String endpointPattern) {
+        wiremock.stubFor(
+            WireMock
+                .delete(WireMock.urlPathMatching(endpointPattern))
+                .willReturn(WireMock.status(errorCode))
+        );
+    }
+
     protected static void requestReceived(Request request, Response response) {
         log.trace("WireMock request at URL: {}", request.getAbsoluteUrl());
         log.trace("WireMock request headers: \n{}", request.getHeaders());

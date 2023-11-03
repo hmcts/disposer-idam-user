@@ -25,13 +25,14 @@ public class LoggingSummaryUtils {
     private static final String DISPOSER_EXECUTION_TIME = "\r\nDisposer Execution Time : ";
     private static final String TOTAL_PROCESSED_USERS = "\r\nTotal Processed Users : ";
     private static final String TOTAL_DELETED_USERS = "\r\nTotal Deleted Users : ";
+    private static final String TOTAL_ERRORED_DELETIONS = "\r\nFailed deletions :";
     private static final String TOTAL_UNDELETED_USERS = "\r\nTotal Undeleted Users : ";
     private static final String IS_SIMULATION_MODE = "\r\nIs Simulation Mode : ";
     private static final String BATCH_SIZE = "\r\nBatch Size : ";
     private static final String REQUEST_LIMIT = "\r\nRequest Limit : ";
 
     @SuppressWarnings("PMD.LawOfDemeter")
-    public void logSummary(long startTime, long endTime, int processedUsers, int deletedUsers) {
+    public void logSummary(long startTime, long endTime, int processedUsers, int deletedUsers, int failedDeletions) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
         StringBuilder stringBuilder = new StringBuilder(SUMMARY_HEADING_STRING);
         long executionTime  =  endTime - startTime;
@@ -55,9 +56,15 @@ public class LoggingSummaryUtils {
             .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_PROCESSED_USERS))
             .append(TAB_STRING)
             .append(String.format(FORMAT_STR_LENGTH_10,processedUsers))
+
             .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_DELETED_USERS))
             .append(TAB_STRING)
             .append(String.format(FORMAT_STR_LENGTH_10,deletedUsers))
+
+            .append(String.format(FORMAT_STR_LENGTH_30, TOTAL_ERRORED_DELETIONS))
+            .append(TAB_STRING)
+            .append(String.format(FORMAT_STR_LENGTH_10, failedDeletions))
+
             .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_UNDELETED_USERS))
             .append(TAB_STRING)
             .append(String.format(FORMAT_STR_LENGTH_10,processedUsers - deletedUsers))

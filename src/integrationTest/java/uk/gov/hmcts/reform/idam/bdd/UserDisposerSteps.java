@@ -1,9 +1,12 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.service.DeleteUserService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 
 import java.util.List;
@@ -26,6 +29,9 @@ public class UserDisposerSteps extends WireMockStubs {
     private IdamUserDisposerService service;
 
     @Autowired
+    private DeleteUserService deleteUserService;
+
+    @Autowired
     private ParameterResolver parameterResolver;
 
     @Given("IdAM api works fine and simulation mode is {string}")
@@ -34,6 +40,13 @@ public class UserDisposerSteps extends WireMockStubs {
         setupWireMock();
         setupIdamApiStubsForSuccess();
         setField(parameterResolver, "isSimulation", valueOf(simulationMode));
+    }
+
+    @Given("IdAM api responds with {int} error to {string} endpoint {string} call")
+    public void idamApiRespondsWithErrorToCall(int errorCode, String endpoint) {
+        wiremock.resetRequests();
+        setupWireMock();
+        setIdamApiStubToReturnErrorOnEndpoint(errorCode, endpoint);
     }
 
     @Then("it should dispose users without roles")
@@ -101,4 +114,20 @@ public class UserDisposerSteps extends WireMockStubs {
         wiremock.verify(14, deleteRequestedFor(urlPathMatching(deleteUserPath + "/([0-9a-zA-Z-]+)")));
     }
 
+    @When("deletion called for")
+    public void deletionCalledFor(List<String> listOfUsers) {
+        deleteUserService.deleteUsers(listOfUsers);
+    }
+
+    @Then("it should attempt to delete")
+    public void itShouldAttemptToDelete(List<String> listOfUsers) {
+        for (String user: listOfUsers) {
+            wiremock.verify(1, deleteRequestedFor(urlPathEqualTo(STALE_USERS_PATH + "/" + user)));
+        }
+    }
+
+    @And("it should log {int} errors")
+    public void itShouldLogErrors(int numberOfFailures) {
+        assertThat(deleteUserService.getFailedDeletions()).isEqualTo(numberOfFailures);
+    }
 }

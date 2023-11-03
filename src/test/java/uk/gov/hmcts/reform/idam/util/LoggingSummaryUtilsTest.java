@@ -29,13 +29,20 @@ class LoggingSummaryUtilsTest {
     private static final int PROCESSED_USERS = 1000;
     private static final int DELETED_USERS = 900;
 
+    private static final int FAILED_DELETIONS = 123;
+
     @Test
     void shouldCallLogSummary() {
         when(parameterResolver.getIsSimulation()).thenReturn(true);
         when(parameterResolver.getBatchSize()).thenReturn(100);
         when(parameterResolver.getRequestLimit()).thenReturn(1000);
-        loggingSummaryUtils.logSummary(Long.parseLong(START_TIME),Long.parseLong(END_TIME),
-                                       PROCESSED_USERS,DELETED_USERS);
+        loggingSummaryUtils.logSummary(
+            Long.parseLong(START_TIME),
+            Long.parseLong(END_TIME),
+            PROCESSED_USERS,
+            DELETED_USERS,
+            FAILED_DELETIONS
+        );
         verify(parameterResolver, times(1)).getIsSimulation();
         verify(parameterResolver, times(1)).getBatchSize();
         verify(parameterResolver, times(1)).getRequestLimit();
