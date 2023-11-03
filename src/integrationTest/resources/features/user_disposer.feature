@@ -6,7 +6,7 @@ Feature: User disposer
     Then it should dispose users without roles
 
   Scenario: Stale user disposer is in simulation mode
-    Given IdAM api works fine and simulation mode is "true"
+    Given IdAM api works fine and simulation mode is "false"
     Then it should not dispose users due to simulation mode
 
   Scenario: Feign client makes multiple calls on Forbidden response
