@@ -57,9 +57,9 @@ public class LoggingSummaryUtils {
             .append(TAB_STRING)
             .append(String.format(FORMAT_STR_LENGTH_10,processedUsers))
 
-            .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_DELETED_USERS))
+            .append(String.format(FORMAT_STR_LENGTH_30, TOTAL_DELETED_USERS))
             .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,deletedUsers))
+            .append(String.format(FORMAT_STR_LENGTH_10, deletedUsers - failedDeletions))
 
             .append(String.format(FORMAT_STR_LENGTH_30, TOTAL_ERRORED_DELETIONS))
             .append(TAB_STRING)
