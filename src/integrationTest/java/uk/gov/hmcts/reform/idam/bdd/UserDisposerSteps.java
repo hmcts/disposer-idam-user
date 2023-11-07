@@ -42,7 +42,7 @@ public class UserDisposerSteps extends WireMockStubs {
         setField(parameterResolver, "isSimulation", valueOf(simulationMode));
     }
 
-    @Given("IdAM api responds with {int} error to {string} endpoint {string} call")
+    @Given("IdAM api responds with {int} error to {string} endpoint DELETE call")
     public void idamApiRespondsWithErrorToCall(int errorCode, String endpoint) {
         wiremock.resetRequests();
         setupWireMock();
