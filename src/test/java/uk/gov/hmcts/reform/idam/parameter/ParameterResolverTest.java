@@ -4,20 +4,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Optional;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("PMD.TooManyMethods")
 class ParameterResolverTest {
 
     private static final String IDAM_API_URL = "idamHost";
-
     private static final String BATCH_SIZE = "batchSize";
-
     private static final String REQUEST_LIMIT = "requestLimit";
-
     private static final String CLIENT_ID = "clientId";
     private static final String CLIENT_SECRET = "clientSecret";
-    private static final String IDAM_ROLE_TO_DELETE = "idamRoleToDelete";
+    private static final String REQUIRED_ROLE_TO_DELETE = "requiredRole";
+    private static final String IDAM_ROLES_TO_DELETE = "idamRolesToDelete";
     private static final String CLIENT_USER_NAME = "clientUserName";
     private static final String CLIENT_PASSWORD = "clientPassword";
     private static final String REDIRECT_URI = "redirectUri";
@@ -32,7 +33,8 @@ class ParameterResolverTest {
         ReflectionTestUtils.setField(resolver, REQUEST_LIMIT, 10);
         ReflectionTestUtils.setField(resolver, CLIENT_ID, "client id");
         ReflectionTestUtils.setField(resolver, CLIENT_SECRET, "client secret");
-        ReflectionTestUtils.setField(resolver, IDAM_ROLE_TO_DELETE, "disposer-test");
+        ReflectionTestUtils.setField(resolver, REQUIRED_ROLE_TO_DELETE, "disposer-test");
+        ReflectionTestUtils.setField(resolver, IDAM_ROLES_TO_DELETE, Optional.of(Set.of("a", "b")));
         ReflectionTestUtils.setField(resolver, CLIENT_USER_NAME, "user@example.org");
         ReflectionTestUtils.setField(resolver, CLIENT_PASSWORD, "client password");
         ReflectionTestUtils.setField(resolver, REDIRECT_URI, "redirect.uri");
@@ -66,8 +68,13 @@ class ParameterResolverTest {
     }
 
     @Test
-    void shouldGetIdamRoleToDelete() {
-        assertThat(resolver.getIdamRoleToDelete()).isEqualTo("disposer-test");
+    void shouldGetRequiredRoleToDelete() {
+        assertThat(resolver.getRequiredRole()).isEqualTo("disposer-test");
+    }
+
+    @Test
+    void shouldGetAdditionalRoles() {
+        assertThat(resolver.getIdamRolesToDelete()).isEqualTo(Optional.of(Set.of("a", "b")));
     }
 
     @Test
@@ -87,6 +94,6 @@ class ParameterResolverTest {
 
     @Test
     void shouldGetIsSimulationMode() {
-        assertThat(resolver.getIsSimulation()).isEqualTo(true);
+        assertThat(resolver.getIsSimulation()).isTrue();
     }
 }

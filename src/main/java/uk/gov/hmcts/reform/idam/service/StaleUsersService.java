@@ -11,8 +11,10 @@ import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -51,16 +53,17 @@ public class StaleUsersService {
         currentPage += 1;
         totalStaleUsers += staleUsersResponse.getContent().size();
 
-        String roleToDelete = parameterResolver.getIdamRoleToDelete();
+        Set<String> rolesToDelete = parameterResolver.getIdamRolesToDelete().orElse(new HashSet<>());
+        String requiredRole = parameterResolver.getRequiredRole().toLowerCase();
+        rolesToDelete.add(requiredRole);
 
         return staleUsersResponse
-                .getContent()
-                .stream()
-                .filter(user -> user.getRoles() != null
-                    && user.getRoles().size() == 1
-                    && user.getRoles().get(0).toLowerCase().equalsIgnoreCase(roleToDelete))
-                .map(UserContent::getId)
-                .toList();
+            .getContent()
+            .stream()
+            .filter(user -> user.getRoles().contains(requiredRole))
+            .filter(user -> rolesToDelete.containsAll(new HashSet<>(user.getLettersRemovedRoles())))
+            .map(UserContent::getId)
+            .toList();
     }
 
     public boolean hasFinished() {

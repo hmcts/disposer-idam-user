@@ -25,7 +25,7 @@ public class IdamUserDataProvider {
     @Value("${idam.api.url}")
     private String idamApi = "https://idam-api.aat.platform.hmcts.net";
 
-    @Value("${stale-users.roles}")
+    @Value("${stale-users.required_role}")
     private String roleToDelete;
 
     private static final String CREATE_USER_PATH = "testing-support/accounts";

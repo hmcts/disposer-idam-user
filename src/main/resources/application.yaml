@@ -30,13 +30,12 @@ stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
-  roles: citizen
+  required_role: citizen
+  citizen_roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
 
 ccd:
   role.assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
-
-
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
