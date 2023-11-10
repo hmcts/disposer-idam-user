@@ -33,7 +33,7 @@ public class LoggingSummaryUtils {
 
     @SuppressWarnings("PMD.LawOfDemeter")
     public void logSummary(long startTime, long endTime, int processedUsers, int deletedUsers, int failedDeletions) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         StringBuilder stringBuilder = new StringBuilder(SUMMARY_HEADING_STRING);
         long executionTime  =  endTime - startTime;
         long hh = TimeUnit.MILLISECONDS.toHours(executionTime);
