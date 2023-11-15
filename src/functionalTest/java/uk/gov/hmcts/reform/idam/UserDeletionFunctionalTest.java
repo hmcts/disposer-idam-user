@@ -53,6 +53,7 @@ class UserDeletionFunctionalTest {
         roleAssignmentProvider.setup(userWithRole);
         List<String> deletedStaleUsers = userDisposerService.run();
         assertThat(deletedStaleUsers).isEmpty();
+
     }
 
     @Test
