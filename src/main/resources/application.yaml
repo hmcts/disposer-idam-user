@@ -40,3 +40,4 @@ ccd:
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+  restorer_enabled: ${IDAM_USER_RESTORER_ENABLED:false}

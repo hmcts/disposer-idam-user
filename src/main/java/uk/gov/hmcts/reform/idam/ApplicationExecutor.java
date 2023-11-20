@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
+import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
 
 @Component
 @RequiredArgsConstructor
@@ -14,20 +15,26 @@ import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 public class ApplicationExecutor implements ApplicationRunner {
 
     @Value("${service.enabled}")
-    private boolean isServiceEnabled;
+    private boolean isDisposerEnabled;
 
-    private final IdamUserDisposerService service;
+    @Value("${service.restorer_enabled}")
+    private boolean isRestorerEnabled;
+
+    private final IdamUserDisposerService disposerService;
+    private final IdamUserRestorerService restorerService;
 
     @Override
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public void run(ApplicationArguments args) {
-
-        if (isServiceEnabled) {
+        if (isDisposerEnabled) {
             log.info("Starting the Idam-Disposer job...");
-            service.run();
-            log.info("Idam-Disposer job has finished...");
+            disposerService.run();
+            log.info("Idam-Disposer job has finished!");
+        } else if (isRestorerEnabled) {
+            log.info("Starting the Idam-Restorer job...");
+            restorerService.run();
+            log.info("Idam-Restorer job has completed!");
         } else {
-            log.info("Not running Idam-Disposer job as it is disabled...");
+            log.info("Not running any Idam-Disposer job as all are disabled...");
         }
     }
 
