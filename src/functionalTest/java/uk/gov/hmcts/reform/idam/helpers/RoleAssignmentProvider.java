@@ -34,7 +34,7 @@ public class RoleAssignmentProvider {
 
     public void deleteRole() {
         RestAssured.given()
-            .header("Authorization", idamTokenGenerator.getRoleAssignmentAuthorizationHeader())
+            .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())
             .header("ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken())
             .param("process", "businessProcess1")
             .param("reference", "ed474902-05f8-4358-bafb-b3afb0cc5d57")
@@ -51,7 +51,7 @@ public class RoleAssignmentProvider {
             JsonNode requestedRole = role.get("requestedRoles").get(0);
             ((ObjectNode)requestedRole).put("actorId", userId);
             RestAssured.given()
-                .header("Authorization", idamTokenGenerator.getRoleAssignmentAuthorizationHeader())
+                .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())
                 .header("ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken())
                 .header("Content-Type", "application/json")
                 .body(role)

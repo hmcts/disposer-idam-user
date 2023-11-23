@@ -21,6 +21,9 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 public class WireMockStubs {
 
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APP_JSON = "application/json";
+
     @Value("${dummy-jwt}")
     String dummyJwtToken;
 
@@ -30,11 +33,69 @@ public class WireMockStubs {
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
     public void setupWireMock() {
-        if (debugging) {
+        setupWireMock(false);
+    }
+
+    public void setupWireMock(boolean debug) {
+        if (debug) {
             wiremock.addMockServiceRequestListener(
                     WireMockStubs::requestReceived);
         }
         setupAuthorizationStub();
+    }
+
+    protected void setupLauIdamApiStubToReturnMoreRecords() {
+        var request = WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH));
+        var response = WireMock.aResponse();
+        response.withHeader(CONTENT_TYPE, APP_JSON);
+        response.withBody("""
+            {"deletionLogs": [{
+                "userId": "00001",
+                "emailAddress": "joe.doe@example.org",
+                "firstName": "Joe",
+                "lastName": "Doe",
+                "deletionTimestamp": "2023-08-23T22:20:05.023Z"
+            }],
+            "startRecordNumber": 1,
+            "moreRecords": true
+            }"""
+        );
+        wiremock.stubFor(request.willReturn(response));
+    }
+
+    protected void setupLauApiStubs() {
+        wiremock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withHeader(CONTENT_TYPE, APP_JSON)
+                        .withBodyFile("lauIdamGetDeletedUsers.json")
+                )
+        );
+
+        wiremock.stubFor(
+            WireMock.delete(WireMock.urlPathEqualTo(Constants.LAU_DELETE_LOG_ENTRY_PATH))
+                .withQueryParam("userId", WireMock.matching("0000[1-4]"))
+                .willReturn(
+                    WireMock.aResponse().withStatus(204)
+                )
+        );
+    }
+
+    protected void setupIdamRestoreStub(int httpReturnStatus, String errorDescription) {
+        var response = WireMock.aResponse();
+        response.withHeader(CONTENT_TYPE, APP_JSON);
+        response.withStatus(httpReturnStatus);
+        if (errorDescription != null) {
+            response.withBody(String.format("""
+                {
+                    "error":"doesn't matter",
+                    "error_description":"%s"
+                }
+                """, errorDescription));
+        }
+        var request = WireMock.post(WireMock.urlPathTemplate(Constants.STALE_USERS_PATH + "/{userId}"));
+        wiremock.stubFor(request.willReturn(response));
     }
 
     public void setupIdamApiStubsForSuccess() {
@@ -48,7 +109,7 @@ public class WireMockStubs {
                             .withQueryParam("page", equalTo(String.valueOf(i)))
                             .willReturn(
                                     WireMock.aResponse()
-                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader(CONTENT_TYPE, APP_JSON)
                                             .withBodyFile("staleUsersPage" + (i + 1) + ".json")
                             )
             );
@@ -65,7 +126,7 @@ public class WireMockStubs {
                             .willReturn(
                                     WireMock.aResponse()
                                             .withBodyFile("roleAssignmentsResponse" + (i + 1) + ".json")
-                                            .withHeader("Content-Type", Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
+                                            .withHeader(CONTENT_TYPE, Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
                             )
             );
         }
@@ -125,7 +186,7 @@ public class WireMockStubs {
     }
 
     protected static void requestReceived(Request request, Response response) {
-        log.trace("WireMock request at URL: {}", request.getAbsoluteUrl());
+        log.trace("WireMock request {} at URL: {}", request.getMethod(), request.getAbsoluteUrl());
         log.trace("WireMock request headers: \n{}", request.getHeaders());
         log.trace("WireMock response status: {}", response.getStatus());
         log.trace("WireMock response body: \n{}", response.getBodyAsString());

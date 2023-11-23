@@ -25,6 +25,7 @@ public class ApplicationExecutor implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+
         if (isDisposerEnabled) {
             log.info("Starting the Idam-Disposer job...");
             disposerService.run();

@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
+import uk.gov.hmcts.reform.idam.service.remote.requests.RestoreUserRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.util.Constants;
 
@@ -23,6 +25,16 @@ public interface IdamClient {
     StaleUsersResponse getStaleUsers(
         @RequestHeader("Authorization") String authHeader,
         @RequestParam Map<String, Object> queryParams
+    );
+
+    @PostMapping(
+        value = Constants.STALE_USERS_PATH + "/{userId}",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE)
+    Response restoreUser(
+        @RequestHeader("Authorization") String authHeader,
+        @PathVariable(name = "userId") String userId,
+        @RequestBody RestoreUserRequest restoreUserRequest
     );
 
     @DeleteMapping(
@@ -47,4 +59,5 @@ public interface IdamClient {
         @RequestParam("password") String password,
         @RequestParam("scope") String scope
     );
+
 }

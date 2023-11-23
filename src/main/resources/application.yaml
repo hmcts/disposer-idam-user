@@ -36,7 +36,13 @@ ccd:
   role.assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
 
+lau:
+  api:
+    url: ${LAU_API_URL:http://localhost:4550}
 
+restorer:
+  batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
+  requests.limit: ${DISPOSER_RESTORER_REQUESTS_LIMIT:1}
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

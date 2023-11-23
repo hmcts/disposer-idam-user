@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.IDAM_GRANT_TYPE;
 import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.IDAM_SCOPE;
-import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.ROLE_ASSIGNMENTS_GRANT_TYPE;
+import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.PASSWORD_GRANT_TYPE;
 import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.ROLE_ASSIGNMENT_SCOPE;
 
 @ExtendWith(MockitoExtension.class)
@@ -121,13 +121,13 @@ class IdamTokenGeneratorTest {
                 parameterResolver.getClientId(),
                 parameterResolver.getClientSecret(),
                 null,
-                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                PASSWORD_GRANT_TYPE,
                 parameterResolver.getClientUserName(),
                 parameterResolver.getClientPassword(),
                 ROLE_ASSIGNMENT_SCOPE
         )).thenReturn(tokenResponse);
-        idamTokenGenerator.generateRoleAssignmentIdamToken();
-        assertThat(idamTokenGenerator.getRoleAssignmentsClientToken()).isEqualTo(token);
+        idamTokenGenerator.generatePasswordTypeToken();
+        assertThat(idamTokenGenerator.getPasswordTypeClientToken()).isEqualTo(token);
     }
 
     @Test
@@ -145,13 +145,13 @@ class IdamTokenGeneratorTest {
                 parameterResolver.getClientId(),
                 parameterResolver.getClientSecret(),
                 null,
-                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                PASSWORD_GRANT_TYPE,
                 parameterResolver.getClientUserName(),
                 parameterResolver.getClientPassword(),
                 ROLE_ASSIGNMENT_SCOPE
         )).thenReturn(tokenResponse);
-        idamTokenGenerator.generateRoleAssignmentIdamToken();
-        assertThat(idamTokenGenerator.getRoleAssignmentAuthorizationHeader()).isEqualTo("Bearer " + token);
+        idamTokenGenerator.generatePasswordTypeToken();
+        assertThat(idamTokenGenerator.getPasswordTypeAuthorizationHeader()).isEqualTo("Bearer " + token);
     }
 
     @Test
@@ -160,7 +160,7 @@ class IdamTokenGeneratorTest {
                 parameterResolver.getClientId(),
                 parameterResolver.getClientSecret(),
                 null,
-                ROLE_ASSIGNMENTS_GRANT_TYPE,
+                PASSWORD_GRANT_TYPE,
                 parameterResolver.getClientUserName(),
                 parameterResolver.getClientPassword(),
                 ROLE_ASSIGNMENT_SCOPE
@@ -168,7 +168,7 @@ class IdamTokenGeneratorTest {
 
         IdamAuthTokenGenerationException thrown = assertThrows(
                 IdamAuthTokenGenerationException.class,
-                () -> idamTokenGenerator.generateRoleAssignmentIdamToken()
+                () -> idamTokenGenerator.generatePasswordTypeToken()
         );
 
         assertThat(thrown.getMessage()).contains("Unable to generate Role Assignment IDAM token due to error -");
