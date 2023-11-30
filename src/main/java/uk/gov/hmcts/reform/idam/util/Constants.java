@@ -10,4 +10,5 @@ public interface Constants {
     @SuppressWarnings("checkstyle:linelength")
     String ROLE_ASSIGNMENTS_CONTENT_TYPE = "application/vnd.uk.gov.hmcts.role-assignment-service.post-assignment-query-request+json;charset=UTF-8;version=2.0";
 
+    String LAU_GET_DELETED_USERS_PATH = "/audit/getAllDeletedAccounts";
 }

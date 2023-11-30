@@ -16,17 +16,17 @@ import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 public class IdamTokenGenerator {
 
     public static final String BEARER = "Bearer ";
-    public static final String ROLE_ASSIGNMENTS_GRANT_TYPE = "password";
+    public static final String PASSWORD_GRANT_TYPE = "password";
     public static final String IDAM_GRANT_TYPE = "client_credentials";
-    public static final String IDAM_SCOPE = "archive-user view-archived-user delete-archived-user";
+    @SuppressWarnings("checkstyle:linelength")
+    public static final String IDAM_SCOPE = "archive-user view-archived-user delete-archived-user restore-archived-user";
     public static final String ROLE_ASSIGNMENT_SCOPE = "profile roles";
-
 
     private final IdamClient idamClient;
     private final ParameterResolver parameterResolver;
 
     private String idamClientToken = "token";
-    private String roleAssignmentsClientToken = "token";
+    private String passwordTypeClientToken = "token";
 
     public void generateIdamToken() {
         try {
@@ -48,18 +48,18 @@ public class IdamTokenGenerator {
         }
     }
 
-    public void generateRoleAssignmentIdamToken() {
+    public void generatePasswordTypeToken() {
         try {
             TokenResponse tokenResponse = idamClient.getToken(
                     parameterResolver.getClientId(),
                     parameterResolver.getClientSecret(),
                     parameterResolver.getRedirectUri(),
-                    ROLE_ASSIGNMENTS_GRANT_TYPE,
+                    PASSWORD_GRANT_TYPE,
                     parameterResolver.getClientUserName(),
                     parameterResolver.getClientPassword(),
                     ROLE_ASSIGNMENT_SCOPE
             );
-            roleAssignmentsClientToken = tokenResponse.accessToken;
+            passwordTypeClientToken = tokenResponse.accessToken;
 
         } catch (final Exception exception) {
             String msg = String.format("Unable to generate Role Assignment IDAM token due to error - %s",
@@ -73,7 +73,7 @@ public class IdamTokenGenerator {
         return BEARER + idamClientToken;
     }
 
-    public String getRoleAssignmentAuthorizationHeader() {
-        return BEARER + roleAssignmentsClientToken;
+    public String getPasswordTypeAuthorizationHeader() {
+        return BEARER + passwordTypeClientToken;
     }
 }

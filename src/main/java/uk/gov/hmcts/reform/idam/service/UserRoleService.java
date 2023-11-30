@@ -38,7 +38,7 @@ public class UserRoleService {
             response = roleAssignmentClient.getRoleAssignments(
                 Map.of(
                     "Content-Type", ROLE_ASSIGNMENTS_CONTENT_TYPE,
-                    "Authorization", idamTokenGenerator.getRoleAssignmentAuthorizationHeader(),
+                    "Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader(),
                     "ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken()
                 ),
                 request

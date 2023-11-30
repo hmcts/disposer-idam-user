@@ -22,7 +22,7 @@ public class SecurityUtil {
     public void generateTokens() {
         log.info("Security Util Generate token has been called");
         idamTokenGenerator.generateIdamToken();
-        idamTokenGenerator.generateRoleAssignmentIdamToken();
+        idamTokenGenerator.generatePasswordTypeToken();
         serviceTokenGenerator.generateServiceToken();
     }
 }

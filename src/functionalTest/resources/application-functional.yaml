@@ -23,5 +23,14 @@ stale-users:
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   roles: disposer-test-role
 
+lau:
+  idam:
+    url: ${LAU_API_URL:http://localhost:4550}
+
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+  restorer_enabled: ${IDAM_USER_RESTORER_ENABLED:true}
+
+restorer:
+  batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
+  requests.limit: ${DISPOSER_RESTORER_REQUESTS_LIMIT:1}
