@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
@@ -19,6 +20,7 @@ public class IdamUserRestorerService {
     private final RestoreUserService restoreService;
     private final SecurityUtil securityUtil;
     private final RestoreSummary restoreSummary;
+    private final LoggingSummaryUtils summaryUtils;
 
     @Value("${restorer.requests.limit}")
     private int requestsLimit;
@@ -41,11 +43,15 @@ public class IdamUserRestorerService {
                 break;
             }
 
+            restoreSummary.addProcessedNumber(deletedUsers.size());
+
             for (DeletionLog deletionLog : deletedUsers) {
                 restoreService.restoreUser(deletionLog);
             }
 
             restoreSummary.setEndTime();
         }
+
+        log.info(summaryUtils.createRestorerStatistics(restoreSummary));
     }
 }
