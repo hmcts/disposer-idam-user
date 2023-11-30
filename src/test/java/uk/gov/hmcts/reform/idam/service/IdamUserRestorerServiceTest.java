@@ -9,6 +9,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
@@ -30,6 +31,9 @@ class IdamUserRestorerServiceTest {
 
     @Mock
     SecurityUtil securityUtil;
+
+    @Mock
+    LoggingSummaryUtils loggingUtils;
 
     @Spy
     RestoreSummary restoreSummary;
@@ -53,6 +57,7 @@ class IdamUserRestorerServiceTest {
 
         verify(lauService, times(1)).fetchDeletedUsers();
         verify(restoreService, times(1)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
 
     }
 
@@ -65,6 +70,7 @@ class IdamUserRestorerServiceTest {
 
         verify(lauService, times(2)).fetchDeletedUsers();
         verify(restoreService, times(4)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
     }
 
     @Test
@@ -76,6 +82,7 @@ class IdamUserRestorerServiceTest {
 
         verify(lauService, times(1)).fetchDeletedUsers();
         verify(restoreService, times(2)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
     }
 
     @Test
@@ -87,6 +94,7 @@ class IdamUserRestorerServiceTest {
 
         verify(lauService, times(1)).fetchDeletedUsers();
         verify(restoreService, times(2)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
     }
 
     @Test
@@ -97,6 +105,7 @@ class IdamUserRestorerServiceTest {
         service.run();
 
         verify(restoreService, times(0)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
     }
 
     @Test
@@ -108,5 +117,6 @@ class IdamUserRestorerServiceTest {
 
         verify(lauService, times(10)).fetchDeletedUsers();
         verify(restoreService, times(20)).restoreUser(any());
+        verify(loggingUtils, times(1)).createRestorerStatistics(any());
     }
 }
