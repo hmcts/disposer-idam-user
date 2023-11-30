@@ -72,14 +72,51 @@ public class WireMockStubs {
                         .withBodyFile("lauIdamGetDeletedUsers.json")
                 )
         );
+    }
+
+    protected void setupPagedLauApiStubs() {
+        String page1 = """
+            {
+              "deletionLogs": [{
+                  "userId":"00001","emailAddress":"a@a.a","firstName":"J","lastName":"D",
+                  "deletionTimestamp":"2023-08-23T22:20:05.023Z"
+                },{
+                  "userId":"00002","emailAddress":"a@a.a","firstName":"J","lastName":"D",
+                  "deletionTimestamp":"2023-08-23T20:20:05.023Z"
+                }],
+              "startRecordNumber": 1,
+              "moreRecords": true
+            }""";
+
+        String page2 = """
+            {
+              "deletionLogs": [{
+                  "userId":"00003","emailAddress":"a@a.a","firstName":"J","lastName":"D",
+                  "deletionTimestamp":"2023-08-23T16:20:05.023Z"
+                }],
+              "startRecordNumber": 3,
+              "moreRecords": false
+            }""";
 
         wiremock.stubFor(
-            WireMock.delete(WireMock.urlPathEqualTo(Constants.LAU_DELETE_LOG_ENTRY_PATH))
-                .withQueryParam("userId", WireMock.matching("0000[1-4]"))
+            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
+                .withQueryParam("page", equalTo("1"))
                 .willReturn(
-                    WireMock.aResponse().withStatus(204)
+                    WireMock.aResponse()
+                        .withHeader(CONTENT_TYPE, APP_JSON)
+                        .withBody(page1)
                 )
         );
+        wiremock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
+                .withQueryParam("page", equalTo("2"))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withHeader(CONTENT_TYPE, APP_JSON)
+                        .withBody(page2)
+                )
+        );
+
     }
 
     protected void setupIdamRestoreStub(int httpReturnStatus, String errorDescription) {

@@ -1,10 +1,9 @@
 package uk.gov.hmcts.reform.idam.service;
 
 import feign.FeignException;
-import feign.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.remote.client.LauIdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletedUsersResponse;
@@ -26,36 +25,25 @@ public class LauIdamUserService {
     private final IdamTokenGenerator idamTokenGenerator;
     private final ServiceTokenGenerator serviceTokenGenerator;
 
-    private boolean more = true;
+    @Value("${restorer.batch.size}")
+    private int batchSize;
+    private int page = 1;
+    private boolean hasMoreRecords = true;
 
-    public List<DeletionLog> fetchDeletedUsers(final int batchSize) {
+    public List<DeletionLog> fetchDeletedUsers() {
         try {
-            final DeletedUsersResponse response = lauClient.getDeletedUsers(getAuthHeaders(), batchSize);
-            more = response.isMoreRecords();
+            final DeletedUsersResponse response = lauClient.getDeletedUsers(getAuthHeaders(), batchSize, page++);
+            hasMoreRecords = response.isMoreRecords();
             return response.getDeletionLogs();
-        } catch (FeignException fe) {
-            log.error("[{}] Exception fetching deleted users {}", MARKER, fe.getMessage(), fe);
-            more = false;
+        } catch (final FeignException feignException) {
+            log.error("[{}] Exception fetching deleted users {}", MARKER, feignException.getMessage(), feignException);
+            hasMoreRecords = false;
         }
-
         return List.of();
     }
 
-    public boolean deleteLogEntry(String userId) {
-        HttpStatus status = callApi(userId);
-        if (status != HttpStatus.NO_CONTENT) {
-            log.error(
-                "[{}] Unexpected status code from user deletion log deletion for user {}. Http Status: {}",
-                MARKER,
-                userId,
-                status
-            );
-        }
-        return status == HttpStatus.NO_CONTENT;
-    }
-
-    public boolean hasMore() {
-        return more;
+    public boolean hasMoreRecords() {
+        return hasMoreRecords;
     }
 
     private Map<String, String> getAuthHeaders() {
@@ -63,11 +51,5 @@ public class LauIdamUserService {
             "Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader(),
             "ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken()
         );
-    }
-
-    private HttpStatus callApi(String userId) {
-        try (Response response = lauClient.deleteLogEntry(getAuthHeaders(), userId)) {
-            return HttpStatus.valueOf(response.status());
-        }
     }
 }

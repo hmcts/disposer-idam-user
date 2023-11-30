@@ -12,11 +12,13 @@ import uk.gov.hmcts.reform.idam.service.remote.requests.RestoreUserRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
 import uk.gov.hmcts.reform.idam.service.remote.responses.IdamCreateUserErrorResponse;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 
 import java.io.IOException;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.reform.idam.service.IdamUserRestorerService.MARKER;
 
 @Service
@@ -26,23 +28,12 @@ public class RestoreUserService {
 
     private final IdamClient idamClient;
     private final IdamTokenGenerator idamTokenGenerator;
+    private final RestoreSummary restoreSummary;
 
-    public boolean restoreUser(DeletionLog deletionLog) {
-
+    public void restoreUser(DeletionLog deletionLog) {
         try {
             RestoreUserRequest requestBody = createRequestBody(deletionLog);
-            HttpStatus status = callApi(deletionLog.getUserId(), requestBody);
-            if (status == HttpStatus.CREATED) {
-                return true;
-            } else {
-                log.error(
-                    "[{}] Failed to restore user from deletion log {}. HTTP Status {}",
-                    MARKER,
-                    deletionLog.getUserId(),
-                    status
-                );
-            }
-
+            callApi(deletionLog.getUserId(), requestBody);
         } catch (IOException ioe) {
             log.error(
                 "[{}] Failed to read idam response from restore user {}. Exception {}",
@@ -52,33 +43,54 @@ public class RestoreUserService {
                 ioe
             );
         }
-        return false;
     }
 
-    private HttpStatus callApi(String userId, RestoreUserRequest requestBody) throws IOException {
+    private void callApi(String userId, RestoreUserRequest requestBody) throws IOException {
         String authHeader = idamTokenGenerator.getIdamAuthorizationHeader();
         try (Response response = idamClient.restoreUser(authHeader, userId, requestBody)) {
-            return handleStatus(response, userId);
+            parsePotentialConflicts(response, userId);
         }
     }
 
-    private HttpStatus handleStatus(Response response, String userId) throws IOException {
+    private void parsePotentialConflicts(Response response, String userId) throws IOException {
         HttpStatus status = HttpStatus.valueOf(response.status());
-        if (status == HttpStatus.CONFLICT) {
-            status = parseConflict(response.body(), userId);
+
+        if (status == HttpStatus.CREATED) {
+            restoreSummary.addSuccess(userId);
+        } else if (status == HttpStatus.CONFLICT) {
+            String json = IOUtils.toString(response.body().asInputStream(), UTF_8);
+            var errorResponse = new ObjectMapper().readValue(json, IdamCreateUserErrorResponse.class);
+            String errorDescription = errorResponse.getErrorDescription();
+            logPotentialErrorAndUpdateSummary(userId, errorDescription);
+        } else {
+            restoreSummary.addFailed(userId);
+            log.info("[{}] Failed to reinstate the user due to http error {}: {}", MARKER, status, userId);
         }
-        return status;
     }
 
-    private HttpStatus parseConflict(Response.Body body, String userId) throws IOException {
-        String json = IOUtils.toString(body.asInputStream(), UTF_8);
-        var errorResponse = new ObjectMapper().readValue(json, IdamCreateUserErrorResponse.class);
-        String description = errorResponse.getErrorDescription();
-        if ("id in use".equalsIgnoreCase(description) || "id already archived".equalsIgnoreCase(description)) {
-            log.info("[{}] User already exists with id {}", MARKER, userId);
-            return HttpStatus.CREATED;
+    private void logPotentialErrorAndUpdateSummary(final String userId, final String description) {
+        if (!isEmpty(description)) {
+            switch (description.toLowerCase()) {
+                case "id in use":
+                    log.info("[{}] User has been reinstated and reactivated the account: {}", MARKER, userId);
+                    restoreSummary.addFailedToRestoreDueToReinstatedAndActiveAccount(userId);
+                    break;
+                case "email in use":
+                    log.info("[{}] The user has created a new account: {}", MARKER, userId);
+                    restoreSummary.addFailedToRestoreDueToNewAccountWithSameEmail(userId);
+                    break;
+                case "id already archived":
+                    log.info("[{}] User has already been archived: {}", MARKER, userId);
+                    restoreSummary.addFailedToRestoreDueToReinstatedAccount(userId);
+                    break;
+                case "email already archived":
+                    log.info("[{}] The user has duplicate record stale users table in IdAM: {}", MARKER, userId);
+                    restoreSummary.addFailedToRestoreDueToDuplicateEmail(userId);
+                    break;
+                default:
+                    break;
+            }
         }
-        return HttpStatus.CONFLICT;
     }
 
     private RestoreUserRequest createRequestBody(DeletionLog deletionLog) {

@@ -3,29 +3,25 @@ Feature: User restorer
 
   Scenario: User restorer restores users
     Given lau api returns a list of users to restore
-    Then user restorer should call IdAM api to restore users
-    And user restorer should call lau api to delete log entries of deletion
+    When restore service runs
+    Then there should be 1 calls to fetch deleted users
+    And user restorer should call IdAM api to restore 4 users
+    And summary should have successful restore of size 4 and failed of size 0
 
-  Scenario: User restorer deletes log entry if idam returns 409 because of matching id
-    Given lau api returns a list of users to restore
-    And IdAM api fails to restore with status code 409 and message "id in use"
-    Then user restorer should call lau api to delete log entries of deletion
+  Scenario: User restorer fetches paged results
+    Given lau api returns paged results
+    When restore service runs
+    Then there should be 2 calls to fetch deleted users
+    And user restorer should call IdAM api to restore 3 users
+    And summary should have successful restore of size 3 and failed of size 0
 
-  Scenario: User restorer deletes log entry if idam returns 409 because of archived matching id
+  Scenario: Summary records successful and failed restore actions
     Given lau api returns a list of users to restore
-    And IdAM api fails to restore with status code 409 and message "id already archived"
-    Then user restorer should call lau api to delete log entries of deletion
-
-  Scenario: User restorer backs out if restore fails
-    Given lau api returns a list of users to restore
-    And IdAM api fails to restore with status code 504 and message "Gateway Timeout"
-    Then user restorer should NOT call lau api to delete log entries
-
-  Scenario: User restorer backs out if user already exists
-    Given lau api returns a list of users to restore
-    And IdAM api fails to restore with status code 409 and message "email in use"
-    Then user restorer should NOT call lau api to delete log entries
+    And IdAM api responds with 400 error to user restore call
+    When restore service runs
+    Then summary should have successful restore of size 0 and failed of size 4
 
   Scenario: User restorer makes limited number of requests
     Given requests limit set to 10
+    When restore service runs
     Then there should be 10 requests to lau api

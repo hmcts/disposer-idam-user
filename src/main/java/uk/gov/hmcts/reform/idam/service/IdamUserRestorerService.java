@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.idam.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,23 +18,22 @@ public class IdamUserRestorerService {
     private final LauIdamUserService lauService;
     private final RestoreUserService restoreService;
     private final SecurityUtil securityUtil;
+    private final RestoreSummary restoreSummary;
 
-    @Getter
-    private final RestoreSummary summary = new RestoreSummary();
-
-    @Value("${restorer.batch.size}")
-    private int batchSize;
     @Value("${restorer.requests.limit}")
     private int requestsLimit;
 
     public static final String MARKER = "IDAM_USER_RESTORER";
 
     public void run() {
+
+        restoreSummary.setStartTime();
+
         securityUtil.generateTokens();
         int requestsMade = 0;
 
-        while (lauService.hasMore() && requestsMade < requestsLimit) {
-            List<DeletionLog> deletedUsers = lauService.fetchDeletedUsers(batchSize);
+        while (lauService.hasMoreRecords() && requestsMade < requestsLimit) {
+            List<DeletionLog> deletedUsers = lauService.fetchDeletedUsers();
             log.info("Fetched deleted users {}", deletedUsers.stream().map(DeletionLog::getUserId).toList());
             requestsMade++;
 
@@ -43,20 +41,11 @@ public class IdamUserRestorerService {
                 break;
             }
 
-            for (DeletionLog deletionLog: deletedUsers) {
-                deleteLogEntry(restoreService.restoreUser(deletionLog), deletionLog.getUserId());
+            for (DeletionLog deletionLog : deletedUsers) {
+                restoreService.restoreUser(deletionLog);
             }
-        }
-    }
 
-    private void deleteLogEntry(boolean successfulRestore, String userId) {
-        if (successfulRestore) {
-            boolean deletion = lauService.deleteLogEntry(userId);
-            if (deletion) {
-                summary.addSuccess(userId);
-            }
-        } else {
-            summary.addFailedRestore(userId);
+            restoreSummary.setEndTime();
         }
     }
 }

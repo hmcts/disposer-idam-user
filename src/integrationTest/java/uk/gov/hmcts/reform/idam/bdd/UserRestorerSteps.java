@@ -1,61 +1,61 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
+import uk.gov.hmcts.reform.idam.service.LauIdamUserService;
 import uk.gov.hmcts.reform.idam.util.Constants;
+import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserRestorerSteps extends WireMockStubs {
 
     @Autowired
     private IdamUserRestorerService service;
 
+    @Autowired
+    private LauIdamUserService lauIdamUserService;
+
+    @Autowired
+    private RestoreSummary restoreSummary;
+
     @Given("lau api returns a list of users to restore")
     public void lauIdamReturnsListOfUsersToRestore() {
-        setupWireMock(true);
-        setupLauApiStubs();
-    }
-
-    @Then("user restorer should call IdAM api to restore users")
-    public void userRestorerShouldCallIdamApiToRestoreUsers() {
-        setupIdamRestoreStub(201, null);
-        service.run();
-        wiremock.verify(1, getRequestedFor(urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH)));
-        wiremock.verify(4, postRequestedFor(urlPathMatching(Constants.STALE_USERS_PATH + "/0000[1-4]")));
-    }
-
-    @Then("user restorer should call lau api to delete log entries of deletion")
-    public void userRestorerShouldCallLauIdamApiToDeleteLogEntriesOfDeletion() {
-        wiremock.verify(
-            4,
-            deleteRequestedFor(
-                urlMatching(Constants.LAU_DELETE_LOG_ENTRY_PATH + "\\?userId=0000[1-4]")
-            )
-        );
-    }
-
-    @And("IdAM api fails to restore with status code {int} and message {string}")
-    public void idamApiFailsToRestoreWithResponse(int statusCode, String message) {
         wiremock.resetAll();
         setupWireMock();
         setupLauApiStubs();
-        setupIdamRestoreStub(statusCode, message.isEmpty() ? null : message);
+        setupIdamRestoreStub(201, null);
+    }
+
+    @Given("lau api returns paged results")
+    public void lauApiReturnsPagedResults() {
+        wiremock.resetAll();
+        setupWireMock();
+        setupPagedLauApiStubs();
+        setupIdamRestoreStub(201, null);
+    }
+
+    @When("restore service runs")
+    public void restoreServiceRuns() {
         service.run();
     }
 
-    @Then("user restorer should NOT call lau api to delete log entries")
-    public void userRestorerShouldNotCallLauIdamApiToDeleteLogEntries() {
-        wiremock.verify(0, deleteRequestedFor(urlPathEqualTo(Constants.LAU_DELETE_LOG_ENTRY_PATH)));
+    @Then("there should be {int} calls to fetch deleted users")
+    public void thereShouldBeCallsToFetchDeletedUsers(int numberOfCalls) {
+        wiremock.verify(numberOfCalls, getRequestedFor(urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH)));
+    }
+
+    @Then("user restorer should call IdAM api to restore {int} users")
+    public void userRestorerShouldCallIdamApiToRestoreUsers(int numberToRestore) {
+        wiremock.verify(numberToRestore, postRequestedFor(urlPathMatching(Constants.STALE_USERS_PATH + "/0000[1-4]")));
     }
 
     @Given("requests limit set to {int}")
@@ -66,13 +66,25 @@ public class UserRestorerSteps extends WireMockStubs {
         setupIdamRestoreStub(201, null);
 
         ReflectionTestUtils.setField(service, "requestsLimit", requestLimit);
-        ReflectionTestUtils.setField(service, "batchSize", 2);
-        service.run();
+        ReflectionTestUtils.setField(lauIdamUserService, "batchSize", 2);
     }
 
     @Then("there should be {int} requests to lau api")
     public void thereShouldBeRequestsToLauIdAM(int requestNumber) {
-        wiremock.verify(10, getRequestedFor(urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH)));
-        wiremock.verify(10, postRequestedFor(urlPathEqualTo(Constants.STALE_USERS_PATH + "/00001")));
+        wiremock.verify(requestNumber, getRequestedFor(urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH)));
+        wiremock.verify(requestNumber, postRequestedFor(urlPathEqualTo(Constants.STALE_USERS_PATH + "/00001")));
+    }
+
+    @Then("summary should have successful restore of size {int} and failed of size {int}")
+    public void summaryShouldHaveSuccessfulRestoreOfSize(int successes, int failures) {
+        assertThat(restoreSummary.getSuccessful()).hasSize(successes);
+        assertThat(restoreSummary.getFailed()).hasSize(failures);
+    }
+
+    @Given("IdAM api responds with {int} error to user restore call")
+    public void idamApiRespondsWithErrorToEndpointPostCall(int errorCode) {
+        wiremock.resetRequests();
+        setupWireMock();
+        setupIdamRestoreStub(errorCode, "Bad Request");
     }
 }
