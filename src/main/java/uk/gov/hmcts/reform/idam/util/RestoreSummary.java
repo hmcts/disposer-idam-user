@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 public class RestoreSummary {
 
+    private int totalProcessed;
     private final List<String> successful = new LinkedList<>();
     private final List<String> failed = new LinkedList<>();
     private final List<String> failedToRestoreDueToReinstatedAndActiveAccount = new LinkedList<>();
@@ -20,6 +21,10 @@ public class RestoreSummary {
     private long startTime;
     private long endTime;
 
+
+    public void addProcessedNumber(int batch) {
+        totalProcessed += batch;
+    }
 
     public void addSuccess(String userId) {
         successful.add(userId);
@@ -51,5 +56,13 @@ public class RestoreSummary {
 
     public void setEndTime() {
         endTime = System.currentTimeMillis();
+    }
+
+    public int getTotalFailed() {
+        return failed.size()
+            + failedToRestoreDueToReinstatedAndActiveAccount.size()
+            + failedToRestoreDueToReinstatedAccount.size()
+            + failedToRestoreDueToNewAccountWithSameEmail.size()
+            + failedToRestoreDueToDuplicateEmail.size();
     }
 }
