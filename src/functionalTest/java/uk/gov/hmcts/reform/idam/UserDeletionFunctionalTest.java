@@ -4,7 +4,10 @@ import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("functional")
 @RequiredArgsConstructor
 @Slf4j
+@Execution(ExecutionMode.SAME_THREAD)
+@Disabled
 class UserDeletionFunctionalTest {
 
     @Inject

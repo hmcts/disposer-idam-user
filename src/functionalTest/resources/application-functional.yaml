@@ -29,7 +29,7 @@ lau:
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
-  restorer_enabled: ${IDAM_USER_RESTORER_ENABLED:true}
+  restorer_enabled: ${IDAM_USER_RESTORER_ENABLED:false}
 
 restorer:
   batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
