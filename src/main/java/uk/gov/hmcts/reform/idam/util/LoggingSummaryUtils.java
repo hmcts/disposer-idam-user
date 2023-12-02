@@ -130,6 +130,10 @@ public class LoggingSummaryUtils {
             Total failed users:                             | ${totalFailed}
 
             -------------------------------------------------------------------
+            Requests made:                                  | ${requestsMade}
+            Start page:                                     | ${startPage}
+            Page size:                                      | ${batchSize}
+            -------------------------------------------------------------------
             Total 409 due to user id conflict:              | ${conflictUserId}
             Total 409 due to archived user id conflict:     | ${conflictArchivedUserId}
             Total 409 due to email conflict:                | ${conflictEmail}
@@ -150,6 +154,9 @@ public class LoggingSummaryUtils {
         valueMappings.put("conflictArchivedEmail", summary.getFailedToRestoreDueToDuplicateEmail().size());
         valueMappings.put("failedOther", summary.getFailed().size());
         valueMappings.put("totalFailed", summary.getTotalFailed());
+        valueMappings.put("requestsMade", summary.getRequestsMade());
+        valueMappings.put("startPage", summary.getStartPage());
+        valueMappings.put("batchSize", summary.getBatchSize());
 
         return format(template, valueMappings);
     }

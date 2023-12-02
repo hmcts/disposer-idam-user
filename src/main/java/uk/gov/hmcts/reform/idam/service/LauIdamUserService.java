@@ -27,7 +27,9 @@ public class LauIdamUserService {
 
     @Value("${restorer.batch.size}")
     private int batchSize;
-    private int page = 1;
+
+    @Value("${restorer.start.page}")
+    private int page;
     private boolean hasMoreRecords = true;
 
     public List<DeletionLog> fetchDeletedUsers() {

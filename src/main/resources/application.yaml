@@ -43,6 +43,7 @@ lau:
 restorer:
   batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
   requests.limit: ${DISPOSER_RESTORER_REQUESTS_LIMIT:1}
+  start.page: ${DISPOSER_RESTORER_START_PAGE:1}
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

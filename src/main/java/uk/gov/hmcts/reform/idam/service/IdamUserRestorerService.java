@@ -37,7 +37,7 @@ public class IdamUserRestorerService {
         while (lauService.hasMoreRecords() && requestsMade < requestsLimit) {
             List<DeletionLog> deletedUsers = lauService.fetchDeletedUsers();
             log.info("Fetched deleted users {}", deletedUsers.stream().map(DeletionLog::getUserId).toList());
-            requestsMade++;
+            restoreSummary.addRequestsMade(requestsMade++);
 
             if (deletedUsers.isEmpty()) {
                 break;
