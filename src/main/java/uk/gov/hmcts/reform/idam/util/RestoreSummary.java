@@ -54,7 +54,7 @@ public class RestoreSummary {
         failedToRestoreDueToNewAccountWithSameEmail.add(userId);
     }
 
-    public void addRequestsMade(int requestsMade){
+    public void addRequestsMade(int requestsMade) {
         this.requestsMade = requestsMade;
     }
 

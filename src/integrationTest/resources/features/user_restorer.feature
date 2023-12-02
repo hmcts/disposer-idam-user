@@ -21,7 +21,13 @@ Feature: User restorer
     When restore service runs
     Then summary should have successful restore of size 0 and failed of size 4
 
+  Scenario: User restorer starts on specific page
+    Given requests limit set to 2
+    And starting page set to 5
+    When restore service runs
+    Then there should be 2 requests to lau api starting with page 5
+
   Scenario: User restorer makes limited number of requests
     Given requests limit set to 10
     When restore service runs
-    Then there should be 10 requests to lau api
+    Then there should be 10 requests to lau api starting with page 1
