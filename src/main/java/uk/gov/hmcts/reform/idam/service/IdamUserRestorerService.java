@@ -33,11 +33,16 @@ public class IdamUserRestorerService {
 
         securityUtil.generateTokens();
         int requestsMade = 0;
-
+        int startPage = restoreSummary.getStartPage();
         while (lauService.hasMoreRecords() && requestsMade < requestsLimit) {
             List<DeletionLog> deletedUsers = lauService.fetchDeletedUsers();
-            log.info("Fetched deleted users {}", deletedUsers.stream().map(DeletionLog::getUserId).toList());
-            requestsMade++;
+            int currentPage = startPage + requestsMade;
+            log.info(
+                "[Page {}] Fetched deleted users {}",
+                currentPage,
+                deletedUsers.stream().map(DeletionLog::getUserId).toList()
+            );
+            restoreSummary.addRequestsMade(++requestsMade);
 
             if (deletedUsers.isEmpty()) {
                 break;
@@ -48,10 +53,9 @@ public class IdamUserRestorerService {
             for (DeletionLog deletionLog : deletedUsers) {
                 restoreService.restoreUser(deletionLog);
             }
-
-            restoreSummary.setEndTime();
         }
 
+        restoreSummary.setEndTime();
         log.info(summaryUtils.createRestorerStatistics(restoreSummary));
     }
 }

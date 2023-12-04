@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -114,9 +115,14 @@ class IdamUserRestorerServiceTest {
         when(lauService.fetchDeletedUsers()).thenReturn(List.of(log, log));
 
         service.run();
+        verify(restoreSummary, times(1)).setStartTime();
 
         verify(lauService, times(10)).fetchDeletedUsers();
         verify(restoreService, times(20)).restoreUser(any());
+
         verify(loggingUtils, times(1)).createRestorerStatistics(any());
+        verify(restoreSummary, times(1)).setEndTime();
+
+        assertThat(restoreSummary.getRequestsMade()).isEqualTo(10);
     }
 }

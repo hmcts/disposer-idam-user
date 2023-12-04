@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.idam.service.LauIdamUserService;
 import uk.gov.hmcts.reform.idam.util.Constants;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -69,12 +70,6 @@ public class UserRestorerSteps extends WireMockStubs {
         ReflectionTestUtils.setField(lauIdamUserService, "batchSize", 2);
     }
 
-    @Then("there should be {int} requests to lau api")
-    public void thereShouldBeRequestsToLauIdAM(int requestNumber) {
-        wiremock.verify(requestNumber, getRequestedFor(urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH)));
-        wiremock.verify(requestNumber, postRequestedFor(urlPathEqualTo(Constants.STALE_USERS_PATH + "/00001")));
-    }
-
     @Then("summary should have successful restore of size {int} and failed of size {int}")
     public void summaryShouldHaveSuccessfulRestoreOfSize(int successes, int failures) {
         assertThat(restoreSummary.getSuccessful()).hasSize(successes);
@@ -86,5 +81,27 @@ public class UserRestorerSteps extends WireMockStubs {
         wiremock.resetRequests();
         setupWireMock();
         setupIdamRestoreStub(errorCode, "Bad Request");
+    }
+
+    @When("starting page set to {int}")
+    public void startingPageSetTo(int startingPage) {
+        wiremock.resetRequests();
+        setupWireMock();
+        setupLauIdamApiStubToReturnMoreRecords();
+        setupIdamRestoreStub(201, null);
+
+        ReflectionTestUtils.setField(lauIdamUserService, "batchSize", 2);
+        ReflectionTestUtils.setField(lauIdamUserService, "page", startingPage);
+    }
+
+    @Then("there should be {int} requests to lau api starting with page {int}")
+    public void thereShouldBeRequestsToLauApiStartingWithPage(int requestNumber, int startingPage) {
+        for (int i = 0; i < requestNumber; i++) {
+            wiremock.verify(1, getRequestedFor(
+                urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
+                .withQueryParam("page", equalTo(String.valueOf(startingPage + i)))
+            );
+        }
+
     }
 }

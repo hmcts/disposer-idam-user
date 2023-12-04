@@ -98,6 +98,9 @@ class LoggingSummaryUtilsTest {
             .containsIgnoringWhitespaces("Total 409 due to archived user id conflict: | 3")
             .containsIgnoringWhitespaces("Total 409 due to email conflict: | 2")
             .containsIgnoringWhitespaces("Total 409 due to archived email conflict: | 1")
-            .containsIgnoringWhitespaces("Total failed due to other reasons: | 0");
+            .containsIgnoringWhitespaces("Total failed due to other reasons: | 0")
+            .containsIgnoringWhitespaces("Requests made: | 0")
+            .containsIgnoringWhitespaces("Start page: | 0")
+            .containsIgnoringWhitespaces("Page size: | 0");
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.idam.util;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -17,6 +18,13 @@ public class RestoreSummary {
     private final List<String> failedToRestoreDueToReinstatedAccount = new LinkedList<>();
     private final List<String> failedToRestoreDueToNewAccountWithSameEmail = new LinkedList<>();
     private final List<String> failedToRestoreDueToDuplicateEmail = new LinkedList<>();
+    private int requestsMade;
+
+    @Value("${restorer.start.page}")
+    private int startPage;
+
+    @Value("${restorer.batch.size}")
+    private int batchSize;
 
     private long startTime;
     private long endTime;
@@ -44,6 +52,10 @@ public class RestoreSummary {
 
     public void addFailedToRestoreDueToNewAccountWithSameEmail(String userId) {
         failedToRestoreDueToNewAccountWithSameEmail.add(userId);
+    }
+
+    public void addRequestsMade(int requestsMade) {
+        this.requestsMade = requestsMade;
     }
 
     public void addFailedToRestoreDueToDuplicateEmail(String userId) {
