@@ -48,17 +48,18 @@ public class RestoreUserService {
     private void callApi(String userId, RestoreUserRequest requestBody) throws IOException {
         String authHeader = idamTokenGenerator.getIdamAuthorizationHeader();
         try (Response response = idamClient.restoreUser(authHeader, userId, requestBody)) {
-            parsePotentialConflicts(response, userId);
+            String json = IOUtils.toString(response.body().asInputStream(), UTF_8);
+            final HttpStatus httpStatus = HttpStatus.valueOf(response.status());
+            restoreSummary.addRestoredUserResponse(userId, json);
+            parsePotentialConflicts(json, userId, httpStatus);
         }
     }
 
-    private void parsePotentialConflicts(Response response, String userId) throws IOException {
-        HttpStatus status = HttpStatus.valueOf(response.status());
-
+    private void parsePotentialConflicts(String json, String userId, HttpStatus status) throws IOException {
         if (status == HttpStatus.CREATED) {
             restoreSummary.addSuccess(userId);
         } else if (status == HttpStatus.CONFLICT) {
-            String json = IOUtils.toString(response.body().asInputStream(), UTF_8);
+
             var errorResponse = new ObjectMapper().readValue(json, IdamCreateUserErrorResponse.class);
             String errorDescription = errorResponse.getErrorDescription();
             logPotentialErrorAndUpdateSummary(userId, errorDescription);
@@ -97,8 +98,8 @@ public class RestoreUserService {
         return RestoreUserRequest.builder()
             .id(deletionLog.getUserId())
             .email(deletionLog.getEmailAddress())
-            .firstName(deletionLog.getFirstName())
-            .lastName(deletionLog.getLastName())
+            .forename(deletionLog.getFirstName())
+            .surname(deletionLog.getLastName())
             .roles(List.of("citizen"))
             .build();
     }

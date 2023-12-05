@@ -58,11 +58,12 @@ class RestoreUserServiceTest {
     }
 
     @Test
-    void restoreUserShouldCallIdamClientToRestoreUser() {
+    void restoreUserShouldCallIdamClientToRestoreUser() throws IOException {
         String userId = "00001";
         final DeletionLog deletionLog = createDeletionLog(userId);
         when(response.status()).thenReturn(HttpStatus.CREATED.value());
         when(idamClient.restoreUser(anyString(), anyString(), any())).thenReturn(response);
+        mockBodyWithMessage("hello");
 
         restoreUserService.restoreUser(deletionLog);
 
@@ -72,8 +73,8 @@ class RestoreUserServiceTest {
 
         assertThat(request.getId()).isEqualTo("00001");
         assertThat(request.getEmail()).isEqualTo(deletionLog.getEmailAddress());
-        assertThat(request.getFirstName()).isEqualTo(deletionLog.getFirstName());
-        assertThat(request.getLastName()).isEqualTo(deletionLog.getLastName());
+        assertThat(request.getForename()).isEqualTo(deletionLog.getFirstName());
+        assertThat(request.getSurname()).isEqualTo(deletionLog.getLastName());
         assertThat(request.getRoles()).hasSize(1);
         assertThat(request.getRoles().get(0)).isEqualTo("citizen");
 
@@ -137,12 +138,13 @@ class RestoreUserServiceTest {
     }
 
     @Test
-    void restoreUserReturnsErrorShouldNotLogSuccess()  {
+    void restoreUserReturnsErrorShouldNotLogSuccess() throws IOException {
         final DeletionLog deletionLog = createDeletionLog("0001");
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer 01");
         when(response.status()).thenReturn(HttpStatus.BAD_REQUEST.value());
-
         when(idamClient.restoreUser(anyString(), anyString(), any())).thenReturn(response);
+
+        mockBodyWithMessage("hello");
 
         restoreUserService.restoreUser(deletionLog);
 
