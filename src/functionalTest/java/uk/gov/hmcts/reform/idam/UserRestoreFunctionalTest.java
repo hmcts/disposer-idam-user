@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.idam;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,15 @@ import uk.gov.hmcts.reform.idam.helpers.LauDeletionLogEntryProvider;
 import uk.gov.hmcts.reform.idam.helpers.LauIdamBackendServiceProvider;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
+import uk.gov.hmcts.reform.idam.service.remote.responses.RestoredUserFullObject;
+import uk.gov.hmcts.reform.idam.service.remote.responses.RestoredUserResponse;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 
@@ -49,10 +54,11 @@ class UserRestoreFunctionalTest {
 
     @Test
     @DirtiesContext
-    void givenDeletedUserExistsThenShouldAbleToRestoreDeletedUsers() {
+    void givenDeletedUserExistsThenShouldAbleToRestoreDeletedUsers() throws IOException {
         List<DeletionLog> lauDeletionLogs = lauDeletionLogEntryProvider.createDeletionLogLau();
         assertEquals("Deletion Log entry has not created", 1, lauDeletionLogs.size());
-        logEntryUserIds.add(lauDeletionLogs.get(0).getUserId());
+        final String userId = lauDeletionLogs.get(0).getUserId();
+        logEntryUserIds.add(userId);
 
         idamUserRestoreService.run();
 
@@ -61,6 +67,18 @@ class UserRestoreFunctionalTest {
                 List<String> userIds = restoreSummary.getSuccessful();
                 assertEquals("User has not been restored successfully", 1, userIds.size());
             });
+
+        final String json = restoreSummary.getIdamDeletionResponse().get(userId);
+        var restoredUserResponse = new ObjectMapper().readValue(json, RestoredUserResponse.class);
+        final RestoredUserFullObject restoredUserFullObject = new ObjectMapper().readValue(
+            restoredUserResponse.getFullObject(),
+            RestoredUserFullObject.class
+        );
+
+        assertThat(restoredUserFullObject.getForename()).isEqualTo(lauDeletionLogs.get(0).getFirstName());
+        assertThat(restoredUserFullObject.getSurname()).isEqualTo(lauDeletionLogs.get(0).getLastName());
+        assertThat(restoredUserFullObject.getEmail()).isEqualTo(lauDeletionLogs.get(0).getEmailAddress());
+        assertThat(restoredUserFullObject.getUserName()).isEqualTo(lauDeletionLogs.get(0).getEmailAddress());
     }
 
     @Test

@@ -11,7 +11,7 @@ public class RestoreUserRequest {
 
     private String id;
     private String email;
-    private String firstName;
-    private String lastName;
+    private String forename;
+    private String surname;
     private List<String> roles;
 }

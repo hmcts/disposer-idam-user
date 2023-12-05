@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Getter
@@ -19,6 +21,7 @@ public class RestoreSummary {
     private final List<String> failedToRestoreDueToNewAccountWithSameEmail = new LinkedList<>();
     private final List<String> failedToRestoreDueToDuplicateEmail = new LinkedList<>();
     private int requestsMade;
+    private Map<String, String> idamDeletionResponse = new ConcurrentHashMap<>();
 
     @Value("${restorer.start.page}")
     private int startPage;
@@ -40,6 +43,10 @@ public class RestoreSummary {
 
     public void addFailed(String userId) {
         failed.add(userId);
+    }
+
+    public void addRestoredUserResponse(String userId, String response) {
+        idamDeletionResponse.put(userId, response);
     }
 
     public void addFailedToRestoreDueToReinstatedAndActiveAccount(String userId) {
