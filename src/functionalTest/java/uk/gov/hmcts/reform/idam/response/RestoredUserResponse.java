@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.idam.service.remote.responses;
+package uk.gov.hmcts.reform.idam.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

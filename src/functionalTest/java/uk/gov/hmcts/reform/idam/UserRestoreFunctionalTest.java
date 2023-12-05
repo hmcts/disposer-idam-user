@@ -14,10 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.idam.helpers.IdamUserDataProvider;
 import uk.gov.hmcts.reform.idam.helpers.LauDeletionLogEntryProvider;
 import uk.gov.hmcts.reform.idam.helpers.LauIdamBackendServiceProvider;
+import uk.gov.hmcts.reform.idam.response.RestoredUserFullObject;
+import uk.gov.hmcts.reform.idam.response.RestoredUserResponse;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
-import uk.gov.hmcts.reform.idam.service.remote.responses.RestoredUserFullObject;
-import uk.gov.hmcts.reform.idam.service.remote.responses.RestoredUserResponse;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
 
 import java.io.IOException;
