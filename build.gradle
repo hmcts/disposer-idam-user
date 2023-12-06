@@ -210,6 +210,10 @@ dependencyManagement {
       entry 'spring-cloud-openfeign-core'
       entry 'spring-cloud-starter-contract-stub-runner'
     }
+    dependencySet(group: 'ch.qos.logback', version: '1.4.14') {
+      entry 'logback-core'
+      entry 'logback-classic'
+    }
   }
   imports {
     mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2022.0.4'
