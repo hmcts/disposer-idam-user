@@ -205,7 +205,7 @@ dependencyCheck {
 
 dependencyManagement {
   dependencies {
-    dependencySet(group: 'org.springframework.cloud', version: '4.0.4') {
+    dependencySet(group: 'org.springframework.cloud', version: '4.1.0') {
       entry 'spring-cloud-starter-openfeign'
       entry 'spring-cloud-openfeign-core'
       entry 'spring-cloud-starter-contract-stub-runner'
