@@ -31,7 +31,7 @@ public class SecurityUtil {
         serviceTokenGenerator.generateServiceToken();
     }
 
-    public void generateTokens(){
+    public void generateTokens() {
         generateIdamTokens();
         generateServiceToken();
     }
