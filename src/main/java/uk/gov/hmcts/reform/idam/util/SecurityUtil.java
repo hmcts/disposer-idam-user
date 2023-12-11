@@ -19,10 +19,20 @@ public class SecurityUtil {
     private final IdamTokenGenerator idamTokenGenerator;
 
     @Scheduled(initialDelay = 55, fixedRate = 55, timeUnit = TimeUnit.MINUTES)
-    public void generateTokens() {
-        log.info("Security Util Generate token has been called");
+    public void generateIdamTokens() {
+        log.info("Security Util Generate Idam token has been called");
         idamTokenGenerator.generateIdamToken();
         idamTokenGenerator.generatePasswordTypeToken();
+    }
+
+    @Scheduled(initialDelay = 237, fixedRate = 237, timeUnit = TimeUnit.MINUTES)
+    public void generateServiceToken() {
+        log.info("Security Util Generate Service token has been called");
         serviceTokenGenerator.generateServiceToken();
+    }
+
+    public void generateTokens(){
+        generateIdamTokens();
+        generateServiceToken();
     }
 }
