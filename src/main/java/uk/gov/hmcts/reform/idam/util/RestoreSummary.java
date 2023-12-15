@@ -61,8 +61,8 @@ public class RestoreSummary {
         failedToRestoreDueToNewAccountWithSameEmail.add(userId);
     }
 
-    public void addRequestsMade(int requestsMade) {
-        this.requestsMade = requestsMade;
+    public void increaseRequestsMade() {
+        this.requestsMade++;
     }
 
     public void addFailedToRestoreDueToDuplicateEmail(String userId) {

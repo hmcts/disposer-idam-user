@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
-import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,9 +34,6 @@ class IdamUserDisposerServiceTest {
     private ParameterResolver parameterResolver;
 
     @Mock
-    private SecurityUtil securityUtil;
-
-    @Mock
     private LoggingSummaryUtils loggingSummaryUtils;
 
     @InjectMocks
@@ -56,7 +52,6 @@ class IdamUserDisposerServiceTest {
 
         service.run();
 
-        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());
@@ -77,7 +72,6 @@ class IdamUserDisposerServiceTest {
 
         service.run();
 
-        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(3)).fetchStaleUsers();
         verify(userRoleService, times(3)).filterUsersWithRoles(any());
         verify(deleteUserService, times(3)).deleteUsers(any());
@@ -98,7 +92,6 @@ class IdamUserDisposerServiceTest {
 
         service.run();
 
-        verify(securityUtil, times(1)).generateTokens();
         verify(staleUsersService, times(1)).fetchStaleUsers();
         verify(userRoleService, times(1)).filterUsersWithRoles(any());
         verify(deleteUserService, times(1)).deleteUsers(any());

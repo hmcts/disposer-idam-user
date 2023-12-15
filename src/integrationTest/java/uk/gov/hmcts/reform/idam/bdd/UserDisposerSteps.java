@@ -69,11 +69,11 @@ public class UserDisposerSteps extends WireMockStubs {
         assertThat(idamUserIds).isNotEmpty();
 
         wiremock.verify(getRequestedFor(urlPathEqualTo("/api/v1/staleUsers"))
-                .withHeader("Authorization", equalTo("Bearer " + dummyJwtToken)));
+                .withHeader("Authorization", equalTo("Bearer token")));
 
         wiremock.verify(postRequestedFor(urlPathEqualTo("/am/role-assignments/query"))
-                .withHeader("Authorization", equalTo("Bearer " + dummyJwtToken))
-                .withHeader("ServiceAuthorization", equalTo("Bearer " + dummyJwtToken)));
+                .withHeader("Authorization", equalTo("Bearer token"))
+                .withHeader("ServiceAuthorization", equalTo("dummy token")));
 
         assertThat(idamUserIds).doesNotContain(
                 "13e31622-edea-493c-8240-9b780c9d6001",

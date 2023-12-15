@@ -11,15 +11,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
 import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.RestoreSummary;
-import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class IdamUserRestorerServiceTest {
@@ -30,16 +28,13 @@ class IdamUserRestorerServiceTest {
     @Mock
     RestoreUserService restoreService;
 
-    @Mock
-    SecurityUtil securityUtil;
-
-    @Mock
-    LoggingSummaryUtils loggingUtils;
-
     @Spy
     RestoreSummary restoreSummary;
 
-    DeletionLog log = DeletionLog.builder().build();
+    @Mock
+    LoggingSummaryUtils summaryUtils;
+
+    DeletionLog deletionLog = DeletionLog.builder().build();
 
     @InjectMocks
     private IdamUserRestorerService service;
@@ -47,82 +42,33 @@ class IdamUserRestorerServiceTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(service, "requestsLimit", 10);
+        ReflectionTestUtils.setField(service, "batchSize", 1);
+        ReflectionTestUtils.setField(service, "startPage", 1);
     }
 
     @Test
-    void shouldRunAtLeastOnce() {
-        when(lauService.hasMoreRecords()).thenReturn(true).thenReturn(false);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of(log));
-
+    void shouldCallRetrieveDeletedUsers() {
         service.run();
 
-        verify(lauService, times(1)).fetchDeletedUsers();
+        verify(lauService, times(1)).retrieveDeletedUsers(service,10, 1, 1);
+        verify(summaryUtils, times(1)).createRestorerStatistics(any());
+    }
+
+    @Test
+    void consumeLauDeletedUsersShouldCallRestoreService() {
+        service.consumeLauDeletedUsers(List.of(deletionLog));
+
         verify(restoreService, times(1)).restoreUser(any());
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-
+        verify(restoreSummary, times(1)).increaseRequestsMade();
+        verify(restoreSummary, times(1)).addProcessedNumber(1);
     }
 
     @Test
-    void shouldRunMultipleTimes() {
-        when(lauService.hasMoreRecords()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of(log, log));
+    void consumeLauDeletedUsersShouldNotCallRestoreServiceOnEmptyList() {
+        service.consumeLauDeletedUsers(List.of());
 
-        service.run();
-
-        verify(lauService, times(2)).fetchDeletedUsers();
-        verify(restoreService, times(4)).restoreUser(any());
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-    }
-
-    @Test
-    void shouldNotCallDeleteLogEntryIfUnsuccessfulRestore() {
-        when(lauService.hasMoreRecords()).thenReturn(true).thenReturn(false);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of(log, log));
-
-        service.run();
-
-        verify(lauService, times(1)).fetchDeletedUsers();
-        verify(restoreService, times(2)).restoreUser(any());
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-    }
-
-    @Test
-    void shouldCallOnlyForSuccessfulRestore() {
-        when(lauService.hasMoreRecords()).thenReturn(true).thenReturn(false);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of(log, log));
-
-        service.run();
-
-        verify(lauService, times(1)).fetchDeletedUsers();
-        verify(restoreService, times(2)).restoreUser(any());
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-    }
-
-    @Test
-    void shouldStopIfLauDeletedUsersFetchReturnsEmpty() {
-        when(lauService.hasMoreRecords()).thenReturn(true).thenReturn(true);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of());
-
-        service.run();
-
-        verify(restoreService, times(0)).restoreUser(any());
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-    }
-
-    @Test
-    void shouldStopAfterRequestsLimitIsReached() {
-        when(lauService.hasMoreRecords()).thenReturn(true);
-        when(lauService.fetchDeletedUsers()).thenReturn(List.of(log, log));
-
-        service.run();
-        verify(restoreSummary, times(1)).setStartTime();
-
-        verify(lauService, times(10)).fetchDeletedUsers();
-        verify(restoreService, times(20)).restoreUser(any());
-
-        verify(loggingUtils, times(1)).createRestorerStatistics(any());
-        verify(restoreSummary, times(1)).setEndTime();
-
-        assertThat(restoreSummary.getRequestsMade()).isEqualTo(10);
+        verifyNoInteractions(restoreService);
+        verify(restoreSummary, times(1)).increaseRequestsMade();
+        verify(restoreSummary, times(1)).addProcessedNumber(0);
     }
 }

@@ -21,97 +21,37 @@ import java.util.regex.Pattern;
 public class LoggingSummaryUtils {
     private final ParameterResolver parameterResolver;
 
-    private static final String DOTTED_LINE = "-----------------------------------------------------------";
-    private static final String CR_STRING = "\r\n";
-    private static final String TAB_STRING = "| ";
-    private static final String FORMAT_STR_LENGTH_30 = "%1$-30s";
-    private static final String FORMAT_STR_LENGTH_10 = "%1$-10s";
-    private static final String SUMMARY_HEADING_STRING = "\r\nDisposer Idam User Summary : ";
-    private static final String DISPOSER_START_TIME = "\r\nDisposer Start Time : ";
-    private static final String DISPOSER_END_TIME = "\r\nDisposer End Time : ";
-    private static final String DISPOSER_EXECUTION_TIME = "\r\nDisposer Execution Time : ";
-    private static final String TOTAL_PROCESSED_USERS = "\r\nTotal Processed Users : ";
-    private static final String TOTAL_DELETED_USERS = "\r\nTotal Deleted Users : ";
-    private static final String TOTAL_ERRORED_DELETIONS = "\r\nFailed deletions :";
-    private static final String TOTAL_UNDELETED_USERS = "\r\nTotal Undeleted Users : ";
-    private static final String IS_SIMULATION_MODE = "\r\nIs Simulation Mode : ";
-    private static final String BATCH_SIZE = "\r\nBatch Size : ";
-    private static final String REQUEST_LIMIT = "\r\nRequest Limit : ";
-
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @SuppressWarnings("PMD.LawOfDemeter")
     public void logSummary(long startTime, long endTime, int processedUsers, int deletedUsers, int failedDeletions) {
-        StringBuilder stringBuilder = new StringBuilder(SUMMARY_HEADING_STRING);
+        final String template = """
+            Disposer Idam User Summary :
+            -----------------------------------------------------------
+            Disposer Start Time :       | ${startTime}
+            Disposer End Time :         | ${endTime}
+            Disposer Execution Time :   | ${executionDuration}
+            Total Processed Users :     | ${processedUsers}
+            Total Deleted Users :       | ${deletedUsers}
+            Failed deletions :          | ${failedDeletions}
+            Total Undeleted Users :     | ${undeletedUsers}
+            Is Simulation Mode :        | ${isSimulation}
+            Batch Size :                | ${batchSize}
+            Request Limit :             | ${requestLimit}
+            -----------------------------------------------------------
+            """;
+        final Map<String, Object> valueMappings = new ConcurrentHashMap<>();
+        valueMappings.put("startTime", dateFormat.format(new Date(startTime)));
+        valueMappings.put("endTime", dateFormat.format(new Date(endTime)));
+        valueMappings.put("executionDuration", getDurationFromLong(endTime - startTime));
+        valueMappings.put("processedUsers", processedUsers);
+        valueMappings.put("deletedUsers", deletedUsers - failedDeletions);
+        valueMappings.put("failedDeletions", failedDeletions);
+        valueMappings.put("undeletedUsers", processedUsers - deletedUsers);
+        valueMappings.put("isSimulation", parameterResolver.getIsSimulation());
+        valueMappings.put("batchSize", parameterResolver.getBatchSize());
+        valueMappings.put("requestLimit", parameterResolver.getRequestLimit());
 
-
-        stringBuilder
-            .append(CR_STRING)
-            .append(DOTTED_LINE)
-            .append(String.format(FORMAT_STR_LENGTH_30,DISPOSER_START_TIME))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,dateFormat.format(new Date(startTime))))
-            .append(String.format(FORMAT_STR_LENGTH_30,DISPOSER_END_TIME))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,dateFormat.format(new Date(endTime))))
-            .append(String.format(FORMAT_STR_LENGTH_30,DISPOSER_EXECUTION_TIME))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10, getDurationFromLong(endTime - startTime)))
-            .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_PROCESSED_USERS))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,processedUsers))
-
-            .append(String.format(FORMAT_STR_LENGTH_30, TOTAL_DELETED_USERS))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10, deletedUsers - failedDeletions))
-
-            .append(String.format(FORMAT_STR_LENGTH_30, TOTAL_ERRORED_DELETIONS))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10, failedDeletions))
-
-            .append(String.format(FORMAT_STR_LENGTH_30,TOTAL_UNDELETED_USERS))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,processedUsers - deletedUsers))
-            .append(String.format(FORMAT_STR_LENGTH_30,IS_SIMULATION_MODE))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,parameterResolver.getIsSimulation()))
-            .append(String.format(FORMAT_STR_LENGTH_30,BATCH_SIZE))
-            .append(TAB_STRING)
-            .append(String.format(FORMAT_STR_LENGTH_10,parameterResolver.getBatchSize()))
-            .append(String.format(FORMAT_STR_LENGTH_30,REQUEST_LIMIT))
-            .append(TAB_STRING)
-            .append(parameterResolver.getRequestLimit())
-            .append(CR_STRING)
-            .append(DOTTED_LINE);
-        log.info(stringBuilder.toString());
-    }
-
-    private static String format(String template, Map<String, Object> parameters) {
-        StringBuilder newTemplate = new StringBuilder(template);
-        List<Object> valueList = new ArrayList<>();
-
-        Matcher matcher = Pattern.compile("[$][{](\\w+)}").matcher(template);
-
-        while (matcher.find()) {
-            String key = matcher.group(1);
-
-            String paramName = "${" + key + "}";
-            int index = newTemplate.indexOf(paramName);
-            if (index != -1) {
-                newTemplate.replace(index, index + paramName.length(), "%s");
-                valueList.add(parameters.get(key));
-            }
-        }
-
-        return String.format(newTemplate.toString(), valueList.toArray());
-    }
-
-    @SuppressWarnings("PMD.LawOfDemeter")
-    public String getDurationFromLong(long duration) {
-        long hh = TimeUnit.MILLISECONDS.toHours(duration);
-        long mm = TimeUnit.MILLISECONDS.toMinutes(duration) % 60;
-        long ss = TimeUnit.MILLISECONDS.toSeconds(duration) % 60;
-        return String.format("%02d:%02d:%02d", hh, mm, ss);
+        log.info(format(template, valueMappings));
     }
 
     @SuppressWarnings("PMD.LawOfDemeter")
@@ -161,4 +101,31 @@ public class LoggingSummaryUtils {
         return format(template, valueMappings);
     }
 
+    private static String format(String template, Map<String, Object> parameters) {
+        StringBuilder newTemplate = new StringBuilder(template);
+        List<Object> valueList = new ArrayList<>();
+
+        Matcher matcher = Pattern.compile("[$][{](\\w+)}").matcher(template);
+
+        while (matcher.find()) {
+            String key = matcher.group(1);
+
+            String paramName = "${" + key + "}";
+            int index = newTemplate.indexOf(paramName);
+            if (index != -1) {
+                newTemplate.replace(index, index + paramName.length(), "%s");
+                valueList.add(parameters.get(key));
+            }
+        }
+
+        return String.format(newTemplate.toString(), valueList.toArray());
+    }
+
+    @SuppressWarnings("PMD.LawOfDemeter")
+    public String getDurationFromLong(long duration) {
+        long hh = TimeUnit.MILLISECONDS.toHours(duration);
+        long mm = TimeUnit.MILLISECONDS.toMinutes(duration) % 60;
+        long ss = TimeUnit.MILLISECONDS.toSeconds(duration) % 60;
+        return String.format("%02d:%02d:%02d", hh, mm, ss);
+    }
 }
