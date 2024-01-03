@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserLoggerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
 
@@ -26,6 +27,9 @@ class ApplicationExecutorTest {
     @Mock
     private IdamUserRestorerService idamUserRestorerService;
 
+    @Mock
+    private IdamDuplicateUserLoggerService idamDuplicateUserLoggerService;
+
     @InjectMocks
     private ApplicationExecutor executor;
 
@@ -35,6 +39,8 @@ class ApplicationExecutorTest {
         ReflectionTestUtils.setField(executor, "isRestorerEnabled", false);
         executor.run(applicationArguments);
         verify(idamUserDisposerService, times(1)).run();
+        verify(idamUserRestorerService, times(0)).run();
+        verify(idamDuplicateUserLoggerService, times(0)).run();
     }
 
     @Test
@@ -43,14 +49,29 @@ class ApplicationExecutorTest {
         ReflectionTestUtils.setField(executor, "isRestorerEnabled", true);
         executor.run(applicationArguments);
         verify(idamUserRestorerService, times(1)).run();
+        verify(idamUserDisposerService, times(0)).run();
+        verify(idamDuplicateUserLoggerService, times(0)).run();
     }
 
     @Test
     void shouldNotRunAnyIfBothDisabled() {
         ReflectionTestUtils.setField(executor, "isRestorerEnabled", false);
         ReflectionTestUtils.setField(executor, "isDisposerEnabled", false);
+        ReflectionTestUtils.setField(executor, "isDuplicateUserEnabled", false);
         executor.run(applicationArguments);
         verify(idamUserDisposerService, times(0)).run();
         verify(idamUserRestorerService, times(0)).run();
+        verify(idamDuplicateUserLoggerService, times(0)).run();
+    }
+
+    @Test
+    void shouldCallDuplicateUserService() {
+        ReflectionTestUtils.setField(executor, "isDisposerEnabled", false);
+        ReflectionTestUtils.setField(executor, "isRestorerEnabled", false);
+        ReflectionTestUtils.setField(executor, "isDuplicateUserEnabled", true);
+        executor.run(applicationArguments);
+        verify(idamUserRestorerService, times(0)).run();
+        verify(idamUserDisposerService, times(0)).run();
+        verify(idamDuplicateUserLoggerService, times(1)).run();
     }
 }

@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RestoreUserRequest;
+import uk.gov.hmcts.reform.idam.service.remote.responses.IdamQueryResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.util.Constants;
 
+import java.util.List;
 import java.util.Map;
 
 @FeignClient(name = "idamClient", url = "${idam.api.url}")
@@ -35,6 +37,15 @@ public interface IdamClient {
         @RequestHeader("Authorization") String authHeader,
         @PathVariable(name = "userId") String userId,
         @RequestBody RestoreUserRequest restoreUserRequest
+    );
+
+    @GetMapping(
+        value = Constants.IDAM_QUERY_PATH,
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE)
+    List<IdamQueryResponse> queryUser(
+        @RequestHeader("Authorization") String authHeader,
+        @RequestParam Map<String, String> queryParams
     );
 
     @DeleteMapping(

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
-import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,10 @@ public class IdamUserDisposerService {
     private final UserRoleService userRoleService;
     private final DeleteUserService deleteUserService;
     private final ParameterResolver parameterResolver;
-    private final SecurityUtil securityUtil;
     private final LoggingSummaryUtils loggingSummaryUtils;
 
     public List<String> run() {
         long disposerStartTime = System.currentTimeMillis();
-        securityUtil.generateTokens();
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
 

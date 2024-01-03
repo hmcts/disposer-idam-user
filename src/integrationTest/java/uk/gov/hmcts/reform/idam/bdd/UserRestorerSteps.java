@@ -67,7 +67,7 @@ public class UserRestorerSteps extends WireMockStubs {
         setupIdamRestoreStub(201, null);
 
         ReflectionTestUtils.setField(service, "requestsLimit", requestLimit);
-        ReflectionTestUtils.setField(lauIdamUserService, "batchSize", 2);
+        ReflectionTestUtils.setField(service, "batchSize", 2);
     }
 
     @Then("summary should have successful restore of size {int} and failed of size {int}")
@@ -90,8 +90,8 @@ public class UserRestorerSteps extends WireMockStubs {
         setupLauIdamApiStubToReturnMoreRecords();
         setupIdamRestoreStub(201, null);
 
-        ReflectionTestUtils.setField(lauIdamUserService, "batchSize", 2);
-        ReflectionTestUtils.setField(lauIdamUserService, "page", startingPage);
+        ReflectionTestUtils.setField(service, "batchSize", 2);
+        ReflectionTestUtils.setField(service, "startPage", startingPage);
     }
 
     @Then("there should be {int} requests to lau api starting with page {int}")

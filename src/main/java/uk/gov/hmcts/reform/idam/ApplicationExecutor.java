@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserLoggerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
+
 
 @Component
 @RequiredArgsConstructor
@@ -20,8 +22,12 @@ public class ApplicationExecutor implements ApplicationRunner {
     @Value("${service.restorer_enabled}")
     private boolean isRestorerEnabled;
 
+    @Value("${service.duplicate_user_enabled}")
+    private boolean isDuplicateUserEnabled;
+
     private final IdamUserDisposerService disposerService;
     private final IdamUserRestorerService restorerService;
+    private final IdamDuplicateUserLoggerService idamDuplicateUserLoggerService;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -34,6 +40,10 @@ public class ApplicationExecutor implements ApplicationRunner {
             log.info("Starting the Idam-Restorer job...");
             restorerService.run();
             log.info("Idam-Restorer job has completed!");
+        } else if (isDuplicateUserEnabled) {
+            log.info("Starting the Idam-Duplicate user job...");
+            idamDuplicateUserLoggerService.run();
+            log.info("Idam-Duplicate job has completed!");
         } else {
             log.info("Not running any Idam-Disposer job as all are disabled...");
         }
