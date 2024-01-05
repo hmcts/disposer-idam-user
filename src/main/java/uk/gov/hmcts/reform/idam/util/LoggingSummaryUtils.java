@@ -101,6 +101,27 @@ public class LoggingSummaryUtils {
         return format(template, valueMappings);
     }
 
+    public String createMergerStatistics(DuplicateUserSummary summary) {
+        final String template = """
+
+            User role assignments merger Summary:
+            -------------------------------------------------------------------
+            Merger start time:                            | ${startTime}
+            Merger end time:                              | ${endTime}
+            Total run time:                               | ${totalTime}
+            """;
+
+        final Map<String, Object> valueMappings = new ConcurrentHashMap<>();
+        final long executionTime  =  summary.getEndTime() - summary.getStartTime();
+        valueMappings.put("startTime", dateFormat.format(new Date(summary.getStartTime())));
+        valueMappings.put("endTime", dateFormat.format(new Date(summary.getEndTime())));
+        valueMappings.put("totalTime", getDurationFromLong(executionTime));
+
+
+        return format(template, valueMappings);
+
+    }
+
     private static String format(String template, Map<String, Object> parameters) {
         StringBuilder newTemplate = new StringBuilder(template);
         List<Object> valueList = new ArrayList<>();
@@ -128,4 +149,5 @@ public class LoggingSummaryUtils {
         long ss = TimeUnit.MILLISECONDS.toSeconds(duration) % 60;
         return String.format("%02d:%02d:%02d", hh, mm, ss);
     }
+
 }

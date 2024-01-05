@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
 import uk.gov.hmcts.reform.idam.service.remote.responses.IdamQueryResponse;
 import uk.gov.hmcts.reform.idam.util.DuplicateUserSummary;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-class IdamDuplicateUserLoggerServiceTest {
+class IdamDuplicateUserMergerServiceTest {
 
     @Mock
     LauIdamUserService lauService;
@@ -36,26 +37,32 @@ class IdamDuplicateUserLoggerServiceTest {
     @Mock
     IdamTokenGenerator idamTokenGenerator;
 
-    @Captor
-    ArgumentCaptor<Map<String, String>> queryParamCaptor;
-
     @Mock
     IdamClient idamClient;
 
+    @Mock
+    UserRoleService userRoleService;
+
+    @Mock
+    LoggingSummaryUtils summaryUtils;
+
+    @Captor
+    ArgumentCaptor<Map<String, String>> queryParamCaptor;
+
     @InjectMocks
-    IdamDuplicateUserLoggerService duplicateUserLoggerService;
+    IdamDuplicateUserMergerService duplicateUserMergerService;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(duplicateUserLoggerService, "requestsLimit", 10);
-        ReflectionTestUtils.setField(duplicateUserLoggerService, "batchSize", 1);
-        ReflectionTestUtils.setField(duplicateUserLoggerService, "startPage", 1);
+        ReflectionTestUtils.setField(duplicateUserMergerService, "requestsLimit", 10);
+        ReflectionTestUtils.setField(duplicateUserMergerService, "batchSize", 1);
+        ReflectionTestUtils.setField(duplicateUserMergerService, "startPage", 1);
     }
 
     @Test
     void runShouldCallRetrieveDeletedUsers() {
-        duplicateUserLoggerService.run();
-        verify(lauService, times(1)).retrieveDeletedUsers(duplicateUserLoggerService, 10, 1, 1);
+        duplicateUserMergerService.run();
+        verify(lauService, times(1)).retrieveDeletedUsers(duplicateUserMergerService, 10, 1, 1);
         verify(duplicateUserSummary, times(1)).setStartTime();
         verify(duplicateUserSummary, times(1)).setEndTime();
     }
@@ -67,7 +74,7 @@ class IdamDuplicateUserLoggerServiceTest {
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("header");
         when(idamClient.queryUser(anyString(), anyMap())).thenReturn(idamQueryResponses);
 
-        duplicateUserLoggerService.consumeLauDeletedUsers(logs);
+        duplicateUserMergerService.consumeLauDeletedUsers(logs);
 
         verify(idamClient, times(1)).queryUser(anyString(), queryParamCaptor.capture());
         assertThat(queryParamCaptor.getValue()).containsEntry("query", "email:" + logs.get(0).getEmailAddress());
@@ -84,7 +91,7 @@ class IdamDuplicateUserLoggerServiceTest {
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("header");
         when(idamClient.queryUser(anyString(), anyMap())).thenReturn(idamQueryResponses);
 
-        duplicateUserLoggerService.consumeLauDeletedUsers(logs);
+        duplicateUserMergerService.consumeLauDeletedUsers(logs);
 
         verify(idamClient, times(1)).queryUser(anyString(), queryParamCaptor.capture());
         assertThat(queryParamCaptor.getValue()).containsEntry("query", "email:" + logs.get(0).getEmailAddress());
@@ -98,7 +105,7 @@ class IdamDuplicateUserLoggerServiceTest {
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("header");
         when(idamClient.queryUser(anyString(), anyMap())).thenReturn(idamQueryResponses);
 
-        duplicateUserLoggerService.consumeLauDeletedUsers(logs);
+        duplicateUserMergerService.consumeLauDeletedUsers(logs);
 
         verify(idamClient, times(1)).queryUser(anyString(), queryParamCaptor.capture());
         assertThat(queryParamCaptor.getValue()).containsEntry("query", "email:" + logs.get(0).getEmailAddress());
@@ -112,7 +119,7 @@ class IdamDuplicateUserLoggerServiceTest {
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("header");
         when(idamClient.queryUser(anyString(), anyMap())).thenReturn(idamQueryResponses);
 
-        duplicateUserLoggerService.consumeLauDeletedUsers(logs);
+        duplicateUserMergerService.consumeLauDeletedUsers(logs);
 
         verify(idamClient, times(1)).queryUser(anyString(), queryParamCaptor.capture());
         assertThat(queryParamCaptor.getValue()).containsEntry("query", "email:" + logs.get(0).getEmailAddress());
@@ -130,7 +137,7 @@ class IdamDuplicateUserLoggerServiceTest {
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("header");
         when(idamClient.queryUser(anyString(), anyMap())).thenReturn(response);
 
-        duplicateUserLoggerService.consumeLauDeletedUsers(logs);
+        duplicateUserMergerService.consumeLauDeletedUsers(logs);
 
         verify(idamClient, times(3)).queryUser(anyString(), queryParamCaptor.capture());
         assertThat(queryParamCaptor.getAllValues().get(0))

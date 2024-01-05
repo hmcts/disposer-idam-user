@@ -154,7 +154,7 @@ public class WireMockStubs {
             // pretend that 001, 002, 010 and 023 still have assigned roles
             wiremock.stubFor(
                     WireMock
-                            .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_PATH))
+                            .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_QUERY_PATH))
                             .withRequestBody(WireMock.matchingJsonPath(
                                             "$.queryRequests[0].actorId",
                                             WireMock.containing(getMatchingActorId(i + 1))

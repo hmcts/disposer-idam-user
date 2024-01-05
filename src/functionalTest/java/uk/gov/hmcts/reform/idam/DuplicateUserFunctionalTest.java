@@ -10,7 +10,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserLoggerService;
+import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserMergerService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,14 +22,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DuplicateUserFunctionalTest {
 
     @Inject
-    IdamDuplicateUserLoggerService idamDuplicateUserLoggerService;
+    IdamDuplicateUserMergerService idamDuplicateUserMergerService;
 
 
     @Test
     @DirtiesContext
     void givenDeletedUserExistsThenShouldAbleToRestoreDeletedUsers() {
 
-        idamDuplicateUserLoggerService.run();
+        idamDuplicateUserMergerService.run();
         assertThat(true).isTrue();
     }
 }

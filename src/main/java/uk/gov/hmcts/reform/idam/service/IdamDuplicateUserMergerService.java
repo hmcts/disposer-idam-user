@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
 import uk.gov.hmcts.reform.idam.service.remote.responses.IdamQueryResponse;
 import uk.gov.hmcts.reform.idam.util.DuplicateUserSummary;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ import static uk.gov.hmcts.reform.idam.util.Constants.QUERY_SIZE;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class IdamDuplicateUserLoggerService implements LauDeletedUsersConsumer {
+public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
 
     @Value("${duplicate-user-logger.requests.limit}")
     private int requestsLimit;
@@ -35,11 +36,14 @@ public class IdamDuplicateUserLoggerService implements LauDeletedUsersConsumer {
     private final DuplicateUserSummary duplicateUserSummary;
     private final IdamTokenGenerator idamTokenGenerator;
     private final IdamClient idamClient;
+    private final UserRoleService userRoleService;
+    private final LoggingSummaryUtils summaryUtils;
 
     public void run() {
         duplicateUserSummary.setStartTime();
         lauService.retrieveDeletedUsers(this, requestsLimit, batchSize, startPage);
         duplicateUserSummary.setEndTime();
+        log.info(summaryUtils.createMergerStatistics(duplicateUserSummary));
     }
 
     @Override
@@ -66,7 +70,7 @@ public class IdamDuplicateUserLoggerService implements LauDeletedUsersConsumer {
                 checkIfMatches(response.get(0), deletionLog);
             }
         } catch (FeignException fe) {
-            log.error("=======", fe);
+            log.error(fe.getMessage(), fe);
             //TODO: do something meaningful
         }
     }
@@ -78,6 +82,7 @@ public class IdamDuplicateUserLoggerService implements LauDeletedUsersConsumer {
         } else {
             log.warn("Ids do not match, deleted {}, existing {}", deletionLog.getUserId(), queryResponse.getId());
             duplicateUserSummary.increaseEmailMultipleIds();
+            userRoleService.mergeRoleAssignments(deletionLog.getUserId(), queryResponse.getId());
         }
     }
 }

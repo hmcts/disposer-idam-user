@@ -23,6 +23,9 @@ public class DuplicateUserSummary {
     // Users that have different id in idam on the same email - expected around 5-6k
     private int multipleIdsOnEmail;
 
+    // Users that failed to merge
+    private int failedMerge;
+
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }
@@ -47,4 +50,7 @@ public class DuplicateUserSummary {
         this.multipleUsersInIdamMatchEmail++;
     }
 
+    public void increaseFailedMerge() {
+        this.failedMerge++;
+    }
 }
