@@ -106,9 +106,15 @@ public class LoggingSummaryUtils {
 
             User role assignments merger Summary:
             -------------------------------------------------------------------
-            Merger start time:                            | ${startTime}
-            Merger end time:                              | ${endTime}
-            Total run time:                               | ${totalTime}
+            Merger start time:                                  | ${startTime}
+            Merger end time:                                    | ${endTime}
+            Total run time:                                     | ${totalTime}
+            ------------------------------------------------|------------------
+            Users not found in IDAM:                            | ${noUserInIdam}
+            Users that have multiple accounts in IDAM:          | ${multipleUsersInIdamMatchEmail}
+            Users that have a single account on email:          | ${emailAndIdsMatch}
+            Users that have created new account since deletion: | ${multipleIdsOnEmail}
+            Users that have failed role assignments merge       | ${failedMerge}
             """;
 
         final Map<String, Object> valueMappings = new ConcurrentHashMap<>();
@@ -116,10 +122,13 @@ public class LoggingSummaryUtils {
         valueMappings.put("startTime", dateFormat.format(new Date(summary.getStartTime())));
         valueMappings.put("endTime", dateFormat.format(new Date(summary.getEndTime())));
         valueMappings.put("totalTime", getDurationFromLong(executionTime));
-
+        valueMappings.put("noUserInIdam", summary.getNoUserInIdam());
+        valueMappings.put("multipleUsersInIdamMatchEmail", summary.getMultipleUsersInIdamMatchEmail());
+        valueMappings.put("emailAndIdsMatch", summary.getEmailAndIdsMatch());
+        valueMappings.put("multipleIdsOnEmail", summary.getMultipleIdsOnEmail());
+        valueMappings.put("failedMerge", summary.getFailedMerge());
 
         return format(template, valueMappings);
-
     }
 
     private static String format(String template, Map<String, Object> parameters) {

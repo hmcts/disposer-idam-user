@@ -23,6 +23,8 @@ import static uk.gov.hmcts.reform.idam.util.Constants.QUERY_SIZE;
 @Slf4j
 public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
 
+    public static final String MARKER = "USER_ROLE_MERGER";
+
     @Value("${duplicate-user-logger.requests.limit}")
     private int requestsLimit;
 
@@ -36,7 +38,7 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
     private final DuplicateUserSummary duplicateUserSummary;
     private final IdamTokenGenerator idamTokenGenerator;
     private final IdamClient idamClient;
-    private final UserRoleService userRoleService;
+    private final UserRoleMergeService userRoleMergeService;
     private final LoggingSummaryUtils summaryUtils;
 
     public void run() {
@@ -67,7 +69,7 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
             } else if (response.size() > 1) {
                 duplicateUserSummary.increaseMultipleMatches();
             } else {
-                checkIfMatches(response.get(0), deletionLog);
+                checkIfUserIdsOnEmailMatch(response.get(0), deletionLog);
             }
         } catch (FeignException fe) {
             log.error(fe.getMessage(), fe);
@@ -75,14 +77,19 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
         }
     }
 
-    private void checkIfMatches(IdamQueryResponse queryResponse, DeletionLog deletionLog) {
+    private void checkIfUserIdsOnEmailMatch(IdamQueryResponse queryResponse, DeletionLog deletionLog) {
         if (queryResponse.getId().equalsIgnoreCase(deletionLog.getUserId())) {
-            log.info("We have a match, nothing to see here");
             duplicateUserSummary.increaseMatchedIds();
         } else {
-            log.warn("Ids do not match, deleted {}, existing {}", deletionLog.getUserId(), queryResponse.getId());
+            log.warn(
+                "{} Ids do not match, deleted {}, existing {}",
+                MARKER,
+                deletionLog.getUserId(),
+                queryResponse.getId()
+            );
+
             duplicateUserSummary.increaseEmailMultipleIds();
-            userRoleService.mergeRoleAssignments(deletionLog.getUserId(), queryResponse.getId());
+            userRoleMergeService.mergeRoleAssignments(deletionLog.getUserId(), queryResponse.getId());
         }
     }
 }

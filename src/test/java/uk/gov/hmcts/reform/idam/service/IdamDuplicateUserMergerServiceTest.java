@@ -41,7 +41,7 @@ class IdamDuplicateUserMergerServiceTest {
     IdamClient idamClient;
 
     @Mock
-    UserRoleService userRoleService;
+    UserRoleMergeService userRoleMergeService;
 
     @Mock
     LoggingSummaryUtils summaryUtils;
