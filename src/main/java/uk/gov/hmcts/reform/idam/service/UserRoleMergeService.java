@@ -2,13 +2,13 @@ package uk.gov.hmcts.reform.idam.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RequestedRole;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsMergeRequest;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RoleRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
-import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentAttributes;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
 import uk.gov.hmcts.reform.idam.util.DuplicateUserSummary;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
@@ -29,58 +29,94 @@ public class UserRoleMergeService {
     private final SecurityUtil securityUtil;
     private final DuplicateUserSummary duplicateUserSummary;
 
+    @Value("${duplicate-user-merger.dry_run}")
+    private boolean dryRun;
+
     public void mergeRoleAssignments(String archivedUserId, String activeUserId) {
         var roleAssignmentResponse = roleAssignmentClient.getRoleAssignmentsByUserId(
             securityUtil.getAuthHeaders(),
             archivedUserId
         );
 
-        RoleAssignmentsMergeRequest mergeRequest = createMergeRequest(
+        List<RoleAssignmentsMergeRequest> mergeRequests = createMergeRequests(
             roleAssignmentResponse,
             archivedUserId,
             activeUserId
         );
 
+        if (dryRun) {
+            log.warn(
+                "[{}] DRY RUN mode, not merging archived user id {}, active user id {}",
+                MARKER, archivedUserId, activeUserId
+            );
+        } else {
+            commitMergeRequests(mergeRequests, archivedUserId, activeUserId);
+        }
+    }
+
+    private void commitMergeRequests(
+        List<RoleAssignmentsMergeRequest> mergeRequests,
+        String archivedUserId,
+        String activeUserId
+    ) {
         Map<String, String> headers = securityUtil.getAuthHeaders();
-        try (var mergeResponse = roleAssignmentClient.createRoleAssignment(headers, mergeRequest)) {
-            if (mergeResponse.status() >= 300) {
-                duplicateUserSummary.increaseFailedMerge();
-                log.error(
-                    "{} Merge failed for user active user {} (deleted user id {})",
-                    MARKER,
-                    activeUserId,
-                    archivedUserId
-                );
+        for (RoleAssignmentsMergeRequest mergeRequest: mergeRequests) {
+            try (var mergeResponse = roleAssignmentClient.createRoleAssignment(headers, mergeRequest)) {
+                if (mergeResponse.status() < 300) {
+                    duplicateUserSummary.increaseMerged();
+                } else {
+                    duplicateUserSummary.increaseFailedMerge();
+                    log.error(
+                        "[{}] Merge failed for user active user {} (deleted user id {})",
+                        MARKER,
+                        activeUserId,
+                        archivedUserId
+                    );
+                }
             }
         }
     }
 
-    private RoleAssignmentsMergeRequest createMergeRequest(
+    private List<RoleAssignmentsMergeRequest> createMergeRequests(
         RoleAssignmentResponse response,
         String archivedUserId,
         String activeUserId
     ) {
+        final List<RoleAssignmentsMergeRequest> mergeRequests = new LinkedList<>();
         List<RoleAssignment> roleAssignments = response.getRoleAssignments();
-        String caseId = checkRoleAssignments(roleAssignments, archivedUserId);
-        String reference = String.format("%s-%s", caseId, activeUserId);
+        if (roleAssignments == null || roleAssignments.isEmpty()) {
+            duplicateUserSummary.increaseNoRoleAssignmentsOnUser();
+            log.info("[{}] No roles assigned to user: {}", MARKER, archivedUserId);
+            return mergeRequests;
+        }
+        Map<String, List<RoleAssignment>> caseIdRoleMapping = groupRoleAssignmentsByCaseId(roleAssignments);
 
-        RoleRequest roleRequest = RoleRequest.builder()
-            .requestType("CREATE")
-            .process("CCD")
-            .reference(reference)
-            .assignerId(activeUserId) // ???
-            .replaceExisting(false)
-            .build();
+        for (var entry: caseIdRoleMapping.entrySet()) {
+            String reference = String.format("%s-%s", entry.getKey(), activeUserId);
+            RoleRequest roleRequest = RoleRequest.builder()
+                .requestType("CREATE")
+                .process("CCD")
+                .reference(reference)
+                .assignerId(activeUserId) // ???
+                .replaceExisting(false)
+                .build();
 
-        List<RequestedRole> requestedRoles = new LinkedList<>();
-        for (var roleAssignment: roleAssignments) {
-            requestedRoles.add(buildRequestedRole(roleAssignment, activeUserId));
+            mergeRequests.add(
+                RoleAssignmentsMergeRequest.builder()
+                    .roleRequest(roleRequest)
+                    .requestedRoles(createRoleRequests(entry.getValue(), activeUserId))
+                    .build()
+            );
         }
 
-        return RoleAssignmentsMergeRequest.builder()
-            .roleRequest(roleRequest)
-            .requestedRoles(requestedRoles)
-            .build();
+        return mergeRequests;
+    }
+
+    private List<RequestedRole> createRoleRequests(List<RoleAssignment> roleAssignments, String activeUserId) {
+        return roleAssignments
+            .stream()
+            .map(roleAssignment -> buildRequestedRole(roleAssignment, activeUserId))
+            .toList();
     }
 
     private RequestedRole buildRequestedRole(RoleAssignment roleAssignment, String activeUserId) {
@@ -99,20 +135,7 @@ public class UserRoleMergeService {
             .build();
     }
 
-    private String checkRoleAssignments(List<RoleAssignment> roleAssignments, String archivedUserId) {
-        var caseIds = roleAssignments.stream()
-            .map(RoleAssignment::getAttributes)
-            .map(RoleAssignmentAttributes::getCaseId)
-            .collect(Collectors.toSet());
-
-        if (caseIds.size() > 1) {
-            throw new UnsupportedOperationException("Different case ids found on a single user " + archivedUserId);
-        }
-
-        if (caseIds.isEmpty()) {
-            throw new UnsupportedOperationException("User has no role assignments " + archivedUserId);
-        }
-        var iterator = caseIds.iterator();
-        return iterator.next();
+    private Map<String, List<RoleAssignment>> groupRoleAssignmentsByCaseId(List<RoleAssignment> roleAssignments) {
+        return roleAssignments.stream().collect(Collectors.groupingBy(role -> role.getAttributes().getCaseId()));
     }
 }

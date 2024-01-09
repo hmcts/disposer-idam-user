@@ -25,13 +25,13 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
 
     public static final String MARKER = "USER_ROLE_MERGER";
 
-    @Value("${duplicate-user-logger.requests.limit}")
+    @Value("${duplicate-user-merger.requests.limit}")
     private int requestsLimit;
 
-    @Value("${duplicate-user-logger.batch.size}")
+    @Value("${duplicate-user-merger.batch.size}")
     private int batchSize;
 
-    @Value("${duplicate-user-logger.start.page}")
+    @Value("${duplicate-user-merger.start.page}")
     private int startPage;
 
     private final LauIdamUserService lauService;
@@ -82,7 +82,7 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
             duplicateUserSummary.increaseMatchedIds();
         } else {
             log.warn(
-                "{} Ids do not match, deleted {}, existing {}",
+                "[{}] Ids do not match, deleted {}, existing {}",
                 MARKER,
                 deletionLog.getUserId(),
                 queryResponse.getId()

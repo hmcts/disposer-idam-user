@@ -105,16 +105,19 @@ public class LoggingSummaryUtils {
         final String template = """
 
             User role assignments merger Summary:
-            -------------------------------------------------------------------
+            -----------------------------------------------------------------------
             Merger start time:                                  | ${startTime}
             Merger end time:                                    | ${endTime}
             Total run time:                                     | ${totalTime}
-            ------------------------------------------------|------------------
+            ----------------------------------------------------|------------------
             Users not found in IDAM:                            | ${noUserInIdam}
             Users that have multiple accounts in IDAM:          | ${multipleUsersInIdamMatchEmail}
             Users that have a single account on email:          | ${emailAndIdsMatch}
             Users that have created new account since deletion: | ${multipleIdsOnEmail}
-            Users that have failed role assignments merge       | ${failedMerge}
+            Users that have failed role assignments merge:      | ${failedMerge}
+            Users that have no roles on archived account:       | ${noRoleAssigmentsOnArchived}
+                                                                |
+            Merged                                              | ${merged}
             """;
 
         final Map<String, Object> valueMappings = new ConcurrentHashMap<>();
@@ -127,6 +130,8 @@ public class LoggingSummaryUtils {
         valueMappings.put("emailAndIdsMatch", summary.getEmailAndIdsMatch());
         valueMappings.put("multipleIdsOnEmail", summary.getMultipleIdsOnEmail());
         valueMappings.put("failedMerge", summary.getFailedMerge());
+        valueMappings.put("noRoleAssigmentsOnArchived", summary.getNoRoleAssigmentsOnArchived());
+        valueMappings.put("merged", summary.getMerged());
 
         return format(template, valueMappings);
     }

@@ -26,6 +26,12 @@ public class DuplicateUserSummary {
     // Users that failed to merge
     private int failedMerge;
 
+    // Archived users that have no role assignments
+    private int noRoleAssigmentsOnArchived;
+
+    // Successful role assignment merges
+    private int merged;
+
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }
@@ -52,5 +58,13 @@ public class DuplicateUserSummary {
 
     public void increaseFailedMerge() {
         this.failedMerge++;
+    }
+
+    public void increaseNoRoleAssignmentsOnUser() {
+        this.noRoleAssigmentsOnArchived++;
+    }
+
+    public void increaseMerged() {
+        this.merged++;
     }
 }
