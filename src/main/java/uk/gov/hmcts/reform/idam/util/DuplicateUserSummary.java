@@ -37,6 +37,7 @@ public class DuplicateUserSummary {
     public void setIsDryRunMode(boolean dryRunMode) {
         this.dryRunMode = dryRunMode;
     }
+
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }
