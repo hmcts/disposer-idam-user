@@ -34,6 +34,9 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
     @Value("${duplicate-user-merger.start.page}")
     private int startPage;
 
+    @Value("${duplicate-user-merger.dry_run}")
+    private boolean dryRunMode;
+
     private final LauIdamUserService lauService;
     private final DuplicateUserSummary duplicateUserSummary;
     private final IdamTokenGenerator idamTokenGenerator;
@@ -42,6 +45,7 @@ public class IdamDuplicateUserMergerService implements LauDeletedUsersConsumer {
     private final LoggingSummaryUtils summaryUtils;
 
     public void run() {
+        duplicateUserSummary.setIsDryRunMode(dryRunMode);
         duplicateUserSummary.setStartTime();
         lauService.retrieveDeletedUsers(this, requestsLimit, batchSize, startPage);
         duplicateUserSummary.setEndTime();

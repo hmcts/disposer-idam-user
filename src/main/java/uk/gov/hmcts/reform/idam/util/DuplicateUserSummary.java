@@ -32,6 +32,11 @@ public class DuplicateUserSummary {
     // Successful role assignment merges
     private int merged;
 
+    private boolean dryRunMode;
+
+    public void setIsDryRunMode(boolean dryRunMode) {
+        this.dryRunMode = dryRunMode;
+    }
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }

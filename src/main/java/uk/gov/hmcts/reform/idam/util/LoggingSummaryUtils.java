@@ -117,6 +117,7 @@ public class LoggingSummaryUtils {
             Users that have failed role assignments merge:      | ${failedMerge}
             Users that have no roles on archived account:       | ${noRoleAssigmentsOnArchived}
                                                                 |
+            Dry run?                                            | ${isDryRun}
             Merged                                              | ${merged}
             """;
 
@@ -132,6 +133,7 @@ public class LoggingSummaryUtils {
         valueMappings.put("failedMerge", summary.getFailedMerge());
         valueMappings.put("noRoleAssigmentsOnArchived", summary.getNoRoleAssigmentsOnArchived());
         valueMappings.put("merged", summary.getMerged());
+        valueMappings.put("isDryRun", summary.isDryRunMode());
 
         return format(template, valueMappings);
     }
