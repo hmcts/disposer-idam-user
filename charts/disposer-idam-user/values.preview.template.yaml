@@ -6,8 +6,13 @@ job:
     S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
     LAU_API_URL: http://lau-idam-backend-aat.service.core-compute-aat.internal
+    ROLE_ASSIGNMENT_HOST: http://am-role-assignment-service-aat.service.core-compute-aat.internal
+    IDAM_DUPLICATE_USER_RESTORER_ENABLED: true
+    DUPLICATE_USER_BATCH_SIZE: 100
+    DUPLICATE_USER_REQUESTS_LIMIT: 2
+    DUPLICATE_USER_START_PAGE: 3086
   kind: CronJob
-  schedule: "*/20 * * * *"
+  schedule: "*/10 * * * *"
   startingDeadlineSeconds: 180
   concurrencyPolicy: Forbid
 
