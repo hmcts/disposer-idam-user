@@ -62,7 +62,7 @@ public class UserRoleMergeService {
         Map<String, String> headers = securityUtil.getAuthHeaders();
         for (RoleAssignmentsMergeRequest mergeRequest: mergeRequests) {
             try (var mergeResponse = roleAssignmentClient.createRoleAssignment(headers, mergeRequest)) {
-                if (mergeResponse.status() < 300) {
+                if (mergeResponse.status() == 201) {
                     duplicateUserSummary.increaseMerged();
                 } else {
                     duplicateUserSummary.increaseFailedMerge();
@@ -86,7 +86,7 @@ public class UserRoleMergeService {
         List<RoleAssignment> roleAssignments = response.getRoleAssignments();
         if (roleAssignments == null || roleAssignments.isEmpty()) {
             duplicateUserSummary.increaseNoRoleAssignmentsOnUser();
-            log.info("[{}] No roles assigned to user: {}", MARKER, archivedUserId);
+            log.info("[{}] No roles assigned to archived user: {}", MARKER, archivedUserId);
             return mergeRequests;
         }
         Map<String, List<RoleAssignment>> caseIdRoleMapping = groupRoleAssignmentsByCaseId(roleAssignments);
