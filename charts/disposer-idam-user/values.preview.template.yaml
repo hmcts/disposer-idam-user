@@ -9,8 +9,8 @@ job:
     ROLE_ASSIGNMENT_HOST: http://am-role-assignment-service-aat.service.core-compute-aat.internal
     IDAM_DUPLICATE_USER_RESTORER_ENABLED: true
     DUPLICATE_USER_BATCH_SIZE: 100
-    DUPLICATE_USER_REQUESTS_LIMIT: 2
-    DUPLICATE_USER_START_PAGE: 3086
+    DUPLICATE_USER_REQUESTS_LIMIT: 100
+    DUPLICATE_USER_START_PAGE: 2540
   kind: CronJob
   schedule: "*/10 * * * *"
   startingDeadlineSeconds: 180
