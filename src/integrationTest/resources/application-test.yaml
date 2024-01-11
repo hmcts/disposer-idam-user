@@ -1,4 +1,18 @@
 #Application specific properties
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            loggerLevel: basic
+
+logging:
+  level:
+    root: warn
+    uk.gov.hmcts.reform: debug
+
+
 idam:
   s2s-auth:
     url: http://localhost:5000
@@ -7,9 +21,17 @@ lau:
   api:
     url: ${LAU_API_URL:http://localhost:5000}
 
+ccd:
+  role.assignment:
+    host: ${ROLE_ASSIGNMENT_HOST:localhost:5000}
+
+
 dummy-jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 
 wiremock-debug: false
 
 restorer:
   requests.limit: 10
+
+duplicate-user-merger:
+  dry_run: false

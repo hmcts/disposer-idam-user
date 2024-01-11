@@ -64,6 +64,7 @@ public class UserRoleMergeService {
             try (var mergeResponse = roleAssignmentClient.createRoleAssignment(headers, mergeRequest)) {
                 if (mergeResponse.status() == 201) {
                     duplicateUserSummary.increaseMerged();
+                    log.info("[{}] Merged archived user {} to active user {}", MARKER, archivedUserId, activeUserId);
                 } else {
                     duplicateUserSummary.increaseFailedMerge();
                     log.error(
