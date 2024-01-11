@@ -7,12 +7,13 @@ job:
     IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
     LAU_API_URL: http://lau-idam-backend-aat.service.core-compute-aat.internal
     ROLE_ASSIGNMENT_HOST: http://am-role-assignment-service-aat.service.core-compute-aat.internal
-    IDAM_DUPLICATE_USER_RESTORER_ENABLED: false
+    IDAM_DUPLICATE_USER_RESTORER_ENABLED: true
+    DUPLICATE_USER_MERGE_DRY_RUN: false
     DUPLICATE_USER_BATCH_SIZE: 100
-    DUPLICATE_USER_REQUESTS_LIMIT: 10000
-    DUPLICATE_USER_START_PAGE: 1
+    DUPLICATE_USER_REQUESTS_LIMIT: 1
+    DUPLICATE_USER_START_PAGE: 2986
   kind: CronJob
-  schedule: "0 */2 * * *"
+  schedule: "30 13 11 01 *"
   startingDeadlineSeconds: 180
   concurrencyPolicy: Forbid
 
