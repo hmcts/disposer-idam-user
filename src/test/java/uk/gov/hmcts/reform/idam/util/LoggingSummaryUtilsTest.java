@@ -103,4 +103,20 @@ class LoggingSummaryUtilsTest {
             .containsIgnoringWhitespaces("Start page: | 0")
             .containsIgnoringWhitespaces("Page size: | 0");
     }
+
+    @Test
+    void createMergerStatsShouldReturnFormattedString() {
+        DuplicateUserSummary summary = new DuplicateUserSummary();
+        // 2023-11-14 22:13:20
+        ReflectionTestUtils.setField(summary, "startTime", 1_700_000_000_000L);
+        // 70s later - 2023-11-14 22:14:30
+        ReflectionTestUtils.setField(summary, "endTime", 1_700_000_070_000L);
+
+        String stats = loggingSummaryUtils.createMergerStatistics(summary);
+
+        assertThat(stats)
+            .contains("2023-11-14 22:13:20")
+            .contains("2023-11-14 22:14:30")
+            .contains("00:01:10");
+    }
 }

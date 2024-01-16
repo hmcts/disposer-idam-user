@@ -35,8 +35,14 @@ public class IdamUserDataProvider {
 
     public String setup() {
         securityUtil.generateTokens();
-        ExtractableResponse<Response> res = createUser("DisposerTest-@example.org","Lau ",
-                                                       "Test","{Pass12345Y");
+
+        String name = UUID.randomUUID().toString();
+        String email = "DisposerRestorer-@example.org";
+        String[] emailParts = email.split("-");
+        email = emailParts[0] + name + emailParts[1];
+        String foreName = "Lau " + name;
+
+        ExtractableResponse<Response> res = createUser(email, foreName, "Test", "{Pass12345Y");
         String userId = res.path("id");
         retireUser(userId);
         return userId;
@@ -46,7 +52,7 @@ public class IdamUserDataProvider {
         return RestAssured.given()
             .header("Authorization", idamTokenGenerator.getIdamAuthorizationHeader())
             .header("Content-Type", "application/json")
-            .body(makeUser(email,foreName,lastName,password))
+            .body(makeUser(email, foreName, lastName, password))
             .baseUri(idamApi)
             .when()
             .post(CREATE_USER_PATH)
@@ -68,10 +74,8 @@ public class IdamUserDataProvider {
     private String makeUser(String email, String foreName, String lastName, String password) {
         JSONObject user = new JSONObject();
         try {
-            String name = UUID.randomUUID().toString();
-            String[] emailParts = email.split("-");
-            user.put("email", emailParts[0] + name + emailParts[1]);
-            user.put("forename", foreName + name);
+            user.put("email", email);
+            user.put("forename", foreName);
             user.put("surname", lastName);
             user.put("password", password);
             JSONArray roles = new JSONArray();
@@ -116,7 +120,17 @@ public class IdamUserDataProvider {
     }
 
     public ExtractableResponse<Response> createRestorerUser() {
-        return createUser("DisposerRestorer-@example.org","LauRestorer ",
-                   "TestRestorer","{Pass12345Y");
+        String name = UUID.randomUUID().toString();
+        String email = "DisposerRestorer-@example.org";
+        String[] emailParts = email.split("-");
+        email = emailParts[0] + name + emailParts[1];
+        String foreName = "LauRestorer " + name;
+
+        return createUser(email,foreName, "TestRestorer","{Pass12345Y");
+    }
+
+    public String createIdamUserWithEmail(String email) {
+        var response = createUser(email, "Disposer", "Merger", "{Pass12345Y");
+        return response.path("id");
     }
 }

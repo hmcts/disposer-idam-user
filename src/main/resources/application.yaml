@@ -47,7 +47,8 @@ restorer:
   requests.limit: ${DISPOSER_RESTORER_REQUESTS_LIMIT:1}
   start.page: ${DISPOSER_RESTORER_START_PAGE:1}
 
-duplicate-user-logger:
+duplicate-user-merger:
+  dry_run: ${DUPLICATE_USER_MERGE_DRY_RUN:true}
   batch.size: ${DUPLICATE_USER_BATCH_SIZE:1}
   requests.limit: ${DUPLICATE_USER_REQUESTS_LIMIT:1}
   start.page: ${DUPLICATE_USER_START_PAGE:1}

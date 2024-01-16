@@ -3,11 +3,14 @@ package uk.gov.hmcts.reform.idam.helpers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.idam.requests.RoleAssignmentsAssignRoleRequest;
+import uk.gov.hmcts.reform.idam.response.RoleAssignmentResponse;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
 
@@ -44,7 +47,33 @@ public class RoleAssignmentProvider {
             .statusCode(204);
     }
 
-    private void assignRole(String userId) {
+    public RoleAssignmentResponse getRoleAssignments(String userId) {
+        return RestAssured.given()
+            .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())
+            .header("ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken())
+            .header("Content-Type", "application/json")
+            .baseUri(roleAssignmentApi)
+            .when()
+            .get(ROLE_PATH + "/actors/" + userId)
+            .as(RoleAssignmentResponse.class);
+    }
+
+    public void assignRole(RoleAssignmentsAssignRoleRequest roleRequest) {
+        String body = new Gson().toJson(roleRequest);
+
+        RestAssured.given()
+            .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())
+            .header("ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken())
+            .header("Content-Type", "application/json")
+            .body(body)
+            .baseUri(roleAssignmentApi)
+            .when()
+            .post(ROLE_PATH)
+            .then()
+            .statusCode(201);
+    }
+
+    public void assignRole(String userId) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             JsonNode role = mapper.readTree(classLoader.getResourceAsStream("role-assignment.json"));

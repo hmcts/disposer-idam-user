@@ -20,7 +20,6 @@ public class SecurityUtil {
     public SecurityUtil(ServiceTokenGenerator serviceTokenGenerator, IdamTokenGenerator idamTokenGenerator) {
         this.serviceTokenGenerator = serviceTokenGenerator;
         this.idamTokenGenerator = idamTokenGenerator;
-        generateTokens();
     }
 
     @Scheduled(initialDelay = 55, fixedRate = 55, timeUnit = TimeUnit.MINUTES)
