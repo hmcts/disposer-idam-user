@@ -5,16 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
-import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsPostRequest;
+import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsQueryRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
-import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
-import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.List;
 import java.util.Map;
-
-import static uk.gov.hmcts.reform.idam.util.Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +20,7 @@ import static uk.gov.hmcts.reform.idam.util.Constants.ROLE_ASSIGNMENTS_CONTENT_T
 public class UserRoleService {
 
     private final RoleAssignmentClient roleAssignmentClient;
-    private final IdamTokenGenerator idamTokenGenerator;
-    private final ServiceTokenGenerator serviceTokenGenerator;
+    private final SecurityUtil securityUtil;
 
     @Retry(retryAttempts = 2)
     public List<String> filterUsersWithRoles(List<String> staleUsers) {
@@ -31,18 +28,11 @@ public class UserRoleService {
             return List.of();
         }
 
-        var request = new RoleAssignmentsPostRequest(staleUsers);
+        var request = new RoleAssignmentsQueryRequest(staleUsers);
         final RoleAssignmentResponse response;
 
         try {
-            response = roleAssignmentClient.getRoleAssignments(
-                Map.of(
-                    "Content-Type", ROLE_ASSIGNMENTS_CONTENT_TYPE,
-                    "Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader(),
-                    "ServiceAuthorization", serviceTokenGenerator.getServiceAuthToken()
-                ),
-                request
-            );
+            response = roleAssignmentClient.getRoleAssignments(getHeaders(), request);
         } catch (Exception e) {
             log.error("UserRoleService.getRoleAssignemnts threw exception: {}", e.getMessage(), e);
             throw e;
@@ -58,5 +48,13 @@ public class UserRoleService {
             .filter(userId -> !assignments.contains(userId))
             .toList();
 
+    }
+
+
+
+    private Map<String, String> getHeaders() {
+        Map<String, String> headers = new ConcurrentHashMap<>(securityUtil.getAuthHeaders());
+        headers.put("Content-Type", "application/json");
+        return headers;
     }
 }

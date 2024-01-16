@@ -23,6 +23,21 @@ public class DuplicateUserSummary {
     // Users that have different id in idam on the same email - expected around 5-6k
     private int multipleIdsOnEmail;
 
+    // Users that failed to merge
+    private int failedMerge;
+
+    // Archived users that have no role assignments
+    private int noRoleAssigmentsOnArchived;
+
+    // Successful role assignment merges
+    private int merged;
+
+    private boolean dryRunMode;
+
+    public void setIsDryRunMode(boolean dryRunMode) {
+        this.dryRunMode = dryRunMode;
+    }
+
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }
@@ -47,4 +62,15 @@ public class DuplicateUserSummary {
         this.multipleUsersInIdamMatchEmail++;
     }
 
+    public void increaseFailedMerge() {
+        this.failedMerge++;
+    }
+
+    public void increaseNoRoleAssignmentsOnUser() {
+        this.noRoleAssigmentsOnArchived++;
+    }
+
+    public void increaseMerged() {
+        this.merged++;
+    }
 }

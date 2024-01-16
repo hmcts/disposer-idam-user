@@ -1,19 +1,12 @@
-package uk.gov.hmcts.reform.idam.service.remote.responses;
+package uk.gov.hmcts.reform.idam.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import uk.gov.hmcts.reform.idam.requests.RoleAssignmentAttributes;
 
 import java.time.Instant;
 
-@Builder
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RoleAssignment {
     String actorIdType;

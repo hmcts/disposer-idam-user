@@ -6,12 +6,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class RoleAssignmentsPostRequest {
+public class RoleAssignmentsQueryRequest {
 
     @JsonProperty("queryRequests")
     private List<QueryRequest> queryRequests;
 
-    public RoleAssignmentsPostRequest(List<String> userIds) {
+    public RoleAssignmentsQueryRequest(List<String> userIds) {
         queryRequests = List.of(QueryRequest.builder().userIds(userIds).build());
     }
 }

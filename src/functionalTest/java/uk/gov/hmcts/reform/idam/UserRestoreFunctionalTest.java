@@ -55,9 +55,8 @@ class UserRestoreFunctionalTest {
     @Test
     @DirtiesContext
     void givenDeletedUserExistsThenShouldAbleToRestoreDeletedUsers() throws IOException {
-        List<DeletionLog> lauDeletionLogs = lauDeletionLogEntryProvider.createDeletionLogLau();
-        assertEquals("Deletion Log entry has not created", 1, lauDeletionLogs.size());
-        final String userId = lauDeletionLogs.get(0).getUserId();
+        DeletionLog lauDeletionLog = lauDeletionLogEntryProvider.createDeletionLogLau();
+        final String userId = lauDeletionLog.getUserId();
         logEntryUserIds.add(userId);
 
         idamUserRestoreService.run();
@@ -75,10 +74,10 @@ class UserRestoreFunctionalTest {
             RestoredUserFullObject.class
         );
 
-        assertThat(restoredUserFullObject.getForename()).isEqualTo(lauDeletionLogs.get(0).getFirstName());
-        assertThat(restoredUserFullObject.getSurname()).isEqualTo(lauDeletionLogs.get(0).getLastName());
-        assertThat(restoredUserFullObject.getEmail()).isEqualTo(lauDeletionLogs.get(0).getEmailAddress());
-        assertThat(restoredUserFullObject.getUserName()).isEqualTo(lauDeletionLogs.get(0).getEmailAddress());
+        assertThat(restoredUserFullObject.getForename()).isEqualTo(lauDeletionLog.getFirstName());
+        assertThat(restoredUserFullObject.getSurname()).isEqualTo(lauDeletionLog.getLastName());
+        assertThat(restoredUserFullObject.getEmail()).isEqualTo(lauDeletionLog.getEmailAddress());
+        assertThat(restoredUserFullObject.getUserName()).isEqualTo(lauDeletionLog.getEmailAddress());
     }
 
     @Test

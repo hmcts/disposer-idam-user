@@ -3,11 +3,9 @@ package uk.gov.hmcts.reform.idam.bdd;
 import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.idam.Application;
-import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -19,7 +17,5 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class SpringBootIntegrationTest {
 
-    @MockBean
-    SecurityUtil securityUtil;
 
 }

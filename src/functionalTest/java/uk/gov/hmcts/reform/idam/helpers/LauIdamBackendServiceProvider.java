@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletedUsersResponse;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
 
 @Component
@@ -15,11 +16,13 @@ import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
 public class LauIdamBackendServiceProvider {
     private final IdamTokenGenerator idamTokenGenerator;
     private final ServiceTokenGenerator serviceTokenGenerator;
+    private final SecurityUtil securityUtil;
 
     @Value("${lau.api.url}")
     private String lauIdamBackendUrl;
 
     public int deleteLogEntry(final String userId) {
+        securityUtil.generateTokens();
         return RestAssured.given()
             .baseUri(lauIdamBackendUrl)
             .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())
@@ -31,6 +34,7 @@ public class LauIdamBackendServiceProvider {
     }
 
     public DeletedUsersResponse postLogEntry(final DeletedAccountsRequest deletedAccountsRequest) {
+        securityUtil.generateTokens();
         return RestAssured.given()
             .baseUri(lauIdamBackendUrl)
             .header("Authorization", idamTokenGenerator.getPasswordTypeAuthorizationHeader())

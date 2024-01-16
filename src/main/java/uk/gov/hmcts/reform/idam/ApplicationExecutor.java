@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserLoggerService;
+import uk.gov.hmcts.reform.idam.service.IdamDuplicateUserMergerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 import uk.gov.hmcts.reform.idam.service.IdamUserRestorerService;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 
 @Component
@@ -27,22 +28,26 @@ public class ApplicationExecutor implements ApplicationRunner {
 
     private final IdamUserDisposerService disposerService;
     private final IdamUserRestorerService restorerService;
-    private final IdamDuplicateUserLoggerService idamDuplicateUserLoggerService;
+    private final IdamDuplicateUserMergerService idamDuplicateUserMergerService;
+    private final SecurityUtil securityUtil;
 
     @Override
     public void run(ApplicationArguments args) {
 
         if (isDisposerEnabled) {
             log.info("Starting the Idam-Disposer job...");
+            securityUtil.generateTokens();
             disposerService.run();
             log.info("Idam-Disposer job has finished!");
         } else if (isRestorerEnabled) {
             log.info("Starting the Idam-Restorer job...");
+            securityUtil.generateTokens();
             restorerService.run();
             log.info("Idam-Restorer job has completed!");
         } else if (isDuplicateUserEnabled) {
             log.info("Starting the Idam-Duplicate user job...");
-            idamDuplicateUserLoggerService.run();
+            securityUtil.generateTokens();
+            idamDuplicateUserMergerService.run();
             log.info("Idam-Duplicate job has completed!");
         } else {
             log.info("Not running any Idam-Disposer job as all are disabled...");

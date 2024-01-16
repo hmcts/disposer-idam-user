@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.idam.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,10 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
-import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
-import uk.gov.hmcts.reform.idam.util.ServiceTokenGenerator;
+import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,18 +28,23 @@ class UserRoleServiceTest {
     RoleAssignmentClient roleAssignmentClient;
 
     @Mock
-    IdamTokenGenerator idamTokenGenerator;
-
-    @Mock
-    ServiceTokenGenerator serviceTokenGenerator;
+    SecurityUtil securityUtil;
 
     @InjectMocks
     private UserRoleService userRoleService;
 
+    @BeforeEach
+    void setUp() {
+        var headers = Map.of(
+            "Authorization", "Bearer 123456",
+            "ServiceAuthorization", "Bearer 123456"
+        );
+        when(securityUtil.getAuthHeaders()).thenReturn(headers);
+    }
+
     @Test
     void shouldFilterUsersWithRoles() {
-        when(idamTokenGenerator.getPasswordTypeAuthorizationHeader()).thenReturn("Bearer 123456");
-        when(serviceTokenGenerator.getServiceAuthToken()).thenReturn("Bearer 123456");
+
         List<RoleAssignment> assignments = List.of(makeRoleAssignment("user-1"), makeRoleAssignment("user-2"));
         var entity = new RoleAssignmentResponse();
         entity.setRoleAssignments(assignments);
@@ -53,8 +59,6 @@ class UserRoleServiceTest {
 
     @Test
     void shouldReturnAllOnEmptyAssignments() {
-        when(idamTokenGenerator.getPasswordTypeAuthorizationHeader()).thenReturn("Bearer 123456");
-        when(serviceTokenGenerator.getServiceAuthToken()).thenReturn("Bearer 123456");
         var roleAssignmentResponse = new RoleAssignmentResponse();
         roleAssignmentResponse.setRoleAssignments(List.of());
 
@@ -65,12 +69,12 @@ class UserRoleServiceTest {
         verify(roleAssignmentClient, times(1)).getRoleAssignments(anyMap(), any());
     }
 
+
     private RoleAssignment makeRoleAssignment(String userId) {
         return RoleAssignment.builder()
             .actorIdType("IDAM")
             .actorId(userId)
             .build();
     }
-
 }
 

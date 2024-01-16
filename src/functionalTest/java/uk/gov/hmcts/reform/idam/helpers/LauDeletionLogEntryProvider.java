@@ -6,61 +6,56 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletedUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.DeletionLog;
-import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
-import static wiremock.org.eclipse.jetty.util.StringUtil.valueOf;
 
 @RequiredArgsConstructor
 @Component
 @Slf4j
 public class LauDeletionLogEntryProvider {
 
-    private final SecurityUtil securityUtil;
-
     @Inject
     private LauIdamBackendServiceProvider lauIdamBackendServiceProvider;
 
-    public List<DeletionLog> createDeletionLogLau() {
-        securityUtil.generateTokens();
-        DeletedAccountsRequest request = generateDeletedAccountsRequest();
+    public DeletionLog createDeletionLogLau(String userId, String email) {
+        DeletedAccountsRequest request = generateDeletedAccountsRequest(userId, email);
         final DeletedUsersResponse deletedUsersResponse = lauIdamBackendServiceProvider.postLogEntry(request);
-        return deletedUsersResponse.getDeletionLogs();
+        return deletedUsersResponse.getDeletionLogs().get(0);
     }
 
-    public DeletedAccountsRequest generateDeletedAccountsRequest() {
-        String id = UUID.randomUUID().toString();
+    public DeletionLog createDeletionLogLau() {
+        String userId = UUID.randomUUID().toString();
+        String email = "DisposerRestorerTest-" + userId + "@example.org";
+        DeletedAccountsRequest request = generateDeletedAccountsRequest(userId, email);
+        final DeletedUsersResponse deletedUsersResponse = lauIdamBackendServiceProvider.postLogEntry(request);
+        return deletedUsersResponse.getDeletionLogs().get(0);
+    }
+
+    public DeletedAccountsRequest generateDeletedAccountsRequest(String userId, String email) {
         DeletionLog deletedAccount = DeletionLog.builder()
-            .userId(id)
-            .emailAddress("DisposerRestorerTest-" + id + "@example.org")
-            .firstName("LauRestorer-" + id + "@example.org")
+            .userId(userId)
+            .emailAddress(email)
+            .firstName("LauRestorer-" + userId + "@example.org")
             .lastName("TestRestorer-")
-            .deletionTimestamp(getTimeStamp(valueOf(now().plusDays(2).toString())))
+            .deletionTimestamp(getTimeStamp(now().plusDays(2)))
             .build();
+
 
         DeletedAccountsRequest request = new DeletedAccountsRequest();
         request.setDeletionLogs(Arrays.asList(deletedAccount));
         return request;
     }
 
-    private String getTimeStamp(String timeStamp) {
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss.sss";
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        try {
-            Date date = format.parse(timeStamp);
-            return dateFormat.format(date);
-        } catch (ParseException e) {
-            log.error("TimsStamp can't be parsed to : " + dateFormat);
-            return "";
-        }
+    private String getTimeStamp(LocalDateTime timeStamp) {
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(pattern);
+        return timeStamp.format(format);
     }
 
     public DeletedAccountsRequest generateDeletedAccountsRequestWithUserId(String userId, int days) {
@@ -69,7 +64,7 @@ public class LauDeletionLogEntryProvider {
             .emailAddress("DisposerRestorerTest-" + userId + "@example.org")
             .firstName("LauRestorer-" + userId + "@example.org")
             .lastName("TestRestorerExisting")
-            .deletionTimestamp(getTimeStamp(valueOf(now().plusDays(days).toString())))
+            .deletionTimestamp(getTimeStamp(now().plusDays(days)))
             .build();
 
         DeletedAccountsRequest request = new DeletedAccountsRequest();
@@ -89,7 +84,7 @@ public class LauDeletionLogEntryProvider {
             .emailAddress(emailAddress)
             .firstName("LauRestorer-" + id + "@example.org")
             .lastName("TestRestorerExisting")
-            .deletionTimestamp(getTimeStamp(valueOf(now().plusDays(days).toString())))
+            .deletionTimestamp(getTimeStamp(now().plusDays(days)))
             .build();
 
         DeletedAccountsRequest request = new DeletedAccountsRequest();

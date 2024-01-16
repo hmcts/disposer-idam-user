@@ -1,9 +1,12 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
+import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.idam.util.Constants;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static feign.form.ContentProcessor.CONTENT_TYPE_HEADER;
@@ -72,6 +76,21 @@ public class WireMockStubs {
                         .withBodyFile("lauIdamGetDeletedUsers.json")
                 )
         );
+    }
+
+    protected void setupApiResponse(UrlPathPattern urlPattern, String bodyAsJson) {
+        setupApiResponse(urlPattern, null, bodyAsJson);
+    }
+
+    protected void setupApiResponse(UrlPattern urlPattern, Map<String, String> queryParams, String bodyAsJson) {
+        MappingBuilder requestStubBuilder = WireMock.get(urlPattern);
+        if (queryParams != null) {
+            for (Map.Entry<String, String> entry: queryParams.entrySet()) {
+                requestStubBuilder.withQueryParam(entry.getKey(), equalTo(entry.getValue()));
+            }
+        }
+        requestStubBuilder.willReturn(WireMock.aResponse().withHeader(CONTENT_TYPE, APP_JSON).withBody(bodyAsJson));
+        wiremock.stubFor(requestStubBuilder);
     }
 
     protected void setupPagedLauApiStubs() {
@@ -154,7 +173,7 @@ public class WireMockStubs {
             // pretend that 001, 002, 010 and 023 still have assigned roles
             wiremock.stubFor(
                     WireMock
-                            .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_PATH))
+                            .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_QUERY_PATH))
                             .withRequestBody(WireMock.matchingJsonPath(
                                             "$.queryRequests[0].actorId",
                                             WireMock.containing(getMatchingActorId(i + 1))
