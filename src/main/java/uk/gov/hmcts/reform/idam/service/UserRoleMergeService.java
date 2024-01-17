@@ -61,10 +61,16 @@ public class UserRoleMergeService {
     ) {
         Map<String, String> headers = securityUtil.getAuthHeaders();
         for (RoleAssignmentsMergeRequest mergeRequest: mergeRequests) {
+            List<String> caseTypes = mergeRequest.getRequestedRoles().stream()
+                .map(roleAssignment -> roleAssignment.getAttributes().getCaseType())
+                .toList();
             try (var mergeResponse = roleAssignmentClient.createRoleAssignment(headers, mergeRequest)) {
                 if (mergeResponse.status() == 201) {
                     duplicateUserSummary.increaseMerged();
-                    log.info("[{}] Merged archived user {} to active user {}", MARKER, archivedUserId, activeUserId);
+                    log.info(
+                        "[{}] Merged archived user {} to active user {}, case types: {}",
+                        MARKER, archivedUserId, activeUserId, caseTypes
+                    );
                 } else {
                     duplicateUserSummary.increaseFailedMerge();
                     log.error(
