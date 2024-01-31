@@ -7,7 +7,7 @@ This micro-service runs periodically and disposes archived citizen accounts
 ## Getting started
 
 ### Prerequisites
-- [JDK 17](https://openjdk.org/projects/jdk/17/)
+- [JDK 21](https://openjdk.org/projects/jdk/21/)
 
 ### Building the application
 
