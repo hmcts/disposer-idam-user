@@ -205,11 +205,6 @@ dependencyCheck {
 
 dependencyManagement {
   dependencies {
-    dependencySet(group: 'org.springframework.cloud', version: '4.1.1') {
-      entry 'spring-cloud-starter-openfeign'
-      entry 'spring-cloud-openfeign-core'
-      entry 'spring-cloud-starter-contract-stub-runner'
-    }
     dependencySet(group: 'ch.qos.logback', version: '1.4.14') {
       entry 'logback-core'
       entry 'logback-classic'
@@ -262,10 +257,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-  implementation (group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign') {
-    implementation("org.springframework.security:spring-security-rsa:1.1.1")
-  }
-
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.0'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
@@ -288,7 +280,7 @@ dependencies {
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.1'
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 
