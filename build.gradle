@@ -283,7 +283,7 @@ dependencies {
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 
-  testImplementation 'com.github.hmcts:fortify-client:1.4.0:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.4.1:all'
 
   integrationTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
