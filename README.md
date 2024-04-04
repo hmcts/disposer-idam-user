@@ -4,6 +4,45 @@
 
 This micro-service runs periodically and disposes archived citizen accounts
 
+## Extra functionality
+
+Role-assignments returns paged results, however we overlooked this and
+disposer-idam-user deleted a lot more users than had to. This caused us to
+write additional functionality to restore all the users, which we don't expect
+to use in the future. But if ever need to, there are few things required
+outside of our app control. This is an attempt to document those requirements.
+
+Additional functionality is:
+* idam user restorer. Used to restore deleted users. Flow roughly looks like
+this:
+  * get deleted users from lau-idam-backend DB table in batches
+  * iterate over deleted entries individually and create a request
+  * call idam api to insert the user
+  * check the response for any potential conflicts due to user already present
+  on idam
+
+<img src="docs/idam_account_restorer.png" alt="idam account_restorer diagram" width="800" />
+
+* role assignments merger. If there were conflicts due to user already existing
+on idam we needed to merge old user id with a new user id. Flow roughly looks
+like this:
+  * get deleted users from lau-idam-backend DB table in batches
+  * query idam for the user using email address
+  * check if there are multiple IDs for the same user for the same email
+  * on multiple IDs get role assignments for deleted user from role assignments
+  * create role assignments request using new user (active) id and assigning
+  old user (deleted/archived) role assignments to the new user
+
+<img src="docs/role_assignments_merger.png" alt="role_merger diagram" width="800" />
+
+For role assignments to work we need:
+
+* `search-user` scope in `[idam-access-config](https://github.com/hmcts/idam-access-config)`.
+Revert PR [is here](https://github.com/hmcts/idam-access-config/pull/596)
+
+We disabled some functional tests in order for pipeline to pass, as permission
+was already removed.
+
 ## Getting started
 
 ### Prerequisites
@@ -123,4 +162,3 @@ or to generate a code coverage report execute the following command:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-

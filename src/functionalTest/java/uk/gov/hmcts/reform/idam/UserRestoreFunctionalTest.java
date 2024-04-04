@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -33,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 @RequiredArgsConstructor
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
+@Disabled("Missing search-user scope")
 class UserRestoreFunctionalTest {
 
     @Inject

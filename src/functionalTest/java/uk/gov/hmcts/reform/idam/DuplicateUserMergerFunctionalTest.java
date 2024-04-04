@@ -4,6 +4,7 @@ package uk.gov.hmcts.reform.idam;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
+@Disabled("Missing search-user scope")
 class DuplicateUserMergerFunctionalTest {
 
     private static final String CLAIMANT = "[CLAIMANT]";
@@ -114,13 +116,13 @@ class DuplicateUserMergerFunctionalTest {
         // Assign two roles to archived user
         String oldCaseId = "1547572255509701";
         var roleRequest1 = createRoleAssignmentRequest(archivedUserId, oldCaseId, CREATOR, beginTime);
-        var roleRequest2 = createRoleAssignmentRequest(archivedUserId, oldCaseId,CLAIMANT, beginTime);
+        var roleRequest2 = createRoleAssignmentRequest(archivedUserId, oldCaseId, CLAIMANT, beginTime);
         roleAssignmentProvider.assignRole(roleRequest1);
         roleAssignmentProvider.assignRole(roleRequest2);
 
         // Assign role to active user
         String caseId = "1695398101351480";
-        var roleRequest3 = createRoleAssignmentRequest(activeUserId, caseId,"[DEFENDANT]", beginTime);
+        var roleRequest3 = createRoleAssignmentRequest(activeUserId, caseId, "[DEFENDANT]", beginTime);
         roleAssignmentProvider.assignRole(roleRequest3);
 
 
