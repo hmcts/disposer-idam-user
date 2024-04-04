@@ -11,7 +11,11 @@ public class RoleAssignmentsQueryRequest {
     @JsonProperty("queryRequests")
     private List<QueryRequest> queryRequests;
 
-    public RoleAssignmentsQueryRequest(List<String> userIds) {
+    @JsonProperty("size")
+    private int roleAssignmentsSize;
+
+    public RoleAssignmentsQueryRequest(List<String> userIds, int size) {
         queryRequests = List.of(QueryRequest.builder().userIds(userIds).build());
+        roleAssignmentsSize = size * 10;
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.idam.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
@@ -19,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class UserRoleService {
 
+    @Value("${stale-users.roleAssignments.size}")
+    private int size;
+
     private final RoleAssignmentClient roleAssignmentClient;
     private final SecurityUtil securityUtil;
 
@@ -28,7 +32,7 @@ public class UserRoleService {
             return List.of();
         }
 
-        var request = new RoleAssignmentsQueryRequest(staleUsers);
+        var request = new RoleAssignmentsQueryRequest(staleUsers,size);
         final RoleAssignmentResponse response;
 
         try {

@@ -14,11 +14,12 @@ class RoleAssignmentsQueryRequestTest {
     @Test
     void shouldSerialiseToJson() throws JsonProcessingException {
         String expected = """
-            {"queryRequests":[{"actorId":["user1","user2"]}]}
+            {"queryRequests":[{"actorId":["user1","user2"]}],"size":100}
             """.strip();
         var staleUsers = List.of("user1", "user2");
-        var request = new RoleAssignmentsQueryRequest(staleUsers);
+        var request = new RoleAssignmentsQueryRequest(staleUsers,10);
         ObjectMapper mapper = new ObjectMapper();
+        String requestValue = mapper.writeValueAsString(request);
         assertThat(mapper.writeValueAsString(request))
             .isEqualTo(expected);
     }

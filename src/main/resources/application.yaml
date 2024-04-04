@@ -41,6 +41,7 @@ stale-users:
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   roles: citizen
+  roleAssignments.size: ${DISPOSER_IDAM_ROLE_ASSIGNMENTS_SIZE:10}
 
 restorer:
   batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
