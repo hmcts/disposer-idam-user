@@ -20,7 +20,7 @@ public class IdamTokenGenerator {
     public static final String IDAM_GRANT_TYPE = "client_credentials";
     @SuppressWarnings("checkstyle:linelength")
     public static final String IDAM_SCOPE = "archive-user view-archived-user delete-archived-user "
-        + "restore-archived-user search-user";
+        + "restore-archived-user";
     public static final String ROLE_ASSIGNMENT_SCOPE = "profile roles";
 
     private final IdamClient idamClient;

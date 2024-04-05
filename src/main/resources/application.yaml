@@ -26,29 +26,11 @@ ccd:
   role.assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
 
-lau:
-  api:
-    url: ${LAU_API_URL:http://localhost:4550}
-    max_backoff_wait: 32 # max backoff wait before giving up in seconds
-
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
-  restorer_enabled: ${IDAM_USER_RESTORER_ENABLED:false}
-  duplicate_user_enabled: ${IDAM_DUPLICATE_USER_RESTORER_ENABLED:false}
 
 stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   roles: citizen
-
-restorer:
-  batch.size: ${DISPOSER_RESTORER_BATCH_SIZE:1}
-  requests.limit: ${DISPOSER_RESTORER_REQUESTS_LIMIT:1}
-  start.page: ${DISPOSER_RESTORER_START_PAGE:1}
-
-duplicate-user-merger:
-  dry_run: ${DUPLICATE_USER_MERGE_DRY_RUN:true}
-  batch.size: ${DUPLICATE_USER_BATCH_SIZE:1}
-  requests.limit: ${DUPLICATE_USER_REQUESTS_LIMIT:1}
-  start.page: ${DUPLICATE_USER_START_PAGE:1}

@@ -1,12 +1,9 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
-import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
-import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +12,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.hmcts.reform.idam.util.Constants;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.common.ContentTypes.APPLICATION_JSON;
 import static feign.form.ContentProcessor.CONTENT_TYPE_HEADER;
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
@@ -30,9 +26,6 @@ public class WireMockStubs {
 
     @Value("${dummy-jwt}")
     String dummyJwtToken;
-
-    @Value("${wiremock-debug:false}")
-    private boolean debugging;
 
     public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
 
@@ -46,112 +39,6 @@ public class WireMockStubs {
                     WireMockStubs::requestReceived);
         }
         setupAuthorizationStub();
-    }
-
-    protected void setupLauIdamApiStubToReturnMoreRecords() {
-        var request = WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH));
-        var response = WireMock.aResponse();
-        response.withHeader(CONTENT_TYPE, APP_JSON);
-        response.withBody("""
-            {"deletionLogs": [{
-                "userId": "00001",
-                "emailAddress": "joe.doe@example.org",
-                "firstName": "Joe",
-                "lastName": "Doe",
-                "deletionTimestamp": "2023-08-23T22:20:05.023Z"
-            }],
-            "startRecordNumber": 1,
-            "moreRecords": true
-            }"""
-        );
-        wiremock.stubFor(request.willReturn(response));
-    }
-
-    protected void setupLauApiStubs() {
-        wiremock.stubFor(
-            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
-                .willReturn(
-                    WireMock.aResponse()
-                        .withHeader(CONTENT_TYPE, APP_JSON)
-                        .withBodyFile("lauIdamGetDeletedUsers.json")
-                )
-        );
-    }
-
-    protected void setupApiResponse(UrlPathPattern urlPattern, String bodyAsJson) {
-        setupApiResponse(urlPattern, null, bodyAsJson);
-    }
-
-    protected void setupApiResponse(UrlPattern urlPattern, Map<String, String> queryParams, String bodyAsJson) {
-        MappingBuilder requestStubBuilder = WireMock.get(urlPattern);
-        if (queryParams != null) {
-            for (Map.Entry<String, String> entry: queryParams.entrySet()) {
-                requestStubBuilder.withQueryParam(entry.getKey(), equalTo(entry.getValue()));
-            }
-        }
-        requestStubBuilder.willReturn(WireMock.aResponse().withHeader(CONTENT_TYPE, APP_JSON).withBody(bodyAsJson));
-        wiremock.stubFor(requestStubBuilder);
-    }
-
-    protected void setupPagedLauApiStubs() {
-        String page1 = """
-            {
-              "deletionLogs": [{
-                  "userId":"00001","emailAddress":"a@a.a","firstName":"J","lastName":"D",
-                  "deletionTimestamp":"2023-08-23T22:20:05.023Z"
-                },{
-                  "userId":"00002","emailAddress":"a@a.a","firstName":"J","lastName":"D",
-                  "deletionTimestamp":"2023-08-23T20:20:05.023Z"
-                }],
-              "startRecordNumber": 1,
-              "moreRecords": true
-            }""";
-
-        String page2 = """
-            {
-              "deletionLogs": [{
-                  "userId":"00003","emailAddress":"a@a.a","firstName":"J","lastName":"D",
-                  "deletionTimestamp":"2023-08-23T16:20:05.023Z"
-                }],
-              "startRecordNumber": 3,
-              "moreRecords": false
-            }""";
-
-        wiremock.stubFor(
-            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
-                .withQueryParam("page", equalTo("1"))
-                .willReturn(
-                    WireMock.aResponse()
-                        .withHeader(CONTENT_TYPE, APP_JSON)
-                        .withBody(page1)
-                )
-        );
-        wiremock.stubFor(
-            WireMock.get(WireMock.urlPathEqualTo(Constants.LAU_GET_DELETED_USERS_PATH))
-                .withQueryParam("page", equalTo("2"))
-                .willReturn(
-                    WireMock.aResponse()
-                        .withHeader(CONTENT_TYPE, APP_JSON)
-                        .withBody(page2)
-                )
-        );
-
-    }
-
-    protected void setupIdamRestoreStub(int httpReturnStatus, String errorDescription) {
-        var response = WireMock.aResponse();
-        response.withHeader(CONTENT_TYPE, APP_JSON);
-        response.withStatus(httpReturnStatus);
-        if (errorDescription != null) {
-            response.withBody(String.format("""
-                {
-                    "error":"doesn't matter",
-                    "error_description":"%s"
-                }
-                """, errorDescription));
-        }
-        var request = WireMock.post(WireMock.urlPathTemplate(Constants.STALE_USERS_PATH + "/{userId}"));
-        wiremock.stubFor(request.willReturn(response));
     }
 
     public void setupIdamApiStubsForSuccess() {

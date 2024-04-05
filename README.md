@@ -6,6 +6,11 @@ This micro-service runs periodically and disposes archived citizen accounts
 
 ## Extra functionality
 
+Available on tag
+[v2.0.0](https://github.com/hmcts/disposer-idam-user/releases/tag/v2.0.0) and
+also as a separate
+[read-only branch](https://github.com/hmcts/disposer-idam-user/tree/release/user-restorer-role-merger).
+
 Role-assignments returns paged results, however we overlooked this and
 disposer-idam-user deleted a lot more users than had to. This caused us to
 write additional functionality to restore all the users, which we don't expect
