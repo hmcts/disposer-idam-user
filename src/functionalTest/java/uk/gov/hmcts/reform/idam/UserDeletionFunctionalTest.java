@@ -4,7 +4,6 @@ import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -25,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
-@Disabled
 class UserDeletionFunctionalTest {
 
     @Inject
@@ -48,7 +46,7 @@ class UserDeletionFunctionalTest {
         String userId = idamUserDataProvider.setup();
         List<String> deletedStaleUsers = userDisposerService.run();
         assertThat(deletedStaleUsers).hasSize(1);
-        assertThat(deletedStaleUsers.get(0)).isEqualTo(userId);
+        assertThat(deletedStaleUsers.getFirst()).isEqualTo(userId);
     }
 
     @Test
@@ -68,7 +66,7 @@ class UserDeletionFunctionalTest {
         String userIdNoRole = idamUserDataProvider.setup();
         List<String> deletedStaleUsers = userDisposerService.run();
         assertThat(deletedStaleUsers).hasSize(1);
-        assertThat(deletedStaleUsers.get(0)).isEqualTo(userIdNoRole);
+        assertThat(deletedStaleUsers.getFirst()).isEqualTo(userIdNoRole);
     }
 
     @AfterEach

@@ -58,7 +58,7 @@ public class StaleUsersService {
                 .stream()
                 .filter(user -> user.getRoles() != null
                     && user.getRoles().size() == 1
-                    && user.getRoles().get(0).toLowerCase().equalsIgnoreCase(roleToDelete))
+                    && user.getRoles().getFirst().toLowerCase().equalsIgnoreCase(roleToDelete))
                 .map(UserContent::getId)
                 .toList();
     }

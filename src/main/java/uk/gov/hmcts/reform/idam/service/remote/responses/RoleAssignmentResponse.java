@@ -17,5 +17,4 @@ public class RoleAssignmentResponse {
     @JsonProperty("roleAssignmentResponse")
     private List<RoleAssignment> roleAssignments;
 
-
 }

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static uk.gov.hmcts.reform.idam.util.Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -50,11 +52,9 @@ public class UserRoleService {
 
     }
 
-
-
     private Map<String, String> getHeaders() {
         Map<String, String> headers = new ConcurrentHashMap<>(securityUtil.getAuthHeaders());
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", ROLE_ASSIGNMENTS_CONTENT_TYPE);
         return headers;
     }
 }

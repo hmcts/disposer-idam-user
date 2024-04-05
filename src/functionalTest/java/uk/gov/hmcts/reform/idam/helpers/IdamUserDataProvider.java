@@ -90,47 +90,4 @@ public class IdamUserDataProvider {
         return user.toString();
     }
 
-    public String createIdamUser() {
-        securityUtil.generateTokens();
-        ExtractableResponse<Response> res = createRestorerUser();
-        return res.path("id");
-    }
-
-    public String createAndRetireIdamUser() {
-        securityUtil.generateTokens();
-        ExtractableResponse<Response> res = createRestorerUser();
-        String userId = res.path("id");
-        retireUser(userId);
-        return userId;
-    }
-
-    public String createIdamUserAndReturnEmailAddress() {
-        securityUtil.generateTokens();
-        ExtractableResponse<Response> res = createRestorerUser();
-        return res.path("email");
-    }
-
-    public String createAndRetireIdamUserAndReturnEmailAddress() {
-        securityUtil.generateTokens();
-        ExtractableResponse<Response>  res = createRestorerUser();
-        String emailAddress = res.path("email");
-        String userId = res.path("id");
-        retireUser(userId);
-        return emailAddress;
-    }
-
-    public ExtractableResponse<Response> createRestorerUser() {
-        String name = UUID.randomUUID().toString();
-        String email = "DisposerRestorer-@example.org";
-        String[] emailParts = email.split("-");
-        email = emailParts[0] + name + emailParts[1];
-        String foreName = "LauRestorer " + name;
-
-        return createUser(email,foreName, "TestRestorer","{Pass12345Y");
-    }
-
-    public String createIdamUserWithEmail(String email) {
-        var response = createUser(email, "Disposer", "Merger", "{Pass12345Y");
-        return response.path("id");
-    }
 }
