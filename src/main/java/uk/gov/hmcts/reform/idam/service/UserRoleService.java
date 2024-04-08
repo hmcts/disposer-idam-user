@@ -30,7 +30,7 @@ public class UserRoleService {
             return List.of();
         }
 
-        var request = new RoleAssignmentsQueryRequest(staleUsers);
+        RoleAssignmentsQueryRequest request = new RoleAssignmentsQueryRequest(staleUsers);
         final RoleAssignmentResponse response;
 
         try {
@@ -40,7 +40,7 @@ public class UserRoleService {
             throw e;
         }
 
-        var assignments = response
+        List<String> assignments = response
             .getRoleAssignments()
             .stream()
             .filter(assignment -> "IDAM".equals(assignment.getActorIdType()))
@@ -49,7 +49,6 @@ public class UserRoleService {
         return staleUsers.stream()
             .filter(userId -> !assignments.contains(userId))
             .toList();
-
     }
 
     private Map<String, String> getHeaders() {

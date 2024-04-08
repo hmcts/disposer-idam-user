@@ -20,7 +20,7 @@ public class RoleAssignmentProvider {
 
     private final IdamTokenGenerator idamTokenGenerator;
     private final ServiceTokenGenerator serviceTokenGenerator;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${ccd.role.assignment.host}")
     private String roleAssignmentApi;

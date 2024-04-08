@@ -22,6 +22,7 @@ public class MethodRetryAspect {
     private final SecurityUtil securityUtil;
 
     @Around("@annotation(uk.gov.hmcts.reform.idam.service.aop.Retry)")
+    @SuppressWarnings("PMD.LawOfDemeter")
     public Object retry(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 

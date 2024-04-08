@@ -35,7 +35,7 @@ class UserRoleServiceTest {
 
     @BeforeEach
     void setUp() {
-        var headers = Map.of(
+        Map<String, String> headers = Map.of(
             "Authorization", "Bearer 123456",
             "ServiceAuthorization", "Bearer 123456"
         );
@@ -46,7 +46,7 @@ class UserRoleServiceTest {
     void shouldFilterUsersWithRoles() {
 
         List<RoleAssignment> assignments = List.of(makeRoleAssignment("user-1"), makeRoleAssignment("user-2"));
-        var entity = new RoleAssignmentResponse();
+        RoleAssignmentResponse entity = new RoleAssignmentResponse();
         entity.setRoleAssignments(assignments);
 
         List<String> staleUsers = List.of("user-1", "user-2", "user-3");
@@ -59,7 +59,7 @@ class UserRoleServiceTest {
 
     @Test
     void shouldReturnAllOnEmptyAssignments() {
-        var roleAssignmentResponse = new RoleAssignmentResponse();
+        RoleAssignmentResponse roleAssignmentResponse = new RoleAssignmentResponse();
         roleAssignmentResponse.setRoleAssignments(List.of());
 
         List<String> staleUsers = List.of("user-1", "user-2", "user-3");

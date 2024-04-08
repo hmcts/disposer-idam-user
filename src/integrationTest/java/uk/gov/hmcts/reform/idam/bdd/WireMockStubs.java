@@ -27,7 +27,7 @@ public class WireMockStubs {
     @Value("${dummy-jwt}")
     String dummyJwtToken;
 
-    public final WireMockServer wiremock = WireMockInstantiator.INSTANCE.getWireMockServer();
+    public final WireMockServer wiremock = WireMockInstantiator.getWireMockInstance();
 
     public void setupWireMock() {
         setupWireMock(false);

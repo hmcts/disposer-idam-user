@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.times;
@@ -35,7 +37,7 @@ class SecurityUtilTest {
     void authHeadersGetShouldCallGeneratorServices() {
         when(idamTokenGenerator.getPasswordTypeAuthorizationHeader()).thenReturn("idam token");
         when(serviceTokenGenerator.getServiceAuthToken()).thenReturn("service token");
-        var headers = securityUtil.getAuthHeaders();
+        Map<String, String> headers = securityUtil.getAuthHeaders();
         assertThat(headers)
             .containsEntry("Authorization", "idam token")
             .containsEntry("ServiceAuthorization", "service token");
