@@ -9,7 +9,7 @@ import java.util.List;
 public class RoleAssignmentsQueryRequest {
 
     @JsonProperty("queryRequests")
-    private List<QueryRequest> queryRequests;
+    private final List<QueryRequest> queryRequests;
 
     public RoleAssignmentsQueryRequest(List<String> userIds) {
         queryRequests = List.of(QueryRequest.builder().userIds(userIds).build());

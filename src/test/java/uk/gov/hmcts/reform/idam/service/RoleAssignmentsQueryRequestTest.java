@@ -16,8 +16,8 @@ class RoleAssignmentsQueryRequestTest {
         String expected = """
             {"queryRequests":[{"actorId":["user1","user2"]}]}
             """.strip();
-        var staleUsers = List.of("user1", "user2");
-        var request = new RoleAssignmentsQueryRequest(staleUsers);
+        List<String> staleUsers = List.of("user1", "user2");
+        RoleAssignmentsQueryRequest request = new RoleAssignmentsQueryRequest(staleUsers);
         ObjectMapper mapper = new ObjectMapper();
         assertThat(mapper.writeValueAsString(request))
             .isEqualTo(expected);

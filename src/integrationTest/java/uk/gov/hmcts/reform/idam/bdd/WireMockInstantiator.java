@@ -9,17 +9,21 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public enum WireMockInstantiator {
     INSTANCE;
 
-    private int idamApiPort = 5000;
+    private static final int IDAM_API_PORT = 5000;
 
     private final WireMockServer wireMockServer;
 
     WireMockInstantiator() {
         wireMockServer = new WireMockServer(
             options()
-                .port(idamApiPort)
+                .port(IDAM_API_PORT)
                 .usingFilesUnderClasspath("wiremock")
         );
         wireMockServer.start();
+    }
+
+    public static WireMockServer getWireMockInstance() {
+        return INSTANCE.getWireMockServer();
     }
 
 }
