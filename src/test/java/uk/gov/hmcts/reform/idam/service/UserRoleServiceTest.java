@@ -75,6 +75,7 @@ class UserRoleServiceTest {
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any())).thenReturn(roleAssignmentResponse);
         when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         List<String> users = userRoleService.filterUsersWithRoles(staleUsers);
         assertThat(users).hasSize(3);
@@ -89,6 +90,7 @@ class UserRoleServiceTest {
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
 
         when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))
             .thenReturn(roleAssignmentResponse1)
@@ -113,6 +115,7 @@ class UserRoleServiceTest {
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
 
         when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))
             // The first RA request wll return 20 roles -->  20 == (requestLimit x10)
@@ -127,8 +130,8 @@ class UserRoleServiceTest {
 
         final List<Map<String, String>> allValues = roleAssignentsHeaderCaptor.getAllValues();
 
-        assertThat(allValues.getFirst().get("pageNumber")).isEqualTo("0");
-        assertThat(allValues.getLast().get("pageNumber")).isEqualTo("1");
+        assertThat(allValues.getFirst()).containsEntry("pageNumber", "0");
+        assertThat(allValues.getLast()).containsEntry("pageNumber", "1");
     }
 
     private List<RoleAssignment> getRoleAssignmentList(final int size) {

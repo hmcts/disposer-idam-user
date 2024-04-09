@@ -39,4 +39,7 @@ public class ParameterResolver {
 
     @Value("${stale-users.simulation.mode}")
     private Boolean isSimulation;
+
+    @Value("${role-assignments.max-page-size:1000}")
+    private int maxRoleAssignmentsPageSize;
 }

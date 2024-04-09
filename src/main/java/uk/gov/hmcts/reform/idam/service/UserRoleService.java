@@ -57,7 +57,8 @@ public class UserRoleService {
     private RoleAssignmentResponse getRoleAssignmentResponse(final RoleAssignmentsQueryRequest request) {
         int page = 0;
         final int querySize = Math.min(
-            parameterResolver.getBatchSize() * 10, 1000); // the query size can't be greater then 1000
+            parameterResolver.getBatchSize() * 10,
+            parameterResolver.getMaxRoleAssignmentsPageSize()); // the query size can't be greater then 1000
 
         final RoleAssignmentResponse response = roleAssignmentClient.getRoleAssignments(
             getHeaders(page, querySize),

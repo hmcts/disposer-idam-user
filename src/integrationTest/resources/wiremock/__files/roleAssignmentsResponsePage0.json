@@ -1,0 +1,80 @@
+{
+  "roleAssignmentResponse": [
+    {
+      "id": "ea0cc557-d440-40c3-9634-e0ca9f18f1a9",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T22:38:41.003555Z",
+      "created": "2022-02-10T22:38:41.133974Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644532719809859",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    },
+    {
+      "id": "0798ad9b-322b-4269-8e7f-85cf5f45e892",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T22:40:24.611059Z",
+      "created": "2022-02-10T22:40:24.657697Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644532823836392",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    },
+    {
+      "id": "784274ee-5b7f-4845-8d80-eda3403a724d",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T22:46:18.975713Z",
+      "created": "2022-02-10T22:46:19.020705Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644533177748464",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    },
+    {
+      "id": "e7535cd4-d334-481d-af7d-d6ef890725ad",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T22:36:58.701067Z",
+      "created": "2022-02-10T22:36:58.749926Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644532617898848",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    }
+  ]
+}
