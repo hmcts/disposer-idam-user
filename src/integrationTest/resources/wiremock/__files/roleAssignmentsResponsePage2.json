@@ -1,0 +1,61 @@
+{
+  "roleAssignmentResponse": [
+    {
+      "id": "f4959d73-26cd-4996-a50e-aeb3f32a3925",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T23:31:59.063151Z",
+      "created": "2022-02-10T23:31:59.107381Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644535917754447",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    },
+    {
+      "id": "3375f268-0d2c-4e39-b26a-28744866ac6e",
+      "actorIdType": "IDAM",
+      "actorId": "18891e72-15dd-457c-86e2-2e0f4018499f",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T21:33:00.922466Z",
+      "created": "2022-02-10T21:33:01.006197Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644528779302033",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    },
+    {
+      "id": "4cb59890-a2a1-4c4d-80c8-e1fc171462ca",
+      "actorIdType": "IDAM",
+      "actorId": "8fa77679-871a-4e63-9968-d3dca91ef86e",
+      "roleType": "CASE",
+      "roleName": "[CREATOR]",
+      "classification": "RESTRICTED",
+      "grantType": "SPECIFIC",
+      "roleCategory": "CITIZEN",
+      "readOnly": false,
+      "beginTime": "2022-02-10T21:34:32.437291Z",
+      "created": "2022-02-10T21:34:32.509832Z",
+      "attributes": {
+        "substantive": "N",
+        "caseId": "1644528871442364",
+        "jurisdiction": "CMC",
+        "caseType": "MoneyClaimCase"
+      }
+    }
+  ]
+}
