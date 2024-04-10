@@ -1,5 +1,5 @@
 Feature: Role assignments
-  Tests scenarios relatad to role assignments
+  Tests scenarios related to role assignments
 
   Scenario: Call Role Assignment pages
     Given Role Assignments filtering called with many users
