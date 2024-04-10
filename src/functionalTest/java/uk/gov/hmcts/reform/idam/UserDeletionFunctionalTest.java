@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.idam;
 
 import jakarta.inject.Inject;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -15,13 +14,13 @@ import uk.gov.hmcts.reform.idam.helpers.RoleAssignmentProvider;
 import uk.gov.hmcts.reform.idam.service.DeleteUserService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("functional")
-@RequiredArgsConstructor
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 class UserDeletionFunctionalTest {
@@ -30,15 +29,16 @@ class UserDeletionFunctionalTest {
     private IdamUserDataProvider idamUserDataProvider;
 
     @Inject
-    RoleAssignmentProvider roleAssignmentProvider;
+    private RoleAssignmentProvider roleAssignmentProvider;
 
     @Inject
-    DeleteUserService deleteUserService;
+    private DeleteUserService deleteUserService;
 
     @Inject
     private IdamUserDisposerService userDisposerService;
 
     private String userWithRole;
+    private final List<String> userWithRoleList = new ArrayList<>();
 
     @Test
     @DirtiesContext
@@ -69,10 +69,31 @@ class UserDeletionFunctionalTest {
         assertThat(deletedStaleUsers.getFirst()).isEqualTo(userIdNoRole);
     }
 
+    @Test
+    @DirtiesContext
+    void shouldFetchAllRoleAssignmentPages() {
+        int numOfUsers = 4;
+
+        for (int i = 0; i < numOfUsers; i++) {
+            userWithRoleList.add(idamUserDataProvider.setup());
+        }
+        log.info("Created users - {}", userWithRoleList);
+        roleAssignmentProvider.assignRole(userWithRoleList);
+        String userWithoutRole = idamUserDataProvider.setup();
+        log.info("User without role {}", userWithoutRole);
+        List<String> deletedStaleUsers = userDisposerService.run();
+        assertThat(deletedStaleUsers).hasSize(1);
+        assertThat(deletedStaleUsers.getFirst()).isEqualTo(userWithoutRole);
+    }
+
+
     @AfterEach
     public void teardown() {
         if (userWithRole != null) {
             deleteUserService.deleteUser(userWithRole);
+            roleAssignmentProvider.deleteRoles(List.of(userWithRole));
         }
+        deleteUserService.deleteUsers(userWithRoleList);
+        roleAssignmentProvider.deleteRoles(userWithRoleList);
     }
 }

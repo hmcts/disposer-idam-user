@@ -37,9 +37,7 @@ public class IdamUserDataProvider {
         securityUtil.generateTokens();
 
         String name = UUID.randomUUID().toString();
-        String email = "DisposerRestorer-@example.org";
-        String[] emailParts = email.split("-");
-        email = emailParts[0] + name + emailParts[1];
+        String email = "Disposer-" + name + "@example.org";
         String foreName = "Lau " + name;
 
         ExtractableResponse<Response> res = createUser(email, foreName, "Test", "{Pass12345Y");
