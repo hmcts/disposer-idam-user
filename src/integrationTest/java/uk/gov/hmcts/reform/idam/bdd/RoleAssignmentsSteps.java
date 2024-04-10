@@ -17,7 +17,7 @@ public class RoleAssignmentsSteps extends RoleAssignmentStubs {
 
     private final UserRoleService userRoleService;
 
-    private List<String> collected;
+    private List<String> userIdsWithoutRoles;
 
     @Value("${role-assignments.max-page-size}")
     private int maxPageSize;
@@ -27,7 +27,7 @@ public class RoleAssignmentsSteps extends RoleAssignmentStubs {
         wiremock.resetRequests();
         setupRoleAssignmentPagedStub();
 
-        collected = userRoleService.filterUsersWithRoles(List.of(
+        userIdsWithoutRoles = userRoleService.filterUsersWithRoles(List.of(
             "13e31622-edea-493c-8240-9b780c9d6001",
             "8fa77679-871a-4e63-9968-d3dca91ef86e"
         ));
@@ -35,8 +35,8 @@ public class RoleAssignmentsSteps extends RoleAssignmentStubs {
 
     @Then("Role Assignments should fetch all available pages")
     public void checkResults() {
-        assertThat(collected).hasSize(1);
-        assertThat(collected).doesNotContain("8fa77679-871a-4e63-9968-d3dca91ef86e");
+        assertThat(userIdsWithoutRoles).hasSize(1);
+        assertThat(userIdsWithoutRoles).doesNotContain("8fa77679-871a-4e63-9968-d3dca91ef86e");
         for (int i = 0; i < 3; i++) {
             wiremock.verify(1,
                 WireMock.postRequestedFor(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_QUERY_PATH))
