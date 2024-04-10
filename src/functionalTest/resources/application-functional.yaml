@@ -22,6 +22,10 @@ stale-users:
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   roles: disposer-test-role
+  idam-start-page: 110
+
+role-assignments:
+  max-page-size: 2
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

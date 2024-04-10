@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.aop.Retry;
@@ -24,6 +25,8 @@ public class StaleUsersService {
     private boolean finished = false;
     private static final String PAGE_NUMBER_PARAM = "page";
     private static final String BATCH_SIZE_PARAM = "size";
+
+    @Value("${stale-users.idam-start-page:0}")
     private int currentPage;
     private int totalStaleUsers;
 
@@ -42,6 +45,7 @@ public class StaleUsersService {
                     BATCH_SIZE_PARAM, parameterResolver.getBatchSize()
                 )
             );
+            log.info("Fetched page {}", currentPage);
         } catch (Exception e) {
             log.error("StaleUsersService.getStaleUsers threw exception: {}", e.getMessage(), e);
             throw e;
