@@ -45,6 +45,22 @@ For role assignments to work we need:
 * `search-user` scope in `[idam-access-config](https://github.com/hmcts/idam-access-config)`.
 Revert PR [is here](https://github.com/hmcts/idam-access-config/pull/596)
 
+and we need to add environment variables in
+[cnp-flux-config](https://github.com/hmcts/cnp-flux-config/pull/30384/files) for all
+environments:
+
+```yaml
+IDAM_USER_RESTORER_ENABLED: false
+DISPOSER_RESTORER_BATCH_SIZE: 100
+DISPOSER_RESTORER_REQUESTS_LIMIT: 10000
+DISPOSER_RESTORER_START_PAGE: 1
+IDAM_DUPLICATE_USER_RESTORER_ENABLED: false
+DUPLICATE_USER_MERGE_DRY_RUN: true
+DUPLICATE_USER_BATCH_SIZE: 100
+DUPLICATE_USER_REQUESTS_LIMIT: 10000
+DUPLICATE_USER_START_PAGE: 1
+```
+
 We disabled some functional tests in order for pipeline to pass, as permission
 was already removed.
 
