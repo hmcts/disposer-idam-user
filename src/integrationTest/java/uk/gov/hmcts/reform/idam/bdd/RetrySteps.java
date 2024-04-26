@@ -41,6 +41,6 @@ public class RetrySteps extends WireMockStubs {
 
     @Then("it should rethrow exception")
     public void itShouldRethrowException() {
-        assertThrows(FeignException.InternalServerError.class, () -> service.run());
+        assertThrows(FeignException.InternalServerError.class, service::run);
     }
 }
