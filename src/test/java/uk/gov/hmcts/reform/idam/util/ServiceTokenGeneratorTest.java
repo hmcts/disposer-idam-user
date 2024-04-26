@@ -38,7 +38,7 @@ class ServiceTokenGeneratorTest {
 
         ServiceAuthTokenGenerationException thrown = assertThrows(
             ServiceAuthTokenGenerationException.class,
-            () -> serviceTokenGenerator.generateServiceToken()
+            serviceTokenGenerator::generateServiceToken
         );
 
         assertThat(thrown.getMessage()).contains("Unable to generate service auth token due to error -");
