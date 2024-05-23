@@ -232,6 +232,8 @@ def versions = [
   lombok            : '1.18.32'
 ]
 
+ext['jackson-bom.version'] = versions.jackson
+
 dependencies {
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
