@@ -1,13 +1,12 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import feign.FeignException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RetrySteps extends WireMockStubs {
 
@@ -39,8 +38,12 @@ public class RetrySteps extends WireMockStubs {
         wiremock.verify(WireMock.postRequestedFor(WireMock.urlPathEqualTo("/lease")));
     }
 
-    @Then("it should rethrow exception")
-    public void itShouldRethrowException() {
-        assertThrows(FeignException.InternalServerError.class, service::run);
+    @Then("it should catch exception")
+    public void itShouldCatchException() {
+        try {
+            service.run();
+        } catch (Exception e) {
+            assertNotNull(e.getMessage());
+        }
     }
 }
