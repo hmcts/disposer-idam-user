@@ -15,7 +15,7 @@ Feature: User disposer
 
   Scenario: Application raises exception on 500 error
     Given IdAM api responds with 500
-    Then it should rethrow exception
+    Then it should throw exception
 
   Scenario: User deletion continues when IdAM api returns non-200 status code
     Given IdAM api responds with 502 error to "/api/v1/staleUsers/([a-z0-9]+)" endpoint DELETE call
