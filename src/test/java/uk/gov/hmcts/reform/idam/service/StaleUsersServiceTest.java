@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,11 @@ class StaleUsersServiceTest {
     @BeforeEach
     void setUp() {
         when(parameterResolver.getBatchSize()).thenReturn(2);
-        when(parameterResolver.getIdamRoleToDelete()).thenReturn("citizen");
+        when(parameterResolver.getCitizenRole()).thenReturn("citizen");
+        when(parameterResolver.getCitizenRolesPattern()).thenReturn("letter-");
+        when(parameterResolver.getAdditionalIdamCitizenRoles())
+            .thenReturn(java.util.Optional.of(Set.of("claimant", "defendant", "divorce-private-beta")));
+        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
     }
 
     @Test
@@ -53,7 +58,6 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("2", List.of("defendant")));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         List<String> staleUsers = staleUsersService.fetchStaleUsers();
@@ -63,25 +67,63 @@ class StaleUsersServiceTest {
     }
 
     @Test
-    void shouldFilterStaleUsersByCitizenAccount() {
+    void shouldFilterStaleUsersByCitizenRoles() {
         final List<UserContent> userContentList = new LinkedList<>();
-        userContentList.add(new UserContent("1", Arrays.asList("citizen", "defendant")));
-        userContentList.add(new UserContent("2", List.of("defendant")));
-        userContentList.add(new UserContent("3", List.of("citizen")));
-        userContentList.add(new UserContent("4", List.of("CitIZen")));
-        userContentList.add(new UserContent("5", Arrays.asList("CitIZen", "judge")));
-        userContentList.add(new UserContent("6", null));
-        userContentList.add(new UserContent("7", emptyList()));
-
+        userContentList.add(new UserContent("001", Arrays.asList("citizen", "defendant", "claimant", "letter-123")));
+        userContentList.add(new UserContent("002", Arrays.asList("CITIZEN", "DEFENDANT", "CLAIMANT")));
+        userContentList.add(new UserContent("003", Arrays.asList("CITIZEN", "DEFENDANT", "CLAIMANT", "LETTER-123")));
+        userContentList.add(new UserContent("004", List.of("CITIZEN", "LETTER-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
+        userContentList.add(new UserContent("005", List.of("LETTER-1234")));
+        userContentList.add(new UserContent("006", List.of("defendant")));
+        userContentList.add(new UserContent("007", List.of("citizen")));
+        userContentList.add(new UserContent("008", List.of("CiTiZeN", "dEfEnDaNt")));
+        userContentList.add(new UserContent("009", Arrays.asList("CitIZen", "judge")));
+        userContentList.add(new UserContent("010", null));
+        userContentList.add(new UserContent("011", emptyList()));
+        userContentList.add(new UserContent("012", List.of("CITIZEN")));
+        userContentList.add(new UserContent("013", List.of("CITIZEN", "defendant")));
+        userContentList.add(new UserContent("014", List.of("JUROR")));
+        userContentList.add(new UserContent("015", List.of("citizen", "letter-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
+        userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
         final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         final List<String> staleUsers = staleUsersService.fetchStaleUsers();
-        assertThat(staleUsers).hasSize(2);
-        assertThat(staleUsers.get(0)).isEqualTo("3");
-        assertThat(staleUsers.get(1)).isEqualTo("4");
+        assertThat(staleUsers)
+            .hasSize(9)
+            .containsAll(List.of("001", "002", "003", "004", "007", "008", "012", "013", "015"));
+    }
+
+    @Test
+    void shouldFilterOnlyOnMandatoryRoleIfOtherNotProvided() {
+        when(parameterResolver.getCitizenRolesPattern()).thenReturn(null);
+        when(parameterResolver.getAdditionalIdamCitizenRoles())
+            .thenReturn(java.util.Optional.empty());
+        final List<UserContent> userContentList = new LinkedList<>();
+        userContentList.add(new UserContent("001", Arrays.asList("citizen", "defendant", "claimant", "letter-123")));
+        userContentList.add(new UserContent("004", List.of("CITIZEN", "LETTER-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
+        userContentList.add(new UserContent("005", List.of("LETTER-1234")));
+        userContentList.add(new UserContent("006", List.of("defendant")));
+        userContentList.add(new UserContent("007", List.of("citizen")));
+        userContentList.add(new UserContent("008", List.of("CiTiZeN", "dEfEnDaNt")));
+        userContentList.add(new UserContent("009", Arrays.asList("CitIZen", "judge")));
+        userContentList.add(new UserContent("010", null));
+        userContentList.add(new UserContent("011", emptyList()));
+        userContentList.add(new UserContent("012", List.of("CITIZEN")));
+        userContentList.add(new UserContent("013", List.of("CITIZEN", "defendant")));
+        userContentList.add(new UserContent("014", List.of("JUROR")));
+        userContentList.add(new UserContent("015", List.of("citizen", "letter-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
+        userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
+        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
+
+        when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
+
+        final List<String> staleUsers = staleUsersService.fetchStaleUsers();
+        assertThat(staleUsers)
+            .hasSize(2)
+            .containsAll(List.of("007", "012"));
+
     }
 
 }
