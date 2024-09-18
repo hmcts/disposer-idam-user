@@ -4,20 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Optional;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("PMD.TooManyMethods")
 class ParameterResolverTest {
 
     private static final String IDAM_API_URL = "idamHost";
-
     private static final String BATCH_SIZE = "batchSize";
-
     private static final String REQUEST_LIMIT = "requestLimit";
 
     private static final String CLIENT_ID = "clientId";
     private static final String CLIENT_SECRET = "clientSecret";
-    private static final String IDAM_ROLE_TO_DELETE = "idamRoleToDelete";
     private static final String CLIENT_USER_NAME = "clientUserName";
     private static final String CLIENT_PASSWORD = "clientPassword";
     private static final String REDIRECT_URI = "redirectUri";
@@ -32,7 +32,9 @@ class ParameterResolverTest {
         ReflectionTestUtils.setField(resolver, REQUEST_LIMIT, 10);
         ReflectionTestUtils.setField(resolver, CLIENT_ID, "client id");
         ReflectionTestUtils.setField(resolver, CLIENT_SECRET, "client secret");
-        ReflectionTestUtils.setField(resolver, IDAM_ROLE_TO_DELETE, "disposer-test");
+        ReflectionTestUtils.setField(resolver, "citizenRole", "disposer-test");
+        ReflectionTestUtils.setField(resolver, "additionalIdamCitizenRoles", Optional.of(Set.of("role1", "role2")));
+        ReflectionTestUtils.setField(resolver, "citizenRolesPattern", "pattern");
         ReflectionTestUtils.setField(resolver, CLIENT_USER_NAME, "user@example.org");
         ReflectionTestUtils.setField(resolver, CLIENT_PASSWORD, "client password");
         ReflectionTestUtils.setField(resolver, REDIRECT_URI, "redirect.uri");
@@ -66,8 +68,18 @@ class ParameterResolverTest {
     }
 
     @Test
-    void shouldGetIdamRoleToDelete() {
-        assertThat(resolver.getIdamRoleToDelete()).isEqualTo("disposer-test");
+    void shouldGetCitizenRoleToDelete() {
+        assertThat(resolver.getCitizenRole()).isEqualTo("disposer-test");
+    }
+
+    @Test
+    void shouldGetAdditionalIdamCitizenRoles() {
+        assertThat(resolver.getAdditionalIdamCitizenRoles()).isEqualTo(Optional.of(Set.of("role1", "role2")));
+    }
+
+    @Test
+    void shouldGetCitizenRolesPattern() {
+        assertThat(resolver.getCitizenRolesPattern()).isEqualTo("pattern");
     }
 
     @Test
@@ -87,6 +99,6 @@ class ParameterResolverTest {
 
     @Test
     void shouldGetIsSimulationMode() {
-        assertThat(resolver.getIsSimulation()).isEqualTo(true);
+        assertThat(resolver.getIsSimulation()).isTrue();
     }
 }

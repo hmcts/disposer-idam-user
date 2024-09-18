@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.Set;
+
 @Component
 @Getter
 @Setter
@@ -25,8 +28,14 @@ public class ParameterResolver {
     @Value("${idam.client.secret}")
     private String clientSecret;
 
-    @Value("${stale-users.roles}")
-    private String idamRoleToDelete;
+    @Value("${stale-users.mandatory-role-for-citizen:dummy-role}")
+    private String citizenRole;
+
+    @Value("${stale-users.citizen-roles:#{null}}")
+    private Optional<Set<String>> additionalIdamCitizenRoles;
+
+    @Value("${stale-users.citizen-letter-role-pattern:#{null}}")
+    private String citizenRolesPattern;
 
     @Value("${idam.client.username}")
     private String clientUserName;

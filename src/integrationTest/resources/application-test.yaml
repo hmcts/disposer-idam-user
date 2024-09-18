@@ -28,3 +28,10 @@ wiremock-debug: false
 
 role-assignments:
   max-page-size: 4
+
+stale-users:
+  # role that citizen user must have among other, otherwise account will be left untouched
+  mandatory-role-for-citizen: citizen
+  citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
+  citizen-letter-role-pattern: letter-
+
