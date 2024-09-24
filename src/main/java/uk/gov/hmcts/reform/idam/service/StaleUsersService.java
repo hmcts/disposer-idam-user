@@ -67,13 +67,18 @@ public class StaleUsersService {
         rolesToDelete.add(requiredRole);
         String filterPattern = parameterResolver.getCitizenRolesPattern();
 
-        return staleUsersResponse
-                .getContent()
-                .stream()
-                .filter(user -> user.getLowercasedRoles().contains(requiredRole))
-                .filter(user -> rolesToDelete.containsAll(user.filterOutPatternRoles(filterPattern)))
-                .map(UserContent::getId)
-                .toList();
+        final List<UserContent> userContentList = staleUsersResponse
+            .getContent()
+            .stream()
+            .filter(user -> user.getLowercasedRoles().contains(requiredRole))
+            .filter(user -> rolesToDelete.containsAll(user.filterOutPatternRoles(filterPattern)))
+            .toList();
+
+        log.info("Filtered users {}", userContentList);
+
+        return userContentList.stream()
+            .map(UserContent::getId)
+            .toList();
     }
 
     public boolean hasFinished() {
