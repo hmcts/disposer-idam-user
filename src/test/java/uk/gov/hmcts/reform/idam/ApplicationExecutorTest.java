@@ -11,10 +11,15 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.reform.idam.service.DeleteUserService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
+import uk.gov.hmcts.reform.idam.service.StaleUsersService;
+import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -31,6 +36,15 @@ class ApplicationExecutorTest {
     @Mock
     SecurityUtil securityUtil;
 
+    @Mock
+    LoggingSummaryUtils loggingSummaryUtils;
+
+    @Mock
+    private StaleUsersService staleUsersService;
+
+    @Mock
+    private DeleteUserService deleteUserService;
+
     @InjectMocks
     private ApplicationExecutor executor;
 
@@ -40,6 +54,8 @@ class ApplicationExecutorTest {
         executor.run(applicationArguments);
         verify(idamUserDisposerService, times(1)).run();
         verify(securityUtil, times(1)).generateTokens();
+        verify(loggingSummaryUtils, times(1)).logSummary(
+            anyLong(), anyLong(), anyInt(), anyInt(), anyInt());
     }
 
     @Test
@@ -52,7 +68,6 @@ class ApplicationExecutorTest {
 
     @Test()
     void shouldCatchExceptionAndLogError(CapturedOutput output) {
-
         // given
         ReflectionTestUtils.setField(executor, "isDisposerEnabled", true);
         Mockito.doThrow(new IllegalArgumentException("Exception to test alert"))
@@ -64,6 +79,7 @@ class ApplicationExecutorTest {
         // then
         verify(idamUserDisposerService, times(1)).run();
         assertThat(output).contains("Error executing Disposer Idam User service");
-
+        verify(loggingSummaryUtils, times(1)).logSummary(
+            anyLong(), anyLong(), anyInt(), anyInt(), anyInt());
     }
 }
