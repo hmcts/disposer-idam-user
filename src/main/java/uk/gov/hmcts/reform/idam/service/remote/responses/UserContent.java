@@ -38,4 +38,10 @@ public class UserContent {
         }
         return this.getLowercasedRoles().stream().filter(role -> !role.toLowerCase().startsWith(pattern)).toList();
     }
+
+    @Override
+    public String toString() {
+        return "UserContent{" + "id=" + id + ", roles=" + roles + "}";
+    }
+
 }

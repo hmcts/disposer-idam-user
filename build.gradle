@@ -4,7 +4,7 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.1.6'
-  id 'org.springframework.boot' version '3.3.3'
+  id 'org.springframework.boot' version '3.3.4'
   id 'org.owasp.dependencycheck' version '10.0.4'
   id 'io.freefair.lombok' version '8.10'
   id 'com.github.ben-manes.versions' version '0.51.0'
@@ -225,7 +225,7 @@ ext['snakeyaml.version'] = '2.0'
 
 def versions = [
   aspectj           : '1.9.22.1',
-  cucumber          : '7.18.1',
+  cucumber          : '7.19.0',
   gradlePitest      : '1.15.0',
   jackson           : '2.17.2',
   jersey            : '3.1.6',
