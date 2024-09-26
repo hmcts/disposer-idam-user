@@ -50,7 +50,7 @@ class DeleteUserServiceTest {
 
         when(response.status()).thenReturn(OK.value());
         when(idamClient.deleteUser(anyString(), anyString())).thenReturn(response);
-        when(parameterResolver.getIsSimulation()).thenReturn(false);
+        when(parameterResolver.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("a", "b", "c");
@@ -63,7 +63,7 @@ class DeleteUserServiceTest {
     void shouldCatchAndLogExceptionOnIdamClientError() {
         when(idamClient.deleteUser(HEADER, "userId"))
             .thenThrow(new ServerErrorException("Internal Server Error", null));
-        when(parameterResolver.getIsSimulation()).thenReturn(false);
+        when(parameterResolver.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("userId");
@@ -79,7 +79,7 @@ class DeleteUserServiceTest {
 
         when(response.status()).thenReturn(BAD_REQUEST.value());
         when(idamClient.deleteUser(anyString(), anyString())).thenReturn(response);
-        when(parameterResolver.getIsSimulation()).thenReturn(false);
+        when(parameterResolver.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("userId");
@@ -90,7 +90,7 @@ class DeleteUserServiceTest {
 
     @Test
     void shouldNotMakeDeleteRequest() {
-        when(parameterResolver.getIsSimulation()).thenReturn(true);
+        when(parameterResolver.isSimulation()).thenReturn(true);
 
         List<String> staleUserIds = List.of("a", "b", "c");
         deleteUserService.deleteUsers(staleUserIds);

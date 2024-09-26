@@ -34,7 +34,7 @@ class LoggingSummaryUtilsTest {
 
     @Test
     void shouldCallLogSummary() {
-        when(parameterResolver.getIsSimulation()).thenReturn(true);
+        when(parameterResolver.isSimulation()).thenReturn(true);
         when(parameterResolver.getBatchSize()).thenReturn(100);
         when(parameterResolver.getRequestLimit()).thenReturn(1000);
         loggingSummaryUtils.logSummary(
@@ -44,7 +44,7 @@ class LoggingSummaryUtilsTest {
             DELETED_USERS,
             FAILED_DELETIONS
         );
-        verify(parameterResolver, times(1)).getIsSimulation();
+        verify(parameterResolver, times(1)).isSimulation();
         verify(parameterResolver, times(1)).getBatchSize();
         verify(parameterResolver, times(1)).getRequestLimit();
     }

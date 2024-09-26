@@ -12,9 +12,6 @@ import uk.gov.hmcts.reform.idam.service.StaleUsersService;
 import uk.gov.hmcts.reform.idam.util.LoggingSummaryUtils;
 import uk.gov.hmcts.reform.idam.util.SecurityUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Component
 @RequiredArgsConstructor
@@ -41,11 +38,10 @@ public class ApplicationExecutor implements ApplicationRunner {
 
     private void execute() {
         long disposerStartTime = System.currentTimeMillis();
-        List<String> allRemovedStaleUserIds = new ArrayList<>();
         try {
             log.info("Starting the Idam-Disposer job...");
             securityUtil.generateTokens();
-            allRemovedStaleUserIds = disposerService.run();
+            disposerService.run();
             log.info("Idam-Disposer job has finished!");
         } catch (Exception e) {
             //This specific message error has been added in Azure log to look for these traces in alert
@@ -59,7 +55,7 @@ public class ApplicationExecutor implements ApplicationRunner {
                 disposerStartTime,
                 System.currentTimeMillis(),
                 staleUsersService.getTotalStaleUsers(),
-                allRemovedStaleUserIds.size(),
+                deleteUserService.getSuccessfulDeletions(),
                 deleteUserService.getFailedDeletions()
             );
         }

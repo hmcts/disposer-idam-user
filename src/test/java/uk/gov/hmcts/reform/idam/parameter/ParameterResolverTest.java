@@ -99,6 +99,6 @@ class ParameterResolverTest {
 
     @Test
     void shouldGetIsSimulationMode() {
-        assertThat(resolver.getIsSimulation()).isTrue();
+        assertThat(resolver.isSimulation()).isTrue();
     }
 }
