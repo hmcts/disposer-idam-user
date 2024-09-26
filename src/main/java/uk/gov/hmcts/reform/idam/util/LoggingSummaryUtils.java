@@ -44,7 +44,7 @@ public class LoggingSummaryUtils {
         valueMappings.put("deletedUsers", deletedUsers - failedDeletions);
         valueMappings.put("failedDeletions", failedDeletions);
         valueMappings.put("undeletedUsers", processedUsers - deletedUsers);
-        valueMappings.put("isSimulation", parameterResolver.getIsSimulation());
+        valueMappings.put("isSimulation", parameterResolver.isSimulation());
         valueMappings.put("batchSize", parameterResolver.getBatchSize());
         valueMappings.put("requestLimit", parameterResolver.getRequestLimit());
 

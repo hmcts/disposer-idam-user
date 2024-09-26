@@ -27,7 +27,11 @@ public class IdamUserDisposerService {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
             batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
             deleteUserService.deleteUsers(batchStaleUserIds);
-            log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
+
+            if (!batchStaleUserIds.isEmpty()) {
+                log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
+            }
+
             allRemovedStaleUserIds.addAll(batchStaleUserIds);
 
             if (staleUsersService.hasFinished()) {
@@ -38,5 +42,4 @@ public class IdamUserDisposerService {
 
         return allRemovedStaleUserIds;
     }
-
 }

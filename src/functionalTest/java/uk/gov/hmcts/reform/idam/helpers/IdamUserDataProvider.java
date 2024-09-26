@@ -27,7 +27,7 @@ public class IdamUserDataProvider {
     @Value("${idam.api.url}")
     private String idamApi;
 
-    @Value("${stale-users.roles}")
+    @Value("${stale-users.mandatory-role-for-citizen}")
     private String roleToDelete;
 
     private static final String CREATE_USER_PATH = "testing-support/accounts";
@@ -42,7 +42,9 @@ public class IdamUserDataProvider {
 
         ExtractableResponse<Response> res = createUser(email, foreName, "Test", "{Pass12345Y");
         String userId = res.path("id");
+        log.info("Created user id: {}", userId);
         retireUser(userId);
+        log.info("Retired user (made stale): {}", userId);
         return userId;
     }
 
@@ -81,6 +83,7 @@ public class IdamUserDataProvider {
             role.put("code", roleToDelete);
             roles.put(role);
             user.put("roles", roles);
+            log.info("User: {}", user);
         } catch (JSONException je) {
             log.error(je.getMessage(), je);
         }

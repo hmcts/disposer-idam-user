@@ -22,37 +22,36 @@ public class DeleteUserService {
     private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
+    private static final String ERROR_MSG_TMPL = "User with id '%s' deletion failed (response status %s)";
+
     @Getter
     private int failedDeletions;
 
+    @Getter
+    private int successfulDeletions;
+
     public void deleteUsers(List<String> batchStaleUserIds) {
-        if (!parameterResolver.getIsSimulation()) {
-            for (String userId : batchStaleUserIds) {
-                deleteUser(userId);
-            }
+        for (String userId : batchStaleUserIds) {
+            deleteUser(userId);
         }
     }
 
     public void deleteUser(String userId) {
         final Response response;
         try {
-            response = idamClient.deleteUser(
-                idamTokenGenerator.getIdamAuthorizationHeader(),
-                userId
-            );
+            if (!parameterResolver.isSimulation()) {
+                response = idamClient.deleteUser(
+                    idamTokenGenerator.getIdamAuthorizationHeader(),
+                    userId
+                );
+                if (response.status() != OK.value()) {
+                    log.error(String.format(ERROR_MSG_TMPL, userId, response.status()));
+                    failedDeletions++;
+                }
+            }
+            successfulDeletions++;
         } catch (Exception e) {
             log.error("DeleteUserService.deleteUser threw exception: {}", e.getMessage(), e);
-            failedDeletions++;
-            return;
-        }
-
-        if (response.status() != OK.value()) {
-            String msg = String.format(
-                "User with id '%s' deletion failed (response status %s)",
-                userId,
-                response.status()
-            );
-            log.error(msg);
             failedDeletions++;
         }
     }

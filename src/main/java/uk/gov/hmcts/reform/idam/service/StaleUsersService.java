@@ -12,8 +12,11 @@ import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,16 +58,27 @@ public class StaleUsersService {
         currentPage += 1;
         totalStaleUsers += staleUsersResponse.getContent().size();
 
-        String roleToDelete = parameterResolver.getIdamRoleToDelete();
+        String requiredRole = parameterResolver.getCitizenRole().toLowerCase();
+        Set<String> rolesToDelete = parameterResolver
+            .getAdditionalIdamCitizenRoles().orElse(new HashSet<>())
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toSet());
+        rolesToDelete.add(requiredRole);
+        String filterPattern = parameterResolver.getCitizenRolesPattern();
 
-        return staleUsersResponse
-                .getContent()
-                .stream()
-                .filter(user -> user.getRoles() != null
-                    && user.getRoles().size() == 1
-                    && user.getRoles().getFirst().toLowerCase().equalsIgnoreCase(roleToDelete))
-                .map(UserContent::getId)
-                .toList();
+        final List<UserContent> userContentList = staleUsersResponse
+            .getContent()
+            .stream()
+            .filter(user -> user.getLowercasedRoles().contains(requiredRole))
+            .filter(user -> rolesToDelete.containsAll(user.filterOutPatternRoles(filterPattern)))
+            .toList();
+
+        log.info("Filtered users {}", userContentList);
+
+        return userContentList.stream()
+            .map(UserContent::getId)
+            .toList();
     }
 
     public boolean hasFinished() {
