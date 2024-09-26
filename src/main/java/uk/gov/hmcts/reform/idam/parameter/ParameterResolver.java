@@ -47,7 +47,7 @@ public class ParameterResolver {
     private String redirectUri;
 
     @Value("${stale-users.simulation.mode}")
-    private Boolean isSimulation;
+    private boolean isSimulation;
 
     @Value("${role-assignments.max-page-size:1000}")
     private int maxRoleAssignmentsPageSize;

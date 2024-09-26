@@ -42,5 +42,4 @@ public class IdamUserDisposerService {
 
         return allRemovedStaleUserIds;
     }
-
 }
