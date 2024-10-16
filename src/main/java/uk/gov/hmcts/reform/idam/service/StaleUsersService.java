@@ -74,8 +74,6 @@ public class StaleUsersService {
             .filter(user -> rolesToDelete.containsAll(user.filterOutPatternRoles(filterPattern)))
             .toList();
 
-        log.info("Filtered users {}", userContentList);
-
         return userContentList.stream()
             .map(UserContent::getId)
             .toList();
