@@ -261,7 +261,7 @@ dependencies {
   testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: versions.cucumber
   testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: versions.cucumber
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'org.wiremock', name: 'wiremock-standalone', version: '3.9.2'
+  testImplementation group: 'org.wiremock', name: 'wiremock-standalone', version: '3.10.0'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
