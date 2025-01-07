@@ -33,6 +33,7 @@ stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
+  idam-start-page: ${DISPOSER_IDAM_USER_START_PAGE:0}
   # role that citizen user must have among other, otherwise account will be left untouched
   mandatory-role-for-citizen: citizen
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
