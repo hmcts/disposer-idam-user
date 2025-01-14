@@ -8,10 +8,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -45,9 +47,10 @@ class IdamUserDisposerServiceTest {
 
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(service, "applicationStartTime", LocalDateTime.parse("2025-01-15T20:14:43"));
         when(clock.instant()).thenReturn(Instant.parse("2025-01-15T23:34:00.000Z"));
         when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
-        when(parameterResolver.getRunAfter()).thenReturn(LocalTime.of(20, 0));
+        when(parameterResolver.getRunBefore()).thenReturn(LocalTime.of(7, 0));
     }
 
     @Test
@@ -104,17 +107,15 @@ class IdamUserDisposerServiceTest {
     @ParameterizedTest
     @CsvSource({
         "2025-01-15T15:59:43.000Z, 0",
-        "2025-01-15T23:15:30.000Z, 1",
+        "2025-01-14T23:15:30.000Z, 1",
         "2025-01-15T03:15:30.000Z, 1",
         "2025-01-15T00:00:00.000Z, 1",
         "2025-01-15T12:00:00.000Z, 0",
     })
     void shouldRunOrNotBasedOnTime(String currentTime, int invocations) {
-        when(parameterResolver.getRequestLimit()).thenReturn(1);
-        when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
-        when(parameterResolver.getRunAfter()).thenReturn(LocalTime.of(20, 0));
-        when(parameterResolver.getRunBefore()).thenReturn(LocalTime.of(7, 0));
+        ReflectionTestUtils.setField(service, "applicationStartTime", LocalDateTime.parse("2025-01-14T20:14:43"));
         when(clock.instant()).thenReturn(Instant.parse(currentTime));
+        when(parameterResolver.getRequestLimit()).thenReturn(1);
 
         service.run();
 

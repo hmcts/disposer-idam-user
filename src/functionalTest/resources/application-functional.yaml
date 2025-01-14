@@ -25,9 +25,7 @@ stale-users:
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
   citizen-letter-role-pattern: letter-
   idam-start-page: 1
-  # this timeframe effectively disables time window constraint
-  run-after: "01:00"
-  run-until: "23:00"
+  run-until: "06:00"
 
 role-assignments:
   max-page-size: 2
