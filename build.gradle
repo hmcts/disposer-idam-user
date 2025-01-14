@@ -218,7 +218,7 @@ dependencyManagement {
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'https://jitpack.io' }
+  maven { url = 'https://jitpack.io' }
 }
 
 ext['snakeyaml.version'] = '2.0'

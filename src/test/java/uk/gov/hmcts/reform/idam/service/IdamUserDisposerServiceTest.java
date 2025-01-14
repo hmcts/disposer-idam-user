@@ -1,12 +1,19 @@
 package uk.gov.hmcts.reform.idam.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,8 +37,18 @@ class IdamUserDisposerServiceTest {
     @Mock
     private ParameterResolver parameterResolver;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private IdamUserDisposerService service;
+
+    @BeforeEach
+    void setUp() {
+        when(clock.instant()).thenReturn(Instant.parse("2025-01-15T23:34:00.000Z"));
+        when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
+        when(parameterResolver.getRunAfter()).thenReturn(LocalTime.of(20, 0));
+    }
 
     @Test
     void shouldRunAtLeastOnce() {
@@ -84,4 +101,23 @@ class IdamUserDisposerServiceTest {
         verify(deleteUserService, times(1)).deleteUsers(any());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "2025-01-15T15:59:43.000Z, 0",
+        "2025-01-15T23:15:30.000Z, 1",
+        "2025-01-15T03:15:30.000Z, 1",
+        "2025-01-15T00:00:00.000Z, 1",
+        "2025-01-15T12:00:00.000Z, 0",
+    })
+    void shouldRunOrNotBasedOnTime(String currentTime, int invocations) {
+        when(parameterResolver.getRequestLimit()).thenReturn(1);
+        when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
+        when(parameterResolver.getRunAfter()).thenReturn(LocalTime.of(20, 0));
+        when(parameterResolver.getRunBefore()).thenReturn(LocalTime.of(7, 0));
+        when(clock.instant()).thenReturn(Instant.parse(currentTime));
+
+        service.run();
+
+        verify(staleUsersService, times(invocations)).fetchStaleUsers();
+    }
 }

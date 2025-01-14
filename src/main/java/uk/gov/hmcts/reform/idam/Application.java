@@ -5,7 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import java.time.Clock;
 
 @Slf4j
 @SpringBootApplication
@@ -13,6 +16,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam"})
 @EnableAspectJAutoProxy
 public class Application {
+
+    @Bean
+    public Clock clock() {
+        return Clock.systemUTC();
+    }
 
     public static void main(final String[] args) {
         final ApplicationContext context = SpringApplication.run(Application.class);
