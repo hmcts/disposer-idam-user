@@ -19,6 +19,7 @@ import java.util.List;
 public class IdamUserDisposerService implements ApplicationListener<ApplicationStartedEvent> {
 
     private LocalDateTime applicationStartTime;
+    private LocalDateTime runBefore;
 
     private final StaleUsersService staleUsersService;
     private final UserRoleService userRoleService;
@@ -27,7 +28,8 @@ public class IdamUserDisposerService implements ApplicationListener<ApplicationS
     private final Clock clock;
 
     public List<String> run() {
-
+        LocalTime cutOffTime = parameterResolver.getRunBefore();
+        runBefore = LocalDateTime.of(applicationStartTime.plusDays(1).toLocalDate(), cutOffTime);
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
 
@@ -58,8 +60,6 @@ public class IdamUserDisposerService implements ApplicationListener<ApplicationS
 
     private boolean isAllowedToRunTime() {
         LocalDateTime now = LocalDateTime.now(clock);
-        LocalTime cutOffTime = parameterResolver.getRunBefore();
-        LocalDateTime runBefore = LocalDateTime.of(applicationStartTime.plusDays(1).toLocalDate(), cutOffTime);
         boolean inTimeWindow = now.isBefore(runBefore);
 
         if (!inTimeWindow) {
