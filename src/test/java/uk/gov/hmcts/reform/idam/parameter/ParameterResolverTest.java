@@ -40,7 +40,6 @@ class ParameterResolverTest {
         ReflectionTestUtils.setField(resolver, CLIENT_PASSWORD, "client password");
         ReflectionTestUtils.setField(resolver, REDIRECT_URI, "redirect.uri");
         ReflectionTestUtils.setField(resolver, IS_SIMULATION_MODE, true);
-        ReflectionTestUtils.setField(resolver, "runAfter", LocalTime.of(20, 0));
         ReflectionTestUtils.setField(resolver, "runBefore", LocalTime.of(7, 0));
 
     }
@@ -103,11 +102,6 @@ class ParameterResolverTest {
     @Test
     void shouldGetIsSimulationMode() {
         assertThat(resolver.isSimulation()).isTrue();
-    }
-
-    @Test
-    void shouldGetRunAfter() {
-        assertThat(resolver.getRunAfter()).hasHour(20);
     }
 
     @Test

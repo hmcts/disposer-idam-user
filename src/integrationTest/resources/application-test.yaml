@@ -30,9 +30,7 @@ role-assignments:
   max-page-size: 4
 
 stale-users:
-  # this timeframe effectively disables time window constraint
-  run-after: "01:00"
-  run-until: "23:00"
+  run-until: "06:00"
   # role that citizen user must have among other, otherwise account will be left untouched
   mandatory-role-for-citizen: citizen
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta

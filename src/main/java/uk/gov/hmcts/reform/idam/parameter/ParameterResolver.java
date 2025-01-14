@@ -54,10 +54,6 @@ public class ParameterResolver {
     @Value("${role-assignments.max-page-size:1000}")
     private int maxRoleAssignmentsPageSize;
 
-    @Value("${stale-users.run-after}")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private LocalTime runAfter;
-
     @Value("${stale-users.run-until}")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime runBefore;
