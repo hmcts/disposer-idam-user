@@ -34,6 +34,14 @@ stale-users:
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   idam-start-page: ${DISPOSER_IDAM_USER_START_PAGE:0}
+  # two times of the day that the job should run between. It is not going
+  # to run outside of these times and will stop if overruns
+  # note that if "after" time is set to be earlier than "until" time,
+  # it will effectively disable time window constraint.
+  # When the job starts is controlled by the cron job, therefore run-after has
+  # no effect as long as the cron job is not scheduled to run before the time
+  run-after: ${DISPOSER_IDAM_USER_RUN_AFTER_TIME:18:00}
+  run-until: ${DISPOSER_IDAM_USER_RUN_BEFORE_TIME:07:00}
   # role that citizen user must have among other, otherwise account will be left untouched
   mandatory-role-for-citizen: citizen
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta

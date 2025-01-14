@@ -3,8 +3,10 @@ package uk.gov.hmcts.reform.idam.parameter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,4 +53,13 @@ public class ParameterResolver {
 
     @Value("${role-assignments.max-page-size:1000}")
     private int maxRoleAssignmentsPageSize;
+
+    @Value("${stale-users.run-after}")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    private LocalTime runAfter;
+
+    @Value("${stale-users.run-until}")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    private LocalTime runBefore;
+
 }
