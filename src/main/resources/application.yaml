@@ -28,6 +28,7 @@ ccd:
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
+  feign-retry-min-wait: ${DISPOSER_IDAM_USER_FEIGN_RETRY_MIN_WAIT:60} # in seconds
 
 stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}

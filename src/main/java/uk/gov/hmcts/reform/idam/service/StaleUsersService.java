@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
-import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
@@ -37,7 +36,6 @@ public class StaleUsersService {
     private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
-    @Retry(retryAttempts = 2)
     public List<String> fetchStaleUsers() {
         final StaleUsersResponse staleUsersResponse;
         try {

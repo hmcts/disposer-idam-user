@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.idam;
 
+import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import uk.gov.hmcts.reform.idam.service.remote.CustomFeignErrorDecoder;
 
 import java.time.Clock;
 
@@ -20,6 +22,11 @@ public class Application {
     @Bean
     public Clock clock() {
         return Clock.systemUTC();
+    }
+
+    @Bean
+    public ErrorDecoder customFeignErrorDecoder() {
+        return new CustomFeignErrorDecoder();
     }
 
     public static void main(final String[] args) {
