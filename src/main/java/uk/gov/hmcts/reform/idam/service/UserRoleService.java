@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
-import uk.gov.hmcts.reform.idam.service.aop.Retry;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsQueryRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
@@ -27,7 +26,6 @@ public class UserRoleService {
     private final SecurityUtil securityUtil;
     private final ParameterResolver parameterResolver;
 
-    @Retry(retryAttempts = 2)
     public List<String> filterUsersWithRoles(List<String> staleUsers) {
         if (staleUsers.isEmpty()) {
             return List.of();

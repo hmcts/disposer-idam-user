@@ -3,6 +3,7 @@ plugins {
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
+  id 'idea'
   id 'io.spring.dependency-management' version '1.1.7'
   id 'org.springframework.boot' version '3.4.1'
   id 'org.owasp.dependencycheck' version '11.1.1'
@@ -74,6 +75,17 @@ sourceSets {
       srcDir file('src/smokeTest/java')
     }
     resources.srcDir file('src/smokeTest/resources')
+  }
+}
+
+idea {
+  module {
+    testSources.from(project.sourceSets.integrationTest.java.srcDirs)
+    testSources.from(project.sourceSets.functionalTest.java.srcDirs)
+    testSources.from(project.sourceSets.smokeTest.java.srcDirs)
+    testResources.from(project.sourceSets.integrationTest.resources.srcDirs)
+    testResources.from(project.sourceSets.functionalTest.resources.srcDirs)
+    testResources.from(project.sourceSets.smokeTest.resources.srcDirs)
   }
 }
 
@@ -174,6 +186,8 @@ sonar {
     property "sonar.coverage.exclusions", "**/idam/Application.java"
     property "sonar.pitest.mode", "reuseReport"
     property "sonar.pitest.reportsDirectory", "build/reports/pitest"
+    property "sonar.sources", "src/main/java"
+    property "sonar.tests", "src/test/java,src/smokeTest/java,src/functionalTest/java,src/integrationTest/java"
   }
 }
 

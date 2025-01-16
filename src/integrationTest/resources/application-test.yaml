@@ -36,3 +36,5 @@ stale-users:
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
   citizen-letter-role-pattern: letter-
 
+service:
+  feign-retry-min-wait: 1

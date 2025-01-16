@@ -32,11 +32,6 @@ public class RetrySteps extends WireMockStubs {
     public void itShouldRetryMakingIdamCall() {
         service.run();
         wiremock.verify(2, WireMock.getRequestedFor(WireMock.urlPathEqualTo("/api/v1/staleUsers")));
-
-        wiremock.verify(WireMock.postRequestedFor(
-            WireMock.urlPathEqualTo("/o/token")
-        ));
-        wiremock.verify(WireMock.postRequestedFor(WireMock.urlPathEqualTo("/lease")));
     }
 
     @Then("it should throw exception")
@@ -45,6 +40,7 @@ public class RetrySteps extends WireMockStubs {
             service.run();
             fail("This line should not be reached");
         } catch (Exception e) {
+            wiremock.verify(3, WireMock.getRequestedFor(WireMock.urlPathEqualTo("/api/v1/staleUsers")));
             assertNotNull(e.getMessage());
         }
     }
