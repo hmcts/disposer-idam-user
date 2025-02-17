@@ -35,7 +35,8 @@ public class LoggingSummaryUtils {
             Failed deletions :          | ${failedDeletions}
             Total Undeleted Users :     | ${undeletedUsers}
             Is Simulation Mode :        | ${isSimulation}
-            Batch Size :                | ${batchSize}
+            Stale Users Batch Size :    | ${staleUsersBatchSize}
+            RAS Batch Size :            | ${rasBatchSize}
             Request Limit :             | ${requestLimit}
             -----------------------------------------------------------
             """;
@@ -45,7 +46,8 @@ public class LoggingSummaryUtils {
         valueMappings.put("failedDeletions", failedDeletions);
         valueMappings.put("undeletedUsers", processedUsers - deletedUsers);
         valueMappings.put("isSimulation", parameterResolver.isSimulation());
-        valueMappings.put("batchSize", parameterResolver.getBatchSize());
+        valueMappings.put("staleUsersBatchSize", parameterResolver.getStaleUsersBatchSize());
+        valueMappings.put("rasBatchSize", parameterResolver.getRasBatchSize());
         valueMappings.put("requestLimit", parameterResolver.getRequestLimit());
 
         log.info(format(template, valueMappings));

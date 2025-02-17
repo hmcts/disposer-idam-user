@@ -31,6 +31,7 @@ role-assignments:
 
 stale-users:
   run-until: "06:00"
+  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   # role that citizen user must have among other, otherwise account will be left untouched
   mandatory-role-for-citizen: citizen
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
