@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.util.ListUtils;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,6 +44,9 @@ class IdamUserDisposerServiceTest {
     @Mock
     private Clock clock;
 
+    @Mock
+    private ListUtils listUtils;
+
     @InjectMocks
     private IdamUserDisposerService service;
 
@@ -57,11 +62,16 @@ class IdamUserDisposerServiceTest {
     void shouldRunAtLeastOnce() {
         when(staleUsersService.hasFinished()).thenReturn(true);
         when(parameterResolver.getRequestLimit()).thenReturn(10);
+        when(parameterResolver.getRasBatchSize()).thenReturn(10);
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.fetchStaleUsers()).thenReturn(allProcessedStaleUserIds);
+
+        when(listUtils.partition(any(), anyInt())).thenReturn(List.of(allProcessedStaleUserIds));
+
         List<String> allRemovedStaleUserIds = Arrays.asList("45678", "67899");
         when(userRoleService.filterUsersWithRoles(allProcessedStaleUserIds)).thenReturn(allRemovedStaleUserIds);
+
 
         service.run();
 
@@ -77,6 +87,7 @@ class IdamUserDisposerServiceTest {
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.fetchStaleUsers()).thenReturn(allProcessedStaleUserIds);
+        when(listUtils.partition(any(), anyInt())).thenReturn(List.of(allProcessedStaleUserIds));
         List<String> allRemovedStaleUserIds = Arrays.asList("45678", "67899");
         when(userRoleService.filterUsersWithRoles(allProcessedStaleUserIds)).thenReturn(allRemovedStaleUserIds);
 
@@ -94,6 +105,7 @@ class IdamUserDisposerServiceTest {
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.fetchStaleUsers()).thenReturn(allProcessedStaleUserIds);
+        when(listUtils.partition(any(), anyInt())).thenReturn(List.of(allProcessedStaleUserIds));
         List<String> allRemovedStaleUserIds = Arrays.asList("45678", "67899");
         when(userRoleService.filterUsersWithRoles(allProcessedStaleUserIds)).thenReturn(allRemovedStaleUserIds);
 

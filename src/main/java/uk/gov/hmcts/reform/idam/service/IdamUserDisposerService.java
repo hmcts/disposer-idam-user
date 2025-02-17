@@ -6,6 +6,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.util.ListUtils;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class IdamUserDisposerService implements ApplicationListener<ApplicationS
     private final UserRoleService userRoleService;
     private final DeleteUserService deleteUserService;
     private final ParameterResolver parameterResolver;
+    private final ListUtils listUtils;
     private final Clock clock;
 
     public List<String> run() {
@@ -35,14 +37,15 @@ public class IdamUserDisposerService implements ApplicationListener<ApplicationS
 
         while (requestLimit > 0 && isAllowedToRunTime()) {
             List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
-            batchStaleUserIds = userRoleService.filterUsersWithRoles(batchStaleUserIds);
-            deleteUserService.deleteUsers(batchStaleUserIds);
 
-            if (!batchStaleUserIds.isEmpty()) {
-                log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
+            for (List<String> batch : listUtils.partition(batchStaleUserIds, parameterResolver.getRasBatchSize())) {
+                List<String> filteredBatch = userRoleService.filterUsersWithRoles(batch);
+                if (!filteredBatch.isEmpty()) {
+                    log.info("Stale users that have been passed for deletion: {}", batchStaleUserIds);
+                }
+                deleteUserService.deleteUsers(filteredBatch);
+                allRemovedStaleUserIds.addAll(filteredBatch);
             }
-
-            allRemovedStaleUserIds.addAll(batchStaleUserIds);
 
             if (staleUsersService.hasFinished()) {
                 break;
