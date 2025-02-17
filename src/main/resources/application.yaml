@@ -36,9 +36,7 @@ stale-users:
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   idam-start-page: ${DISPOSER_IDAM_USER_START_PAGE:0}
   # Time of the day until the job need to finish, otherwise it will be stopped.
-  # Assymption is that the job will be started at some time in the evening before midnight
-  # and cut off time is set to app start date + 1 day + run-until time
-  run-until: ${DISPOSER_IDAM_USER_RUN_BEFORE_TIME:07:00}
+  run-until: ${DISPOSER_IDAM_USER_RUN_BEFORE_TIME:06:00}
   # role that citizen user must have among other, otherwise account will be left untouched
   mandatory-role-for-citizen: citizen
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
