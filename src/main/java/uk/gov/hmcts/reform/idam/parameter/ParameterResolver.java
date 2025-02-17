@@ -56,6 +56,6 @@ public class ParameterResolver {
 
     @Value("${stale-users.run-until}")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private LocalTime runBefore;
+    private LocalTime cutOffTime;
 
 }

@@ -40,7 +40,7 @@ class ParameterResolverTest {
         ReflectionTestUtils.setField(resolver, CLIENT_PASSWORD, "client password");
         ReflectionTestUtils.setField(resolver, REDIRECT_URI, "redirect.uri");
         ReflectionTestUtils.setField(resolver, IS_SIMULATION_MODE, true);
-        ReflectionTestUtils.setField(resolver, "runBefore", LocalTime.of(7, 0));
+        ReflectionTestUtils.setField(resolver, "cutOffTime", LocalTime.of(6, 0));
 
     }
 
@@ -105,7 +105,7 @@ class ParameterResolverTest {
     }
 
     @Test
-    void shouldGetRunBefore() {
-        assertThat(resolver.getRunBefore()).hasHour(7);
+    void shouldGetCutOffTime() {
+        assertThat(resolver.getCutOffTime()).hasHour(6);
     }
 }
