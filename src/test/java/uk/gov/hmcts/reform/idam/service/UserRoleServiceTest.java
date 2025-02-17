@@ -74,7 +74,7 @@ class UserRoleServiceTest {
         List<String> staleUsers = List.of("user-1", "user-2", "user-3");
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any())).thenReturn(roleAssignmentResponse);
-        when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getRasBatchSize()).thenReturn(2);
         when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         List<String> users = userRoleService.filterUsersWithRoles(staleUsers);
@@ -89,7 +89,7 @@ class UserRoleServiceTest {
         RoleAssignmentResponse roleAssignmentResponse1 = new RoleAssignmentResponse(getRoleAssignmentList(20));
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
 
-        when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getRasBatchSize()).thenReturn(2);
         when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))
@@ -114,7 +114,7 @@ class UserRoleServiceTest {
         RoleAssignmentResponse roleAssignmentResponse1 = new RoleAssignmentResponse(getRoleAssignmentList(20));
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
 
-        when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getRasBatchSize()).thenReturn(2);
         when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))

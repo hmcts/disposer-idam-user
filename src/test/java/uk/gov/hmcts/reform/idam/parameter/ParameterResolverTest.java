@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ParameterResolverTest {
 
     private static final String IDAM_API_URL = "idamHost";
-    private static final String BATCH_SIZE = "batchSize";
+    private static final String BATCH_SIZE = "staleUsersBatchSize";
     private static final String REQUEST_LIMIT = "requestLimit";
 
     private static final String CLIENT_ID = "clientId";
@@ -30,6 +30,7 @@ class ParameterResolverTest {
     public void initMock() {
         ReflectionTestUtils.setField(resolver, IDAM_API_URL, "http://locahost:5000");
         ReflectionTestUtils.setField(resolver, BATCH_SIZE, 100);
+        ReflectionTestUtils.setField(resolver, "rasBatchSize", 100);
         ReflectionTestUtils.setField(resolver, REQUEST_LIMIT, 10);
         ReflectionTestUtils.setField(resolver, CLIENT_ID, "client id");
         ReflectionTestUtils.setField(resolver, CLIENT_SECRET, "client secret");
@@ -50,8 +51,13 @@ class ParameterResolverTest {
     }
 
     @Test
-    void shouldGetBatchSize() {
-        assertThat(resolver.getBatchSize()).isEqualTo(100);
+    void shouldGetStaleUsersBatchSize() {
+        assertThat(resolver.getStaleUsersBatchSize()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldGetRasBatchSize() {
+        assertThat(resolver.getRasBatchSize()).isEqualTo(100);
     }
 
     @Test
