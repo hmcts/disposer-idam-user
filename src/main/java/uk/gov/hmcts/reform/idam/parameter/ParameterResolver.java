@@ -19,7 +19,10 @@ public class ParameterResolver {
     private String idamHost;
 
     @Value("${stale-users.batch.size}")
-    private int batchSize;
+    private int staleUsersBatchSize;
+
+    @Value("${ccd.role.assignment.batch.size}")
+    private int rasBatchSize;
 
     @Value("${stale-users.requests.limit}")
     private int requestLimit;
