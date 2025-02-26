@@ -8,5 +8,5 @@ maintainers:
   - name: HMCTS Retain and Dispose team
 dependencies:
   - name: job
-    version: ~2.2.0
+    version: 2.2.0
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
