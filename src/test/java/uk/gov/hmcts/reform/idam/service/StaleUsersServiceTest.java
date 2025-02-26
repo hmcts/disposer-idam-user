@@ -56,7 +56,7 @@ class StaleUsersServiceTest {
         List<UserContent> userContentList = new LinkedList<>();
         userContentList.add(new UserContent("1", List.of("citizen")));
         userContentList.add(new UserContent("2", List.of("defendant")));
-        StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
+        StaleUsersResponse response = new StaleUsersResponse(userContentList, false, 100L);
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
@@ -85,7 +85,7 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("014", List.of("JUROR")));
         userContentList.add(new UserContent("015", List.of("citizen", "letter-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
         userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
-        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
+        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false, 100L);
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
@@ -115,7 +115,7 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("014", List.of("JUROR")));
         userContentList.add(new UserContent("015", List.of("citizen", "letter-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
         userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
-        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
+        final StaleUsersResponse response = new StaleUsersResponse(userContentList, false, 100L);
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 

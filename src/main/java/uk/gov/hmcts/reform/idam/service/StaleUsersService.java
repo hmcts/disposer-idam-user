@@ -46,7 +46,7 @@ public class StaleUsersService {
                     BATCH_SIZE_PARAM, parameterResolver.getBatchSize()
                 )
             );
-            log.info("Fetched page {}", currentPage);
+            log.info("Page {} of {}", currentPage, staleUsersResponse.getTotalPages());
         } catch (Exception e) {
             log.error("StaleUsersService.getStaleUsers threw exception: {}", e.getMessage(), e);
             throw e;
