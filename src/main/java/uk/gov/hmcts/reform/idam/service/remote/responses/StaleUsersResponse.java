@@ -19,4 +19,7 @@ public class StaleUsersResponse {
 
     @JsonProperty("last")
     private Boolean isLast;
+
+    @JsonProperty
+    private Long totalPages;
 }
