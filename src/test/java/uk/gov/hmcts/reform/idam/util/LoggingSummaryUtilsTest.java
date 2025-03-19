@@ -35,7 +35,8 @@ class LoggingSummaryUtilsTest {
     @Test
     void shouldCallLogSummary() {
         when(parameterResolver.isSimulation()).thenReturn(true);
-        when(parameterResolver.getBatchSize()).thenReturn(100);
+        when(parameterResolver.getStaleUsersBatchSize()).thenReturn(100);
+        when(parameterResolver.getRasBatchSize()).thenReturn(100);
         when(parameterResolver.getRequestLimit()).thenReturn(1000);
         loggingSummaryUtils.logSummary(
             Long.parseLong(START_TIME),
@@ -45,7 +46,8 @@ class LoggingSummaryUtilsTest {
             FAILED_DELETIONS
         );
         verify(parameterResolver, times(1)).isSimulation();
-        verify(parameterResolver, times(1)).getBatchSize();
+        verify(parameterResolver, times(1)).getStaleUsersBatchSize();
+        verify(parameterResolver, times(1)).getRasBatchSize();
         verify(parameterResolver, times(1)).getRequestLimit();
     }
 
