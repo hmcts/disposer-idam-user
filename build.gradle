@@ -238,7 +238,7 @@ repositories {
 ext['snakeyaml.version'] = '2.0'
 
 def versions = [
-  aspectj           : '1.9.23',
+  aspectj           : '1.9.24',
   cucumber          : '7.21.1',
   gradlePitest      : '1.15.0',
   jackson           : '2.18.3',
