@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.reform.idam.util.Constants.ROLE_ASSIGNMENTS_QUERY_PATH;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 @FeignClient(name = "roleAssignmentClient", url = "${ccd.role.assignment.host}")
 public interface RoleAssignmentClient {
 
