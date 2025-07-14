@@ -80,7 +80,6 @@ public class LoggingSummaryUtils {
         return String.format(newTemplate.toString(), valueList.toArray());
     }
 
-    @SuppressWarnings("PMD.LawOfDemeter")
     public String getDurationFromLong(long duration) {
         long hh = TimeUnit.MILLISECONDS.toHours(duration);
         long mm = TimeUnit.MILLISECONDS.toMinutes(duration) % 60;
