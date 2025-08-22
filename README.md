@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This micro-service runs periodically and disposes archived citizen accounts
+This micro-service runs periodically and disposes archived citizen accounts 
 
 ## Extra functionality
 
