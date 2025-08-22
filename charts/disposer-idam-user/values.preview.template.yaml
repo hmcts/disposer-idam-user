@@ -6,7 +6,7 @@ job:
     S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
     ROLE_ASSIGNMENT_HOST: https://am-role-assignment-service-pr-2432.preview.platform.hmcts.net/
-     DISPOSER_IDAM_USER_ENABLED: true
+    DISPOSER_IDAM_USER_ENABLED: true
     DISPOSER_IDAM_USER_BATCH_SIZE: 1
     DISPOSER_IDAM_USER_REQUESTS_LIMIT: 1
   kind: CronJob
