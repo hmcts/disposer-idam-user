@@ -243,7 +243,7 @@ def versions = [
   cucumber          : '7.27.2',
   aspectj           : '1.9.24',
   gradlePitest      : '1.15.0',
-  jackson           : '2.19.2',
+  jackson           : '2.20.0',
   jersey            : '3.1.6',
   junit             : '5.12.2',
   lombok            : '1.18.38'
