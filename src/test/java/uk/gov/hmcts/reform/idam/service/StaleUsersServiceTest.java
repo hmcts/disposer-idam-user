@@ -43,7 +43,7 @@ class StaleUsersServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(parameterResolver.getBatchSize()).thenReturn(2);
+        when(parameterResolver.getStaleUsersBatchSize()).thenReturn(2);
         when(parameterResolver.getCitizenRole()).thenReturn("citizen");
         when(parameterResolver.getCitizenRolesPattern()).thenReturn("letter-");
         when(parameterResolver.getAdditionalIdamCitizenRoles())
