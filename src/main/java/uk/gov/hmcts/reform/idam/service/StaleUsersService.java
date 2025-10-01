@@ -46,13 +46,13 @@ public class StaleUsersService {
                     BATCH_SIZE_PARAM, parameterResolver.getBatchSize()
                 )
             );
-            log.info("Page {} of {}", currentPage, staleUsersResponse.getTotalPages());
+            log.info("Page {}", currentPage);
         } catch (Exception e) {
             log.error("StaleUsersService.getStaleUsers threw exception: {}", e.getMessage(), e);
             throw e;
         }
 
-        finished = staleUsersResponse.getIsLast();
+        finished = staleUsersResponse.isLast();
         currentPage += 1;
         totalStaleUsers += staleUsersResponse.getContent().size();
 
