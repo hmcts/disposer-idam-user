@@ -43,7 +43,7 @@ public class StaleUsersService {
                 idamTokenGenerator.getIdamAuthorizationHeader(),
                 Map.of(
                     PAGE_NUMBER_PARAM, currentPage,
-                    BATCH_SIZE_PARAM, parameterResolver.getBatchSize()
+                    BATCH_SIZE_PARAM, parameterResolver.getStaleUsersBatchSize()
                 )
             );
             log.info("Page {}", currentPage);
