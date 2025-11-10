@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import uk.gov.hmcts.reform.idam.service.remote.CustomFeignErrorDecoder;
 
 import java.time.Clock;
@@ -16,7 +15,6 @@ import java.time.Clock;
 @SpringBootApplication
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam"})
-@EnableAspectJAutoProxy
 public class Application {
 
     @Bean
