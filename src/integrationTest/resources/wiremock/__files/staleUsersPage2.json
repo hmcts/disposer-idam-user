@@ -21,7 +21,5 @@
     "pageSize": 10,
     "offset": 10
   },
-  "totalPages": 2,
-  "totalElements": 25,
   "last": false
 }
