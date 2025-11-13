@@ -39,10 +39,11 @@ public class IdamUserDisposerService {
         List<String> allRemovedStaleUserIds = new ArrayList<>();
         int requestLimit = parameterResolver.getRequestLimit();
 
-        while (requestLimit > 0 && !isCutOffTimeReached(cutOff)) {
-            List<String> batchStaleUserIds = staleUsersService.fetchStaleUsers();
+        while (requestLimit > 0 && !isCutOffTimeReached(cutOff) && staleUsersService.hasNext()) {
+            List<String> batchStaleUserIds = staleUsersService.next();
 
             for (List<String> batch : listUtils.partition(batchStaleUserIds, parameterResolver.getRasBatchSize())) {
+                log.debug("User ids passing for RAS check {}", batch);
                 List<String> filteredBatch = userRoleService.filterUsersWithRoles(batch);
                 if (!filteredBatch.isEmpty()) {
                     log.info("Stale users that have been passed for deletion: {}", filteredBatch);
@@ -51,9 +52,6 @@ public class IdamUserDisposerService {
                 }
             }
 
-            if (staleUsersService.hasFinished()) {
-                break;
-            }
             requestLimit--;
         }
 
