@@ -60,10 +60,10 @@ class StaleUsersServiceTest {
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
-        List<String> staleUsers = staleUsersService.fetchStaleUsers();
+        List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers).hasSize(1);
         verify(idamClient, times(1)).getStaleUsers(anyString(), any());
-        assertThat(staleUsersService.hasFinished()).isFalse();
+        assertThat(staleUsersService.hasNext()).isTrue();
     }
 
     @Test
@@ -89,7 +89,7 @@ class StaleUsersServiceTest {
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
-        final List<String> staleUsers = staleUsersService.fetchStaleUsers();
+        final List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers)
             .hasSize(9)
             .containsAll(List.of("001", "002", "003", "004", "007", "008", "012", "013", "015"));
@@ -119,7 +119,7 @@ class StaleUsersServiceTest {
 
         when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
-        final List<String> staleUsers = staleUsersService.fetchStaleUsers();
+        final List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers)
             .hasSize(2)
             .containsAll(List.of("007", "012"));

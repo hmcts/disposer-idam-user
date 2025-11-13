@@ -36,25 +36,6 @@
         "jurisdiction": "IA",
         "caseType": "Asylum"
       }
-    },
-    {
-      "id": "f5b17cc8-b7fe-41b1-8d31-d3187e642a6e",
-      "actorIdType": "IDAM",
-      "actorId": "13e31622-edea-493c-8240-9b780c9d6010",
-      "roleType": "CASE",
-      "roleName": "tribunal-caseworker",
-      "classification": "PUBLIC",
-      "grantType": "CHALLENGED",
-      "roleCategory": "LEGAL_OPERATIONS",
-      "readOnly": false,
-      "beginTime": "2021-01-01T00:00:00Z",
-      "endTime": "2023-01-01T00:00:00Z",
-      "created": "2021-01-28T18:17:06.568122Z",
-      "attributes": {
-        "caseId": "1607103938250138",
-        "jurisdiction": "IA",
-        "caseType": "Asylum"
-      }
     }
   ]
 }
