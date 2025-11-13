@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.idam.bdd;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
@@ -42,44 +43,58 @@ public class WireMockStubs {
     }
 
     public void setupIdamApiStubsForSuccess() {
-        for (int i = 0; i < 3; i++) {
-            // add 25 user ids with uuid
-            // "13e31622-edea-493c-8240-9b780c9d6001"
-            // changing only the last three bits (001 to 025)
-            wiremock.stubFor(
-                    WireMock
-                            .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
-                            .withQueryParam("page", equalTo(String.valueOf(i)))
-                            .willReturn(
-                                    WireMock.aResponse()
-                                            .withHeader(CONTENT_TYPE, APP_JSON)
-                                            .withBodyFile("staleUsersPage" + (i + 1) + ".json")
-                            )
-            );
+        stubStaleUsersApi(null, "staleUsersPage1.json");
+        stubStaleUsersApi("13e31622-edea-493c-8240-9b780c9d6010", "staleUsersPage2.json");
+        stubStaleUsersApi("13e31622-edea-493c-8240-9b780c9d6020", "staleUsersPage3.json");
 
-            // pretend that 001, 002, 010 and 023 still have assigned roles
-            wiremock.stubFor(
-                    WireMock
-                            .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_QUERY_PATH))
-                            .withRequestBody(WireMock.matchingJsonPath(
-                                            "$.queryRequests[0].actorId",
-                                            WireMock.containing(getMatchingActorId(i + 1))
-                                    )
-                            )
-                            .willReturn(
-                                    WireMock.aResponse()
-                                            .withBodyFile("roleAssignmentsResponse" + (i + 1) + ".json")
-                                            .withHeader(CONTENT_TYPE, Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
-                            )
-            );
+        for (int i = 0; i < 3; i++) {
+            stubRoleAssignmentsApi(i + 1);
         }
 
-        // delete endpoint
+        stubDeleteUserApi();
+    }
+
+    private void stubDeleteUserApi() {
         wiremock.stubFor(
-                WireMock
-                        .delete(WireMock.urlPathMatching(Constants.STALE_USERS_PATH + "/([0-9a-zA-Z-]+)"))
-                        .willReturn(WireMock.aResponse().withStatus(OK.value()))
+            WireMock
+                .delete(WireMock.urlPathMatching(Constants.STALE_USERS_PATH + "/([0-9a-zA-Z-]+)"))
+                .willReturn(WireMock.aResponse().withStatus(OK.value()))
         );
+    }
+
+    private void stubRoleAssignmentsApi(int index) {
+        // pretend that 001, 002, 010 and 023 still have assigned roles
+        wiremock.stubFor(
+            WireMock
+                .post(WireMock.urlPathEqualTo(Constants.ROLE_ASSIGNMENTS_QUERY_PATH))
+                .withRequestBody(WireMock.matchingJsonPath(
+                                     "$.queryRequests[0].actorId",
+                                     WireMock.containing(getMatchingActorId(index))
+                                 )
+                )
+                .willReturn(
+                    WireMock.aResponse()
+                        .withBodyFile("roleAssignmentsResponse" + index + ".json")
+                        .withHeader(CONTENT_TYPE, Constants.ROLE_ASSIGNMENTS_CONTENT_TYPE)
+                )
+        );
+
+    }
+
+    private void stubStaleUsersApi(String previousUserId, String bodyFilename) {
+        MappingBuilder mappingBuilder = WireMock
+            .get(WireMock.urlPathEqualTo(Constants.STALE_USERS_PATH))
+            .withQueryParam("size", equalTo(String.valueOf(101)));
+
+        if (previousUserId != null) {
+            mappingBuilder.withQueryParam("previousUserId", equalTo(previousUserId));
+        }
+
+        wiremock.stubFor(mappingBuilder.willReturn(
+            WireMock.aResponse()
+                .withHeader(CONTENT_TYPE, APP_JSON)
+                .withBodyFile(bodyFilename)
+            ));
     }
 
     public void setIdamApiStubToReturn401() {
