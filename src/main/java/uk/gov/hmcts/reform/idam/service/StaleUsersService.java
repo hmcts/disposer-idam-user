@@ -73,7 +73,7 @@ public class StaleUsersService implements Iterator<List<String>> {
         }
 
         UserContent newAnchorToKeep = staleUsersResponse.content().removeLast();
-        log.info("Fetched page {}, next anchor: {}", currentPage++, newAnchorToKeep);
+        log.info("Fetched page {}, next anchor: {}", currentPage++, newAnchorToKeep.getId());
 
         List<UserContent> users = new ArrayList<>();
 
