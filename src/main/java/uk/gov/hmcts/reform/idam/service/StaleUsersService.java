@@ -28,6 +28,8 @@ public class StaleUsersService implements Iterator<List<String>> {
 
     @SuppressWarnings("PMD.RedundantFieldInitializer")
     private boolean finished = false;
+
+    private static final String PAGE_NUMBER_PARAM = "page";
     private static final String PREVIOUS_USER_PARAM = "previousUserId";
     private static final String BATCH_SIZE_PARAM = "size";
 
@@ -35,19 +37,24 @@ public class StaleUsersService implements Iterator<List<String>> {
     private int currentPage;
     private int totalStaleUsers;
 
-    private String previousUserId;
-    private UserContent pendingAnchor;
+    private UserContent pendingUserAnchor;
 
     private final IdamClient client;
     private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
+    /*
+    fetching on cursor based paging where instead of asking for specific page,
+    we ask to give records after specific user (and user must exist in DB).
+     */
     private List<String> fetchNextBatch() {
         final StaleUsersResponse staleUsersResponse;
         Map<String, Object> query = new ConcurrentHashMap<>();
         query.put(BATCH_SIZE_PARAM, parameterResolver.getStaleUsersBatchSize() + 1);
-        if (pendingAnchor != null) {
-            query.put(PREVIOUS_USER_PARAM, pendingAnchor.getId());
+        if (pendingUserAnchor != null) {
+            query.put(PREVIOUS_USER_PARAM, pendingUserAnchor.getId());
+        } else if (currentPage > 0) {
+            query.put(PAGE_NUMBER_PARAM, currentPage);
         }
 
         staleUsersResponse = client.getStaleUsers(idamTokenGenerator.getIdamAuthorizationHeader(), query);
@@ -58,23 +65,23 @@ public class StaleUsersService implements Iterator<List<String>> {
 
         if (staleUsersResponse.content().isEmpty()) {
             finished = true;
-            return pendingAnchor == null ? List.of() : filterByRoles(List.of(pendingAnchor));
+            return pendingUserAnchor == null ? List.of() : filterByRoles(List.of(pendingUserAnchor));
         }
 
         UserContent newAnchorToKeep = staleUsersResponse.content().removeLast();
-        log.debug("Fetched page {}, next anchor: {}", currentPage++, newAnchorToKeep);
+        log.info("Fetched page {}, next anchor: {}", currentPage++, newAnchorToKeep);
 
         List<UserContent> users = new ArrayList<>();
 
-        if (pendingAnchor != null) {
-            users.add(pendingAnchor);
+        if (pendingUserAnchor != null) {
+            users.add(pendingUserAnchor);
         }
         users.addAll(staleUsersResponse.content());
         finished = staleUsersResponse.isLast();
         if (finished) {
             users.add(newAnchorToKeep);
         }
-        pendingAnchor = newAnchorToKeep;
+        pendingUserAnchor = newAnchorToKeep;
 
         totalStaleUsers += staleUsersResponse.content().size();
 
