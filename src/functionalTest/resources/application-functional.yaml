@@ -19,8 +19,6 @@ ccd:
     batch.size: ${ROLE_ASSIGNMENT_BATCH_SIZE:100}
 
 stale-users:
-  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:5000}
-  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
