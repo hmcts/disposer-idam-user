@@ -21,12 +21,15 @@ ccd:
 stale-users:
   batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:5000}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:120}
+  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
+  requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1}
   simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   mandatory-role-for-citizen: disposer-test-role
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
   citizen-letter-role-pattern: letter-
   idam-start-page: 0
   run-until: "06:00"
+  idam-sort-direction: DESC
 
 role-assignments:
   max-page-size: 2
