@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
@@ -49,6 +50,7 @@ class StaleUsersServiceTest {
         when(parameterResolver.getAdditionalIdamCitizenRoles())
             .thenReturn(java.util.Optional.of(Set.of("claimant", "defendant", "divorce-private-beta")));
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
+        ReflectionTestUtils.setField(staleUsersService, "sortDirection", "ASC");
     }
 
     @Test
