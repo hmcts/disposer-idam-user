@@ -25,7 +25,7 @@ stale-users:
   mandatory-role-for-citizen: disposer-test-role
   citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
   citizen-letter-role-pattern: letter-
-  idam-start-page: 1
+  idam-start-page: 0
   run-until: "06:00"
 
 role-assignments:
