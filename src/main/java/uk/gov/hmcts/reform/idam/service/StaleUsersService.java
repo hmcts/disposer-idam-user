@@ -29,13 +29,11 @@ public class StaleUsersService implements Iterator<List<String>> {
     @SuppressWarnings("PMD.RedundantFieldInitializer")
     private boolean finished = false;
 
-    private static final String PAGE_NUMBER_PARAM = "page";
     private static final String PREVIOUS_USER_PARAM = "previousUserId";
     private static final String BATCH_SIZE_PARAM = "size";
     private static final String SORT_DIRECTION_PARAM = "sortDirection";
 
-    @Value("${stale-users.idam-start-page:0}")
-    private int currentPage;
+    private int requestCount;
     private int totalStaleUsers;
     @Value("${stale-users.idam-sort-direction:ASC}")
     private String sortDirection;
@@ -57,8 +55,6 @@ public class StaleUsersService implements Iterator<List<String>> {
         query.put(SORT_DIRECTION_PARAM, sortDirection);
         if (pendingUserAnchor != null) {
             query.put(PREVIOUS_USER_PARAM, pendingUserAnchor.getId());
-        } else if (currentPage > 0) {
-            query.put(PAGE_NUMBER_PARAM, currentPage);
         }
 
         staleUsersResponse = client.getStaleUsers(idamTokenGenerator.getIdamAuthorizationHeader(), query);
@@ -73,7 +69,7 @@ public class StaleUsersService implements Iterator<List<String>> {
         }
 
         UserContent newAnchorToKeep = staleUsersResponse.content().removeLast();
-        log.info("Fetched page {}, next anchor: {}", currentPage++, newAnchorToKeep.getId());
+        log.info("Request #{}, next anchor: {}", ++requestCount, newAnchorToKeep.getId());
 
         List<UserContent> users = new ArrayList<>();
 
