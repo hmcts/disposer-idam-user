@@ -32,10 +32,13 @@ public class StaleUsersService implements Iterator<List<String>> {
     private static final String PAGE_NUMBER_PARAM = "page";
     private static final String PREVIOUS_USER_PARAM = "previousUserId";
     private static final String BATCH_SIZE_PARAM = "size";
+    private static final String SORT_DIRECTION_PARAM = "sortDirection";
 
     @Value("${stale-users.idam-start-page:0}")
     private int currentPage;
     private int totalStaleUsers;
+    @Value("${stale-users.idam-sort-direction:ASC}")
+    private String sortDirection;
 
     private UserContent pendingUserAnchor;
 
@@ -51,6 +54,7 @@ public class StaleUsersService implements Iterator<List<String>> {
         final StaleUsersResponse staleUsersResponse;
         Map<String, Object> query = new ConcurrentHashMap<>();
         query.put(BATCH_SIZE_PARAM, parameterResolver.getStaleUsersBatchSize() + 1);
+        query.put(SORT_DIRECTION_PARAM, sortDirection);
         if (pendingUserAnchor != null) {
             query.put(PREVIOUS_USER_PARAM, pendingUserAnchor.getId());
         } else if (currentPage > 0) {
