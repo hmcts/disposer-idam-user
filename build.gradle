@@ -242,7 +242,7 @@ ext['snakeyaml.version'] = '2.0'
 def versions = [
   cucumber          : '7.33.0',
   gradlePitest      : '1.15.0',
-  jackson           : '2.20.1',
+  jackson           : '2.21.0',
   jersey            : '3.1.6',
   junit             : '5.12.2',
   lombok            : '1.18.42'
