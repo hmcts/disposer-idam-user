@@ -14,12 +14,12 @@ idam:
   s2s-auth:
     name: ${S2S_NAME:disposer-idam-user}
     url: ${S2S_URL:http://localhost:4502}
-    secret: ${S2S_SECRET_DISPOSER_IDAM_USER:AAAAAAAAAAAAAAAA}
+    secret: ${S2S_SECRET_DISPOSER_IDAM_USER}
   client:
     id: ${DISPOSER_IDAM_USER_CLIENT_ID:disposer-idam-user}
-    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
+    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET}
     username: ${IDAM_CLIENT_USERNAME:disposertest@test.com}
-    password: ${IDAM_CLIENT_PASSWORD:Password12}
+    password: ${IDAM_CLIENT_PASSWORD}
     redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
 
 ccd:
