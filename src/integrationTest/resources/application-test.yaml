@@ -16,6 +16,10 @@ logging:
 idam:
   s2s-auth:
     url: http://localhost:5000
+    secret: ${S2S_SECRET_DISPOSER_IDAM_USER:AAAAAAAAAAAAAAAA}
+  client:
+    secret: ${DISPOSER_IDAM_USER_CLIENT_SECRET:idam-client-secret}
+    password: ${IDAM_CLIENT_PASSWORD:Password12}
 
 ccd:
   role.assignment:
