@@ -88,7 +88,7 @@ class UserDeletionFunctionalTest {
 
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         if (userWithRole != null) {
             deleteUserService.deleteUser(userWithRole);
             roleAssignmentProvider.deleteRoles(List.of(userWithRole));
