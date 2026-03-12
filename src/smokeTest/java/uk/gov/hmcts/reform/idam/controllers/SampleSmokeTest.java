@@ -19,7 +19,7 @@ class SampleSmokeTest {
     private String testUrl;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         RestAssured.baseURI = testUrl;
         RestAssured.useRelaxedHTTPSValidation();
     }

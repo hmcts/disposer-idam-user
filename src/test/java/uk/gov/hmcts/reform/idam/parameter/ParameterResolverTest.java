@@ -27,7 +27,7 @@ class ParameterResolverTest {
     private final ParameterResolver resolver = new ParameterResolver();
 
     @BeforeEach
-    public void initMock() {
+    void initMock() {
         ReflectionTestUtils.setField(resolver, IDAM_API_URL, "http://locahost:5000");
         ReflectionTestUtils.setField(resolver, BATCH_SIZE, 100);
         ReflectionTestUtils.setField(resolver, "rasBatchSize", 100);
