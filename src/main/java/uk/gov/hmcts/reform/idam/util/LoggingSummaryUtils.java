@@ -3,23 +3,22 @@ package uk.gov.hmcts.reform.idam.util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.PropertyPlaceholderHelper;
 import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class LoggingSummaryUtils {
     private final ParameterResolver parameterResolver;
+
+    private static final PropertyPlaceholderHelper PLACEHOLDER_HELPER = new PropertyPlaceholderHelper("${", "}");
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -50,7 +49,7 @@ public class LoggingSummaryUtils {
         valueMappings.put("rasBatchSize", parameterResolver.getRasBatchSize());
         valueMappings.put("requestLimit", parameterResolver.getRequestLimit());
 
-        log.info(format(template, valueMappings));
+        log.info(PLACEHOLDER_HELPER.replacePlaceholders(template, name -> String.valueOf(valueMappings.get(name))));
     }
 
     private Map<String, Object> createRuntimeStats(long startTime, long endTime) {
@@ -60,26 +59,6 @@ public class LoggingSummaryUtils {
         valueMappings.put("endTime", dateFormat.format(new Date(endTime)));
         valueMappings.put("totalTime", getDurationFromLong(executionTime));
         return valueMappings;
-    }
-
-    private static String format(String template, Map<String, Object> parameters) {
-        StringBuilder newTemplate = new StringBuilder(template);
-        List<Object> valueList = new ArrayList<>();
-
-        Matcher matcher = Pattern.compile("[$][{](\\w+)}").matcher(template);
-
-        while (matcher.find()) {
-            String key = matcher.group(1);
-
-            String paramName = "${" + key + "}";
-            int index = newTemplate.indexOf(paramName);
-            if (index != -1) {
-                newTemplate.replace(index, index + paramName.length(), "%s");
-                valueList.add(parameters.get(key));
-            }
-        }
-
-        return String.format(newTemplate.toString(), valueList.toArray());
     }
 
     public String getDurationFromLong(long duration) {
