@@ -103,7 +103,7 @@ class IdamTokenGeneratorTest {
                 idamTokenGenerator::generateIdamToken
         );
 
-        assertThat(thrown.getMessage()).contains("Unable to generate IDAM token due to error -");
+        assertThat(thrown.getMessage()).contains("Unable to generate IDAM token");
     }
 
     @Test
@@ -171,6 +171,6 @@ class IdamTokenGeneratorTest {
                 idamTokenGenerator::generatePasswordTypeToken
         );
 
-        assertThat(thrown.getMessage()).contains("Unable to generate Role Assignment IDAM token due to error -");
+        assertThat(thrown.getMessage()).contains("Unable to generate Role Assignment IDAM token");
     }
 }

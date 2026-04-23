@@ -22,8 +22,6 @@ public class DeleteUserService {
     private final IdamTokenGenerator idamTokenGenerator;
     private final ParameterResolver parameterResolver;
 
-    private static final String ERROR_MSG_TMPL = "User with id '%s' deletion failed (response status %s)";
-
     @Getter
     private int failedDeletions;
 
@@ -40,12 +38,9 @@ public class DeleteUserService {
         final Response response;
         try {
             if (!parameterResolver.isSimulation()) {
-                response = idamClient.deleteUser(
-                    idamTokenGenerator.getIdamAuthorizationHeader(),
-                    userId
-                );
+                response = idamClient.deleteUser(idamTokenGenerator.getIdamAuthorizationHeader(), userId);
                 if (response.status() != OK.value()) {
-                    log.error(String.format(ERROR_MSG_TMPL, userId, response.status()));
+                    log.error("User with id '{}' deletion failed (response status {})", userId, response.status());
                     failedDeletions++;
                 }
             }
