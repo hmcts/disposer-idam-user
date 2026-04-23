@@ -23,6 +23,9 @@ public class IdamTokenGenerator {
         + "restore-archived-user";
     public static final String ROLE_ASSIGNMENT_SCOPE = "profile roles";
 
+    private static final String IDAM_TOKEN_ERROR = "Unable to generate IDAM token";
+    private static final String ROLE_TOKEN_ERROR = "Unable to generate Role Assignment IDAM token";
+
     private final IdamClient idamClient;
     private final ParameterResolver parameterResolver;
 
@@ -43,9 +46,8 @@ public class IdamTokenGenerator {
             idamClientToken = tokenResponse.accessToken;
 
         } catch (final Exception exception) {
-            String msg = String.format("Unable to generate IDAM token due to error - %s", exception.getMessage());
-            log.error(msg, exception);
-            throw new IdamAuthTokenGenerationException(msg, exception);
+            log.error(IDAM_TOKEN_ERROR, exception);
+            throw new IdamAuthTokenGenerationException(IDAM_TOKEN_ERROR, exception);
         }
     }
 
@@ -63,10 +65,8 @@ public class IdamTokenGenerator {
             passwordTypeClientToken = tokenResponse.accessToken;
 
         } catch (final Exception exception) {
-            String msg = String.format("Unable to generate Role Assignment IDAM token due to error - %s",
-                    exception.getMessage());
-            log.error(msg, exception);
-            throw new IdamAuthTokenGenerationException(msg, exception);
+            log.error(ROLE_TOKEN_ERROR, exception);
+            throw new IdamAuthTokenGenerationException(ROLE_TOKEN_ERROR, exception);
         }
     }
 

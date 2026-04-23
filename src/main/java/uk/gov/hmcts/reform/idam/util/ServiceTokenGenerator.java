@@ -17,14 +17,14 @@ public class ServiceTokenGenerator {
 
     private String serviceAuthToken = "dummy token";
 
+    private static final String SERVICE_TOKEN_ERROR = "Unable to generate service auth token due to error";
+
     public void generateServiceToken() {
         try {
             serviceAuthToken = authTokenGenerator.generate();
         } catch (final Exception exception) {
-            String msg = String.format(
-                "Unable to generate service auth token due to error - %s", exception.getMessage());
-            log.error(msg, exception);
-            throw new ServiceAuthTokenGenerationException(msg, exception);
+            log.error(SERVICE_TOKEN_ERROR, exception);
+            throw new ServiceAuthTokenGenerationException(SERVICE_TOKEN_ERROR, exception);
         }
     }
 }
