@@ -245,7 +245,7 @@ def versions = [
   jackson           : '2.21.2',
   jersey            : '3.1.6',
   junit             : '5.12.2',
-  lombok            : '1.18.44'
+  lombok            : '1.18.46'
 ]
 
 ext['jackson-bom.version'] = versions.jackson
