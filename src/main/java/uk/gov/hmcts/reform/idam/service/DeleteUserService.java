@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
@@ -20,7 +20,7 @@ public class DeleteUserService {
 
     private final IdamClient idamClient;
     private final IdamTokenGenerator idamTokenGenerator;
-    private final ParameterResolver parameterResolver;
+    private final StaleUsersProperties staleUsersProperties;
 
     @Getter
     private int failedDeletions;
@@ -37,7 +37,7 @@ public class DeleteUserService {
     public void deleteUser(String userId) {
         final Response response;
         try {
-            if (!parameterResolver.isSimulation()) {
+            if (!staleUsersProperties.isSimulation()) {
                 response = idamClient.deleteUser(idamTokenGenerator.getIdamAuthorizationHeader(), userId);
                 if (response.status() != OK.value()) {
                     log.error("User with id '{}' deletion failed (response status {})", userId, response.status());

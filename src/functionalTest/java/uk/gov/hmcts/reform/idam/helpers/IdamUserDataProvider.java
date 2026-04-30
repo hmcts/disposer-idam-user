@@ -27,7 +27,7 @@ public class IdamUserDataProvider {
     @Value("${idam.api.url}")
     private String idamApi;
 
-    @Value("${stale-users.mandatory-role-for-citizen}")
+    @Value("${stale-users.citizen.mandatory-role}")
     private String roleToDelete;
 
     private static final String CREATE_USER_PATH = "testing-support/accounts";

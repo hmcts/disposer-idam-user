@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.util.ListUtils;
 
 import java.time.Clock;
@@ -36,8 +36,9 @@ class IdamUserDisposerServiceTest {
     @Mock
     private DeleteUserService deleteUserService;
 
-    @Mock
-    private ParameterResolver parameterResolver;
+    private CcdProperties ccdProperties;
+
+    private StaleUsersProperties staleUsersProperties;
 
     @Mock
     private Clock clock;
@@ -45,23 +46,39 @@ class IdamUserDisposerServiceTest {
     @Mock
     private ListUtils listUtils;
 
-    @InjectMocks
     private IdamUserDisposerService service;
 
     @BeforeEach
     void setUp() {
+        staleUsersProperties = new StaleUsersProperties();
+        StaleUsersProperties.Requests requests = new StaleUsersProperties.Requests();
+        requests.setLimit(10);
+        staleUsersProperties.setRequests(requests);
+        staleUsersProperties.setCutOffTime(LocalTime.of(6, 0));
+        ccdProperties = new CcdProperties();
+        CcdProperties.RoleAssignment roleAssignment = new CcdProperties.RoleAssignment();
+        roleAssignment.setBatchSize(10);
+        ccdProperties.setRoleAssignment(roleAssignment);
+
         when(clock.instant())
             .thenReturn(Instant.parse("2025-01-15T20:05:00.000Z")) // applicationStartTime
             .thenReturn(Instant.parse("2025-01-15T23:32:15.123Z")); // first check of current time
         when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
-        when(parameterResolver.getCutOffTime()).thenReturn(LocalTime.of(6, 0));
+
+        service = new IdamUserDisposerService(
+            staleUsersService,
+            userRoleService,
+            deleteUserService,
+            staleUsersProperties,
+            ccdProperties,
+            listUtils,
+            clock
+        );
     }
 
     @Test
     void shouldRunAtLeastOnce() {
         when(staleUsersService.hasNext()).thenReturn(true).thenReturn(false);
-        when(parameterResolver.getRequestLimit()).thenReturn(10);
-        when(parameterResolver.getRasBatchSize()).thenReturn(10);
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.next()).thenReturn(allProcessedStaleUserIds);
@@ -81,8 +98,11 @@ class IdamUserDisposerServiceTest {
 
     @Test
     void shouldRunMultipleTimes() {
-        when(staleUsersService.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(parameterResolver.getRequestLimit()).thenReturn(10);
+        when(staleUsersService.hasNext())
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(false);
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.next()).thenReturn(allProcessedStaleUserIds);
@@ -100,7 +120,7 @@ class IdamUserDisposerServiceTest {
     @Test
     void shouldStopWhenRequestLimitIsReached() {
         when(staleUsersService.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(parameterResolver.getRequestLimit()).thenReturn(1);
+        staleUsersProperties.getRequests().setLimit(1);
 
         List<String> allProcessedStaleUserIds = Arrays.asList("45678", "67899", "78905");
         when(staleUsersService.next()).thenReturn(allProcessedStaleUserIds);
@@ -127,7 +147,6 @@ class IdamUserDisposerServiceTest {
             .thenReturn(Instant.parse(startTime)) // applicationStartTime
             .thenReturn(Instant.parse(currentTime1))
             .thenReturn(Instant.parse(currentTime2));
-        when(parameterResolver.getRequestLimit()).thenReturn(10);
         when(staleUsersService.hasNext()).thenReturn(true);
 
         service.run();
@@ -140,7 +159,6 @@ class IdamUserDisposerServiceTest {
         when(clock.instant())
             .thenReturn(Instant.parse("2025-01-15T20:05:00.000Z")) // applicationStartTime
             .thenReturn(Instant.parse("2025-01-16T15:59:43.000Z"));
-        when(parameterResolver.getRequestLimit()).thenReturn(10);
 
         service.run();
 
