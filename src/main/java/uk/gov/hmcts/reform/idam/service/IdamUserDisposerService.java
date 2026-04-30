@@ -3,7 +3,8 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.util.ListUtils;
 
 import java.time.Clock;
@@ -20,13 +21,14 @@ public class IdamUserDisposerService {
     private final StaleUsersService staleUsersService;
     private final UserRoleService userRoleService;
     private final DeleteUserService deleteUserService;
-    private final ParameterResolver parameterResolver;
+    private final StaleUsersProperties staleUsersProperties;
+    private final CcdProperties ccdProperties;
     private final ListUtils listUtils;
     private final Clock clock;
 
     public List<String> run() {
         LocalDateTime applicationStartTime = LocalDateTime.now(clock);
-        LocalTime cutOffTime = parameterResolver.getCutOffTime();
+        LocalTime cutOffTime = staleUsersProperties.getCutOffTime();
 
         // Check if we need to add one day to the cut-off time.
         // Typical run is at night, starting few hours before midnight and running until morning.
@@ -37,12 +39,15 @@ public class IdamUserDisposerService {
         LocalDateTime cutOff = LocalDateTime.of(applicationStartTime.plusDays(dayOffset).toLocalDate(), cutOffTime);
 
         List<String> allRemovedStaleUserIds = new ArrayList<>();
-        int requestLimit = parameterResolver.getRequestLimit();
+        int requestLimit = staleUsersProperties.getRequests().getLimit();
 
         while (requestLimit > 0 && !isCutOffTimeReached(cutOff) && staleUsersService.hasNext()) {
             List<String> batchStaleUserIds = staleUsersService.next();
 
-            for (List<String> batch : listUtils.partition(batchStaleUserIds, parameterResolver.getRasBatchSize())) {
+            for (List<String> batch : listUtils.partition(
+                batchStaleUserIds,
+                ccdProperties.getRoleAssignment().getBatchSize()
+            )) {
                 log.debug("User ids passing for RAS check {}", batch);
                 List<String> filteredBatch = userRoleService.filterUsersWithRoles(batch);
                 if (!filteredBatch.isEmpty()) {

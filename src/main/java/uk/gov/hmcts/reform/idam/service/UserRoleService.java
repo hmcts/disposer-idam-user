@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.requests.RoleAssignmentsQueryRequest;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
@@ -24,7 +24,7 @@ public class UserRoleService {
 
     private final RoleAssignmentClient roleAssignmentClient;
     private final SecurityUtil securityUtil;
-    private final ParameterResolver parameterResolver;
+    private final CcdProperties ccdProperties;
 
     public List<String> filterUsersWithRoles(List<String> staleUsers) {
         if (staleUsers.isEmpty()) {
@@ -55,8 +55,8 @@ public class UserRoleService {
     private RoleAssignmentResponse getRoleAssignmentResponse(final RoleAssignmentsQueryRequest request) {
         int page = 0;
         final int querySize = Math.min(
-            parameterResolver.getRasBatchSize() * 10,
-            parameterResolver.getMaxRoleAssignmentsPageSize()); // the query size can't be greater then 1000
+            ccdProperties.getRoleAssignment().getBatchSize() * 10,
+            ccdProperties.getRoleAssignment().getRequestPageSize()); // the query size can't be greater then 1000
 
         final RoleAssignmentResponse response = roleAssignmentClient.getRoleAssignments(
             getHeaders(page, querySize),

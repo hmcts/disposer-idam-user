@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ServerErrorException;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
@@ -36,7 +36,7 @@ class DeleteUserServiceTest {
     IdamTokenGenerator idamTokenGenerator;
 
     @Mock
-    ParameterResolver parameterResolver;
+    StaleUsersProperties staleUsersProperties;
 
     @Captor
     ArgumentCaptor<String> pathCaptor;
@@ -50,7 +50,7 @@ class DeleteUserServiceTest {
 
         when(response.status()).thenReturn(OK.value());
         when(idamClient.deleteUser(anyString(), anyString())).thenReturn(response);
-        when(parameterResolver.isSimulation()).thenReturn(false);
+        when(staleUsersProperties.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("a", "b", "c");
@@ -63,7 +63,7 @@ class DeleteUserServiceTest {
     void shouldCatchAndLogExceptionOnIdamClientError() {
         when(idamClient.deleteUser(HEADER, "userId"))
             .thenThrow(new ServerErrorException("Internal Server Error", null));
-        when(parameterResolver.isSimulation()).thenReturn(false);
+        when(staleUsersProperties.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("userId");
@@ -79,7 +79,7 @@ class DeleteUserServiceTest {
 
         when(response.status()).thenReturn(BAD_REQUEST.value());
         when(idamClient.deleteUser(anyString(), anyString())).thenReturn(response);
-        when(parameterResolver.isSimulation()).thenReturn(false);
+        when(staleUsersProperties.isSimulation()).thenReturn(false);
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn(HEADER);
 
         List<String> staleUserIds = List.of("userId");
@@ -90,7 +90,7 @@ class DeleteUserServiceTest {
 
     @Test
     void shouldNotMakeDeleteRequest() {
-        when(parameterResolver.isSimulation()).thenReturn(true);
+        when(staleUsersProperties.isSimulation()).thenReturn(true);
 
         List<String> staleUserIds = List.of("a", "b", "c");
         deleteUserService.deleteUsers(staleUserIds);

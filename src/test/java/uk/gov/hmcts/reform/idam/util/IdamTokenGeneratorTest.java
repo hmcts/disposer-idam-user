@@ -3,12 +3,11 @@ package uk.gov.hmcts.reform.idam.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
+import uk.gov.hmcts.reform.idam.config.IdamProperties;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,18 +23,21 @@ class IdamTokenGeneratorTest {
     @Mock
     IdamClient idamClient;
 
-    @Mock
-    ParameterResolver parameterResolver;
+    private IdamProperties idamProperties;
 
-    @InjectMocks
-    IdamTokenGenerator idamTokenGenerator;
+    private IdamTokenGenerator idamTokenGenerator;
 
     @BeforeEach
     void setUp() {
-        when(parameterResolver.getClientId()).thenReturn("ClientId");
-        when(parameterResolver.getClientSecret()).thenReturn("Client secret");
-        when(parameterResolver.getClientUserName()).thenReturn("username");
-        when(parameterResolver.getClientPassword()).thenReturn("password");
+        idamProperties = new IdamProperties();
+        IdamProperties.Client idamPropertiesClient = new IdamProperties.Client();
+        idamPropertiesClient.setId("ClientId");
+        idamPropertiesClient.setSecret("Client secret");
+        idamPropertiesClient.setUsername("username");
+        idamPropertiesClient.setPassword("password");
+        idamPropertiesClient.setRedirectUri("redirect.uri");
+        idamProperties.setClient(idamPropertiesClient);
+        idamTokenGenerator = new IdamTokenGenerator(idamClient, idamProperties);
     }
 
     @Test
@@ -50,12 +52,12 @@ class IdamTokenGeneratorTest {
                 null
         );
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
                 null,
                 IDAM_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 IDAM_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generateIdamToken();
@@ -74,12 +76,12 @@ class IdamTokenGeneratorTest {
                 null
         );
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
                 null,
                 IDAM_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 IDAM_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generateIdamToken();
@@ -89,12 +91,12 @@ class IdamTokenGeneratorTest {
     @Test
     void shouldThrowIdamAuthTokenGenerationException() {
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
                 null,
                 IDAM_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 IDAM_SCOPE
         )).thenThrow(new IdamAuthTokenGenerationException("message"));
 
@@ -118,12 +120,12 @@ class IdamTokenGeneratorTest {
                 null
         );
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
-                null,
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
+                idamProperties.getClient().getRedirectUri(),
                 PASSWORD_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 ROLE_ASSIGNMENT_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generatePasswordTypeToken();
@@ -142,12 +144,12 @@ class IdamTokenGeneratorTest {
                 null
         );
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
-                null,
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
+                idamProperties.getClient().getRedirectUri(),
                 PASSWORD_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 ROLE_ASSIGNMENT_SCOPE
         )).thenReturn(tokenResponse);
         idamTokenGenerator.generatePasswordTypeToken();
@@ -157,12 +159,12 @@ class IdamTokenGeneratorTest {
     @Test
     void shouldThrowIdamAuthTokenGenerationForRoleAssignmentsException() {
         when(idamClient.getToken(
-                parameterResolver.getClientId(),
-                parameterResolver.getClientSecret(),
-                null,
+                idamProperties.getClient().getId(),
+                idamProperties.getClient().getSecret(),
+                idamProperties.getClient().getRedirectUri(),
                 PASSWORD_GRANT_TYPE,
-                parameterResolver.getClientUserName(),
-                parameterResolver.getClientPassword(),
+                idamProperties.getClient().getUsername(),
+                idamProperties.getClient().getPassword(),
                 ROLE_ASSIGNMENT_SCOPE
         )).thenThrow(new IdamAuthTokenGenerationException("message"));
 

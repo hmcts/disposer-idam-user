@@ -22,8 +22,9 @@ idam:
     password: ${IDAM_CLIENT_PASSWORD:Password12}
 
 ccd:
-  role.assignment:
+  role-assignment:
     host: ${ROLE_ASSIGNMENT_HOST:localhost:5000}
+    request-page-size: 4
 
 
 dummy-jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
@@ -34,12 +35,13 @@ role-assignments:
   max-page-size: 4
 
 stale-users:
-  run-until: "06:00"
-  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
+  cut-off-time: "06:00"
+  simulation: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
   # role that citizen user must have among other, otherwise account will be left untouched
-  mandatory-role-for-citizen: citizen
-  citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
-  citizen-letter-role-pattern: letter-
+  citizen:
+    mandatory-role: citizen
+    roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
+    letter-role-pattern: letter-
 
 service:
   feign-retry-min-wait: 1

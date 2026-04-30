@@ -25,7 +25,7 @@ public class RoleAssignmentProvider {
     private final ServiceTokenGenerator serviceTokenGenerator;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${ccd.role.assignment.host}")
+    @Value("${ccd.role-assignment.host}")
     private String roleAssignmentApi;
 
     private static final String ROLE_PATH = "/am/role-assignments";

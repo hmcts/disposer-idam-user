@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PropertyPlaceholderHelper;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class LoggingSummaryUtils {
-    private final ParameterResolver parameterResolver;
+    private final StaleUsersProperties staleUsersProperties;
+    private final CcdProperties ccdProperties;
 
     private static final PropertyPlaceholderHelper PLACEHOLDER_HELPER = new PropertyPlaceholderHelper("${", "}");
 
@@ -44,10 +46,10 @@ public class LoggingSummaryUtils {
         valueMappings.put("deletedUsers", deletedUsers - failedDeletions);
         valueMappings.put("failedDeletions", failedDeletions);
         valueMappings.put("undeletedUsers", processedUsers - deletedUsers);
-        valueMappings.put("isSimulation", parameterResolver.isSimulation());
-        valueMappings.put("staleUsersBatchSize", parameterResolver.getStaleUsersBatchSize());
-        valueMappings.put("rasBatchSize", parameterResolver.getRasBatchSize());
-        valueMappings.put("requestLimit", parameterResolver.getRequestLimit());
+        valueMappings.put("isSimulation", staleUsersProperties.isSimulation());
+        valueMappings.put("staleUsersBatchSize", staleUsersProperties.getBatchSize());
+        valueMappings.put("rasBatchSize", ccdProperties.getRoleAssignment().getBatchSize());
+        valueMappings.put("requestLimit", staleUsersProperties.getRequests().getLimit());
 
         log.info(PLACEHOLDER_HELPER.replacePlaceholders(template, name -> String.valueOf(valueMappings.get(name))));
     }

@@ -3,16 +3,14 @@ package uk.gov.hmcts.reform.idam.service;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +33,12 @@ public class StaleUsersService implements Iterator<List<String>> {
 
     private int requestCount;
     private int totalStaleUsers;
-    @Value("${stale-users.idam-sort-direction:ASC}")
-    private String sortDirection;
 
     private UserContent pendingUserAnchor;
 
     private final IdamClient client;
     private final IdamTokenGenerator idamTokenGenerator;
-    private final ParameterResolver parameterResolver;
+    private final StaleUsersProperties staleUsersProperties;
 
     /*
     fetching on cursor based paging where instead of asking for specific page,
@@ -51,8 +47,8 @@ public class StaleUsersService implements Iterator<List<String>> {
     private List<String> fetchNextBatch() {
         final StaleUsersResponse staleUsersResponse;
         Map<String, Object> query = new ConcurrentHashMap<>();
-        query.put(BATCH_SIZE_PARAM, parameterResolver.getStaleUsersBatchSize() + 1);
-        query.put(SORT_DIRECTION_PARAM, sortDirection);
+        query.put(BATCH_SIZE_PARAM, staleUsersProperties.getBatchSize() + 1);
+        query.put(SORT_DIRECTION_PARAM, staleUsersProperties.getIdamSortDirection());
         if (pendingUserAnchor != null) {
             query.put(PREVIOUS_USER_PARAM, pendingUserAnchor.getId());
         }
@@ -89,14 +85,14 @@ public class StaleUsersService implements Iterator<List<String>> {
     }
 
     private List<String> filterByRoles(List<UserContent> users) {
-        String requiredRole = parameterResolver.getCitizenRole().toLowerCase();
-        Set<String> rolesToDelete = parameterResolver
-            .getAdditionalIdamCitizenRoles().orElse(new HashSet<>())
+        String requiredRole = staleUsersProperties.getCitizen().getMandatoryRole().toLowerCase();
+        Set<String> rolesToDelete = staleUsersProperties
+            .getCitizen().getRoles()
             .stream()
             .map(String::toLowerCase)
             .collect(Collectors.toSet());
         rolesToDelete.add(requiredRole);
-        String filterPattern = parameterResolver.getCitizenRolesPattern();
+        String filterPattern = staleUsersProperties.getCitizen().getLetterRolePattern();
 
         final List<UserContent> userContentList = users
             .stream()
