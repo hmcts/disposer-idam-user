@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.service.DeleteUserService;
 import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
 
@@ -17,9 +17,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static java.lang.Boolean.valueOf;
+import static java.lang.Boolean.parseBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.reform.idam.util.Constants.STALE_USERS_PATH;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -32,14 +31,14 @@ public class UserDisposerSteps extends WireMockStubs {
     private DeleteUserService deleteUserService;
 
     @Autowired
-    private ParameterResolver parameterResolver;
+    private StaleUsersProperties staleUsersProperties;
 
     @Given("IdAM api works fine and simulation mode is {string}")
     public void idamApiWorksFine(final String simulationMode) {
         wiremock.resetRequests();
         setupWireMock();
         setupIdamApiStubsForSuccess();
-        setField(parameterResolver, "isSimulation", valueOf(simulationMode));
+        staleUsersProperties.setSimulation(parseBoolean(simulationMode));
     }
 
     @Given("IdAM api responds with {int} error to {string} endpoint DELETE call")

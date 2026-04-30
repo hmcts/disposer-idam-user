@@ -49,7 +49,9 @@
   </rule>
   <rule ref="category/java/design.xml/LawOfDemeter">
     <properties>
-      <property name="violationSuppressRegex" value="(.*method chain calls.*|.*object not created locally.*)"/>
+      <property name="violationSuppressXPath"
+                value="//PrimaryExpression
+                     [PrimaryPrefix/Name[matches(@Image, '.*Properties$')]]"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException">

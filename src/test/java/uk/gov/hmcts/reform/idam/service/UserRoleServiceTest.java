@@ -5,10 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.RoleAssignmentClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignment;
 import uk.gov.hmcts.reform.idam.service.remote.responses.RoleAssignmentResponse;
@@ -35,13 +34,11 @@ class UserRoleServiceTest {
     @Mock
     SecurityUtil securityUtil;
 
-    @Mock
-    ParameterResolver parameterResolver;
+    CcdProperties ccdProperties;
 
     @Captor
     ArgumentCaptor<Map<String, String>> roleAssignentsHeaderCaptor;
 
-    @InjectMocks
     private UserRoleService userRoleService;
 
     @BeforeEach
@@ -51,6 +48,12 @@ class UserRoleServiceTest {
             "ServiceAuthorization", "Bearer 123456"
         );
         when(securityUtil.getAuthHeaders()).thenReturn(headers);
+        ccdProperties = new CcdProperties();
+        CcdProperties.RoleAssignment roleAssignmentProperties = new CcdProperties.RoleAssignment();
+        roleAssignmentProperties.setBatchSize(2);
+        roleAssignmentProperties.setRequestPageSize(1000);
+        ccdProperties.setRoleAssignment(roleAssignmentProperties);
+        userRoleService = new UserRoleService(roleAssignmentClient, securityUtil, ccdProperties);
     }
 
     @Test
@@ -74,8 +77,6 @@ class UserRoleServiceTest {
         List<String> staleUsers = List.of("user-1", "user-2", "user-3");
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any())).thenReturn(roleAssignmentResponse);
-        when(parameterResolver.getRasBatchSize()).thenReturn(2);
-        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         List<String> users = userRoleService.filterUsersWithRoles(staleUsers);
         assertThat(users).hasSize(3);
@@ -88,9 +89,6 @@ class UserRoleServiceTest {
 
         RoleAssignmentResponse roleAssignmentResponse1 = new RoleAssignmentResponse(getRoleAssignmentList(20));
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
-
-        when(parameterResolver.getRasBatchSize()).thenReturn(2);
-        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))
             .thenReturn(roleAssignmentResponse1)
@@ -113,9 +111,6 @@ class UserRoleServiceTest {
 
         RoleAssignmentResponse roleAssignmentResponse1 = new RoleAssignmentResponse(getRoleAssignmentList(20));
         RoleAssignmentResponse roleAssignmentResponse2 = new RoleAssignmentResponse(getRoleAssignmentList(10));
-
-        when(parameterResolver.getRasBatchSize()).thenReturn(2);
-        when(parameterResolver.getMaxRoleAssignmentsPageSize()).thenReturn(1000);
 
         when(roleAssignmentClient.getRoleAssignments(anyMap(), any()))
             // The first RA request wll return 20 roles -->  20 == (requestLimit x10)
@@ -149,4 +144,3 @@ class UserRoleServiceTest {
             .build();
     }
 }
-

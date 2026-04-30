@@ -1,29 +1,26 @@
 package uk.gov.hmcts.reform.idam.util;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
-import uk.gov.hmcts.reform.idam.service.IdamUserDisposerService;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+import uk.gov.hmcts.reform.idam.config.CcdProperties;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.awaitility.Awaitility.await;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class LoggingSummaryUtilsTest {
 
-    @InjectMocks
     private LoggingSummaryUtils loggingSummaryUtils;
 
-    @Mock
-    private ParameterResolver parameterResolver;
-
-    @Mock
-    private IdamUserDisposerService idamUserDisposerService;
+    private StaleUsersProperties staleUsersProperties;
+    private CcdProperties ccdProperties;
 
     private static final String START_TIME = "1696954607339";
     private static final String END_TIME = "1696954607360";
@@ -32,12 +29,24 @@ class LoggingSummaryUtilsTest {
 
     private static final int FAILED_DELETIONS = 123;
 
+    @BeforeEach
+    void setUp() {
+        staleUsersProperties = new StaleUsersProperties();
+        staleUsersProperties.setBatchSize(123);
+        StaleUsersProperties.Requests requests = new StaleUsersProperties.Requests();
+        requests.setLimit(1000);
+        staleUsersProperties.setRequests(requests);
+        staleUsersProperties.setSimulation(true);
+        ccdProperties = new CcdProperties();
+        CcdProperties.RoleAssignment roleAssignment = new CcdProperties.RoleAssignment();
+        roleAssignment.setBatchSize(100);
+        ccdProperties.setRoleAssignment(roleAssignment);
+
+        loggingSummaryUtils = new LoggingSummaryUtils(staleUsersProperties, ccdProperties);
+    }
+
     @Test
-    void shouldCallLogSummary() {
-        when(parameterResolver.isSimulation()).thenReturn(true);
-        when(parameterResolver.getStaleUsersBatchSize()).thenReturn(100);
-        when(parameterResolver.getRasBatchSize()).thenReturn(100);
-        when(parameterResolver.getRequestLimit()).thenReturn(1000);
+    void shouldCallLogSummary(CapturedOutput output) {
         loggingSummaryUtils.logSummary(
             Long.parseLong(START_TIME),
             Long.parseLong(END_TIME),
@@ -45,10 +54,13 @@ class LoggingSummaryUtilsTest {
             DELETED_USERS,
             FAILED_DELETIONS
         );
-        verify(parameterResolver, times(1)).isSimulation();
-        verify(parameterResolver, times(1)).getStaleUsersBatchSize();
-        verify(parameterResolver, times(1)).getRasBatchSize();
-        verify(parameterResolver, times(1)).getRequestLimit();
+
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertThat(output.getOut()).contains("Is Simulation Mode :        | true");
+            assertThat(output.getOut()).contains("Stale Users Batch Size :    | 123");
+            assertThat(output.getOut()).contains("RAS Batch Size :            | 100");
+            assertThat(output.getOut()).contains("Request Limit :             | 1000");
+        });
     }
 
     @Test

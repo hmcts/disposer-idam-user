@@ -19,7 +19,7 @@ public class RoleAssignmentsSteps extends RoleAssignmentStubs {
 
     private List<String> userIdsWithoutRoles;
 
-    @Value("${role-assignments.max-page-size}")
+    @Value("${ccd.role-assignment.request-page-size}")
     private int maxPageSize;
 
     @Given("Role Assignments filtering called with many users")

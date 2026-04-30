@@ -23,21 +23,24 @@ idam:
     redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
 
 ccd:
-  role.assignment:
+  role-assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
-    batch.size: ${ROLE_ASSIGNMENT_BATCH_SIZE:100}
+    batch-size: ${ROLE_ASSIGNMENT_BATCH_SIZE:100}
+    request-page-size: 1000 # 1000 is the maximum possible
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}
   feign-retry-min-wait: ${DISPOSER_IDAM_USER_FEIGN_RETRY_MIN_WAIT:60} # in seconds
 
 stale-users:
-  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
+  batch-size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1000}
-  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:true}
+  simulation: ${DISPOSER_IDAM_USER_SIMULATION_MODE:true}
   # Time of the day until the job need to finish, otherwise it will be stopped.
-  run-until: ${DISPOSER_IDAM_USER_RUN_BEFORE_TIME:06:00}
-  # role that citizen user must have among other, otherwise account will be left untouched
-  mandatory-role-for-citizen: citizen
-  citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
-  citizen-letter-role-pattern: letter-
+  cut-off-time: ${DISPOSER_IDAM_USER_RUN_BEFORE_TIME:06:00}
+  idam-sort-direction: ASC
+  citizen:
+    # role that citizen user must have among other, otherwise account will be left untouched
+    mandatory-role: citizen
+    roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
+    letter-role-pattern: letter-

@@ -3,11 +3,9 @@ package uk.gov.hmcts.reform.idam.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
+import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
@@ -34,23 +32,24 @@ class StaleUsersServiceTest {
     IdamClient idamClient;
 
     @Mock
-    private ParameterResolver parameterResolver;
-
-    @Mock
     private IdamTokenGenerator idamTokenGenerator;
 
-    @InjectMocks
+    private StaleUsersProperties staleUsersProperties;
+
     private StaleUsersService staleUsersService;
 
     @BeforeEach
     void setUp() {
-        when(parameterResolver.getStaleUsersBatchSize()).thenReturn(2);
-        when(parameterResolver.getCitizenRole()).thenReturn("citizen");
-        when(parameterResolver.getCitizenRolesPattern()).thenReturn("letter-");
-        when(parameterResolver.getAdditionalIdamCitizenRoles())
-            .thenReturn(java.util.Optional.of(Set.of("claimant", "defendant", "divorce-private-beta")));
+        staleUsersProperties = new StaleUsersProperties();
+        staleUsersProperties.setBatchSize(2);
+        StaleUsersProperties.Citizen citizen = new StaleUsersProperties.Citizen();
+        citizen.setMandatoryRole("citizen");
+        citizen.setLetterRolePattern("letter-");
+        citizen.setRoles(Set.of("claimant", "defendant", "divorce-private-beta"));
+        staleUsersProperties.setCitizen(citizen);
+
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
-        ReflectionTestUtils.setField(staleUsersService, "sortDirection", "ASC");
+        staleUsersService = new StaleUsersService(idamClient, idamTokenGenerator, staleUsersProperties);
     }
 
     @Test
@@ -99,9 +98,8 @@ class StaleUsersServiceTest {
 
     @Test
     void shouldFilterOnlyOnMandatoryRoleIfOtherNotProvided() {
-        when(parameterResolver.getCitizenRolesPattern()).thenReturn(null);
-        when(parameterResolver.getAdditionalIdamCitizenRoles())
-            .thenReturn(java.util.Optional.empty());
+        staleUsersProperties.getCitizen().setRoles(Set.of());
+        staleUsersProperties.getCitizen().setLetterRolePattern(null);
         final List<UserContent> userContentList = new LinkedList<>();
         userContentList.add(new UserContent("001", Arrays.asList("citizen", "defendant", "claimant", "letter-123")));
         userContentList.add(new UserContent("004", List.of("CITIZEN", "LETTER-c1727ce3-33f8-4b91-a50d-d1c1dcd346c7")));
@@ -125,7 +123,6 @@ class StaleUsersServiceTest {
         assertThat(staleUsers)
             .hasSize(2)
             .containsAll(List.of("007", "012"));
-
     }
 
 }

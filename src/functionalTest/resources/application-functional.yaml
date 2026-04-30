@@ -14,22 +14,21 @@ idam:
     redirect_uri: ${DISPOSER_IDAM_USER_CLIENT_REDIRECT_URL:https://disposer-idam-user/oauth2/callback}
 
 ccd:
-  role.assignment:
+  role-assignment:
     host: ${ROLE_ASSIGNMENT_HOST:http://localhost:5000}
-    batch.size: ${ROLE_ASSIGNMENT_BATCH_SIZE:100}
+    batch-size: ${ROLE_ASSIGNMENT_BATCH_SIZE:100}
+    request-page-size: 2
 
 stale-users:
-  batch.size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
+  batch-size: ${DISPOSER_IDAM_USER_BATCH_SIZE:100}
   requests.limit: ${DISPOSER_IDAM_USER_REQUESTS_LIMIT:1}
-  simulation.mode: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
-  mandatory-role-for-citizen: disposer-test-role
-  citizen-roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
-  citizen-letter-role-pattern: letter-
-  run-until: "06:00"
+  simulation: ${DISPOSER_IDAM_USER_SIMULATION_MODE:false}
+  citizen:
+    mandatory-role: disposer-test-role
+    roles: claimant,defendant,divorce-private-beta,cmc-private-beta,probate-private-beta
+    letter-role-pattern: letter-
   idam-sort-direction: DESC
-
-role-assignments:
-  max-page-size: 2
+  cut-off-time: "06:00"
 
 service:
   enabled: ${DISPOSER_IDAM_USER_ENABLED:false}

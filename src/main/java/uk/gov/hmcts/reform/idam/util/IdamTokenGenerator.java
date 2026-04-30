@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
+import uk.gov.hmcts.reform.idam.config.IdamProperties;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
-import uk.gov.hmcts.reform.idam.parameter.ParameterResolver;
 import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
 
 @Service
@@ -27,7 +27,7 @@ public class IdamTokenGenerator {
     private static final String ROLE_TOKEN_ERROR = "Unable to generate Role Assignment IDAM token";
 
     private final IdamClient idamClient;
-    private final ParameterResolver parameterResolver;
+    private final IdamProperties idamProperties;
 
     private String idamClientToken = "token";
     private String passwordTypeClientToken = "token";
@@ -35,12 +35,12 @@ public class IdamTokenGenerator {
     public void generateIdamToken() {
         try {
             TokenResponse tokenResponse = idamClient.getToken(
-                    parameterResolver.getClientId(),
-                    parameterResolver.getClientSecret(),
+                    idamProperties.getClient().getId(),
+                    idamProperties.getClient().getSecret(),
                     null,
                     IDAM_GRANT_TYPE,
-                    parameterResolver.getClientUserName(),
-                    parameterResolver.getClientPassword(),
+                    idamProperties.getClient().getUsername(),
+                    idamProperties.getClient().getPassword(),
                     IDAM_SCOPE
             );
             idamClientToken = tokenResponse.accessToken;
@@ -54,12 +54,12 @@ public class IdamTokenGenerator {
     public void generatePasswordTypeToken() {
         try {
             TokenResponse tokenResponse = idamClient.getToken(
-                    parameterResolver.getClientId(),
-                    parameterResolver.getClientSecret(),
-                    parameterResolver.getRedirectUri(),
+                    idamProperties.getClient().getId(),
+                    idamProperties.getClient().getSecret(),
+                    idamProperties.getClient().getRedirectUri(),
                     PASSWORD_GRANT_TYPE,
-                    parameterResolver.getClientUserName(),
-                    parameterResolver.getClientPassword(),
+                    idamProperties.getClient().getUsername(),
+                    idamProperties.getClient().getPassword(),
                     ROLE_ASSIGNMENT_SCOPE
             );
             passwordTypeClientToken = tokenResponse.accessToken;
