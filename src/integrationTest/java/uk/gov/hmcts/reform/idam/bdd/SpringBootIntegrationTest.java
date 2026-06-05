@@ -13,8 +13,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @Slf4j
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@SuppressWarnings({"PMD.TestClassWithoutTestCases", "java:S2187"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SpringBootIntegrationTest {
-
-
 }
