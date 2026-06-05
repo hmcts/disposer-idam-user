@@ -118,7 +118,7 @@ test {
   jvmArgs("-XX:+EnableDynamicAgentLoading")
 }
 
-task functional(type: Test) {
+tasks.register('functional', Test) {
   useJUnitPlatform()
   description = "Runs functional tests"
   group = "Verification"
@@ -126,9 +126,10 @@ task functional(type: Test) {
   classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
-task integration(type: Test) {
+tasks.register('integration', Test) {
   description = "Runs integration tests"
   group = "Verification"
+  useJUnitPlatform()
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
@@ -137,13 +138,13 @@ task integration(type: Test) {
 
 check.dependsOn integration
 
-task smoke(type: Test) {
+tasks.register('smoke', Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
 }
 
-task fortifyScan(type: JavaExec)  {
+tasks.register('fortifyScan', JavaExec) {
   mainClass = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
@@ -244,14 +245,11 @@ repositories {
   }
 }
 
-ext['snakeyaml.version'] = '2.0'
-
 def versions = [
   cucumber          : '7.34.3',
   gradlePitest      : '1.15.0',
   jackson           : '2.21.3',
   jersey            : '3.1.6',
-  junit             : '5.12.2',
   lombok            : '1.18.46'
 ]
 
@@ -275,14 +273,15 @@ dependencies {
 
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.10', classifier: 'all'
   testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.14.0'
-  testImplementation group: 'io.cucumber', name: 'cucumber-java', version: versions.cucumber
-  testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: versions.cucumber
-  testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: versions.cucumber
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   testImplementation group: 'org.wiremock', name: 'wiremock-standalone', version: '3.13.2'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
+  integrationTestImplementation "io.cucumber:cucumber-java:${versions.cucumber}"
+  integrationTestImplementation "io.cucumber:cucumber-spring:${versions.cucumber}"
+  integrationTestImplementation "io.cucumber:cucumber-junit-platform-engine:${versions.cucumber}"
+  integrationTestImplementation "org.junit.platform:junit-platform-suite"
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 

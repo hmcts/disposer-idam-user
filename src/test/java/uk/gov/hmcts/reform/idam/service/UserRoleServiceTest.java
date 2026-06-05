@@ -101,8 +101,8 @@ class UserRoleServiceTest {
 
         final List<Map<String, String>> allValues = roleAssignentsHeaderCaptor.getAllValues();
 
-        assertThat(allValues.getFirst().get("size")).isEqualTo("20");
-        assertThat(allValues.getLast().get("size")).isEqualTo("20");
+        assertThat(allValues.getFirst()).containsEntry("size", "20");
+        assertThat(allValues.getLast()).containsEntry("size", "20");
     }
 
     @Test
