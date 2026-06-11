@@ -8,15 +8,14 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.idam.service.remote.CustomFeignErrorDecoder;
 
 import java.time.Clock;
 
 @Slf4j
-@SpringBootApplication(excludeName = "uk.gov.hmcts.reform.authorisation.ServiceAuthAutoConfiguration")
+@SpringBootApplication
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
-@EnableFeignClients(basePackageClasses = {Application.class, ServiceAuthorisationApi.class})
+@EnableFeignClients(basePackageClasses = Application.class)
 @ConfigurationPropertiesScan
 public class Application {
 
