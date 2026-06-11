@@ -260,7 +260,7 @@ dependencies {
   implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${versions.jackson}"
   implementation "com.github.hmcts.java-logging:logging:8.0.0"
   implementation "com.github.hmcts:idam-java-client:4.0.0"
-  implementation "com.github.hmcts:service-auth-provider-java-client:5.3.4"
+  implementation "com.github.hmcts:service-auth-provider-java-client:6.0.0"
   implementation "io.rest-assured:rest-assured:6.0.0"
   implementation "org.projectlombok:lombok:${versions.lombok}"
   implementation "org.springframework.boot:spring-boot-starter"
