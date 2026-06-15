@@ -5,7 +5,7 @@ plugins {
   id 'jacoco'
   id 'idea'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'org.springframework.boot' version '4.0.6'
+  id 'org.springframework.boot' version '4.0.7'
   id 'org.owasp.dependencycheck' version '12.2.1'
   id 'io.freefair.lombok' version '9.5.0'
   id 'com.github.ben-manes.versions' version '0.54.0'
@@ -265,6 +265,7 @@ dependencies {
   implementation "org.projectlombok:lombok:${versions.lombok}"
   implementation "org.springframework.boot:spring-boot-starter"
   implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+  implementation "jakarta.servlet:jakarta.servlet-api"
 
   annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
@@ -275,7 +276,6 @@ dependencies {
   testImplementation "com.google.code.gson:gson:2.14.0"
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "org.wiremock:wiremock-standalone:3.13.2"
-  testImplementation "jakarta.servlet:jakarta.servlet-api"
 
   testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 
