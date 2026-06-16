@@ -8,6 +8,9 @@ spring:
     name: Idam user Disposer
 
 idam:
+  auth:
+    port: ${IDAM_AUTH_PORT:5000}
+    url: ${IDAM_AUTH_URL:http://localhost:${idam.auth.port}}
   api:
     port: ${IDAM_API_PORT:5000}
     url: ${IDAM_API_URL:http://localhost:${idam.api.port}}

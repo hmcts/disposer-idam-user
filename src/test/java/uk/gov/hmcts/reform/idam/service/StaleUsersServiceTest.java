@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
-import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamApiClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class StaleUsersServiceTest {
 
     @Mock
-    IdamClient idamClient;
+    IdamApiClient idamApiClient;
 
     @Mock
     private IdamTokenGenerator idamTokenGenerator;
@@ -49,7 +49,7 @@ class StaleUsersServiceTest {
         staleUsersProperties.setCitizen(citizen);
 
         when(idamTokenGenerator.getIdamAuthorizationHeader()).thenReturn("Authorization: Bearer token");
-        staleUsersService = new StaleUsersService(idamClient, idamTokenGenerator, staleUsersProperties);
+        staleUsersService = new StaleUsersService(idamApiClient, idamTokenGenerator, staleUsersProperties);
     }
 
     @Test
@@ -59,11 +59,11 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("2", List.of("defendant")));
         StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
+        when(idamApiClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers).hasSize(1);
-        verify(idamClient, times(1)).getStaleUsers(anyString(), any());
+        verify(idamApiClient, times(1)).getStaleUsers(anyString(), any());
         assertThat(staleUsersService.hasNext()).isTrue();
     }
 
@@ -88,7 +88,7 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
         final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
+        when(idamApiClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         final List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers)
@@ -117,7 +117,7 @@ class StaleUsersServiceTest {
         userContentList.add(new UserContent("016", List.of("claimant", "defendant", "divorce-private-beta")));
         final StaleUsersResponse response = new StaleUsersResponse(userContentList, false);
 
-        when(idamClient.getStaleUsers(anyString(), any())).thenReturn(response);
+        when(idamApiClient.getStaleUsers(anyString(), any())).thenReturn(response);
 
         final List<String> staleUsers = staleUsersService.next();
         assertThat(staleUsers)
