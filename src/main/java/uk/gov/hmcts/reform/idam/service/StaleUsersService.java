@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.config.StaleUsersProperties;
-import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamApiClient;
 import uk.gov.hmcts.reform.idam.service.remote.responses.StaleUsersResponse;
 import uk.gov.hmcts.reform.idam.service.remote.responses.UserContent;
 import uk.gov.hmcts.reform.idam.util.IdamTokenGenerator;
@@ -36,7 +36,7 @@ public class StaleUsersService implements Iterator<List<String>> {
 
     private UserContent pendingUserAnchor;
 
-    private final IdamClient client;
+    private final IdamApiClient idamApiClient;
     private final IdamTokenGenerator idamTokenGenerator;
     private final StaleUsersProperties staleUsersProperties;
 
@@ -53,7 +53,7 @@ public class StaleUsersService implements Iterator<List<String>> {
             query.put(PREVIOUS_USER_PARAM, pendingUserAnchor.getId());
         }
 
-        staleUsersResponse = client.getStaleUsers(idamTokenGenerator.getIdamAuthorizationHeader(), query);
+        staleUsersResponse = idamApiClient.getStaleUsers(idamTokenGenerator.getIdamAuthorizationHeader(), query);
         log.debug(
             "Returned stale user IDs: {}",
             staleUsersResponse.content().stream().map(UserContent::getId).toList()

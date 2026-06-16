@@ -159,16 +159,6 @@ public class WireMockStubs {
 
     private void setupAuthorizationStub() {
         wiremock.stubFor(
-                WireMock.get(WireMock.urlPathEqualTo("/details"))
-                        .willReturn(
-                                WireMock.aResponse()
-                                        .withHeader(CONTENT_TYPE_HEADER, APPLICATION_JSON)
-                                        .withStatus(200)
-                                        .withBody("disposer")
-                        )
-        );
-
-        wiremock.stubFor(
                 WireMock.get(WireMock.urlPathEqualTo("/o/userinfo"))
                         .willReturn(
                                 WireMock.aResponse()
