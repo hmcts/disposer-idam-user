@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 import uk.gov.hmcts.reform.idam.config.IdamProperties;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
-import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamAuthClient;
 
 @Service
 @Slf4j
@@ -26,7 +26,7 @@ public class IdamTokenGenerator {
     private static final String IDAM_TOKEN_ERROR = "Unable to generate IDAM token";
     private static final String ROLE_TOKEN_ERROR = "Unable to generate Role Assignment IDAM token";
 
-    private final IdamClient idamClient;
+    private final IdamAuthClient idamAuthClient;
     private final IdamProperties idamProperties;
 
     private String idamClientToken = "token";
@@ -34,7 +34,7 @@ public class IdamTokenGenerator {
 
     public void generateIdamToken() {
         try {
-            TokenResponse tokenResponse = idamClient.getToken(
+            TokenResponse tokenResponse = idamAuthClient.getToken(
                     idamProperties.getClient().getId(),
                     idamProperties.getClient().getSecret(),
                     null,
@@ -53,7 +53,7 @@ public class IdamTokenGenerator {
 
     public void generatePasswordTypeToken() {
         try {
-            TokenResponse tokenResponse = idamClient.getToken(
+            TokenResponse tokenResponse = idamAuthClient.getToken(
                     idamProperties.getClient().getId(),
                     idamProperties.getClient().getSecret(),
                     idamProperties.getClient().getRedirectUri(),

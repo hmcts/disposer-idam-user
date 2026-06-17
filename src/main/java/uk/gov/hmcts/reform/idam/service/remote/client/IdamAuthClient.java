@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 
-@FeignClient(name = "idamClient", url = "${idam.auth.url}")
+@FeignClient(name = "idamAuthClient", url = "${idam.auth.url}")
 @SuppressWarnings({"PMD.UseObjectForClearerAPI", "PMD.ImplicitFunctionalInterface"})
 @Component
-public interface IdamClient {
+public interface IdamAuthClient {
 
     @PostMapping(
         value = "/o/token",
