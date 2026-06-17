@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 import uk.gov.hmcts.reform.idam.config.IdamProperties;
 import uk.gov.hmcts.reform.idam.exception.IdamAuthTokenGenerationException;
-import uk.gov.hmcts.reform.idam.service.remote.client.IdamClient;
+import uk.gov.hmcts.reform.idam.service.remote.client.IdamAuthClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +21,7 @@ import static uk.gov.hmcts.reform.idam.util.IdamTokenGenerator.ROLE_ASSIGNMENT_S
 @ExtendWith(MockitoExtension.class)
 class IdamTokenGeneratorTest {
     @Mock
-    IdamClient idamClient;
+    IdamAuthClient idamAuthClient;
 
     private IdamProperties idamProperties;
 
@@ -37,7 +37,7 @@ class IdamTokenGeneratorTest {
         idamPropertiesClient.setPassword("password");
         idamPropertiesClient.setRedirectUri("redirect.uri");
         idamProperties.setClient(idamPropertiesClient);
-        idamTokenGenerator = new IdamTokenGenerator(idamClient, idamProperties);
+        idamTokenGenerator = new IdamTokenGenerator(idamAuthClient, idamProperties);
     }
 
     @Test
@@ -51,7 +51,7 @@ class IdamTokenGeneratorTest {
                 null,
                 null
         );
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 null,
@@ -75,7 +75,7 @@ class IdamTokenGeneratorTest {
                 null,
                 null
         );
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 null,
@@ -90,7 +90,7 @@ class IdamTokenGeneratorTest {
 
     @Test
     void shouldThrowIdamAuthTokenGenerationException() {
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 null,
@@ -119,7 +119,7 @@ class IdamTokenGeneratorTest {
                 null,
                 null
         );
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 idamProperties.getClient().getRedirectUri(),
@@ -143,7 +143,7 @@ class IdamTokenGeneratorTest {
                 null,
                 null
         );
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 idamProperties.getClient().getRedirectUri(),
@@ -158,7 +158,7 @@ class IdamTokenGeneratorTest {
 
     @Test
     void shouldThrowIdamAuthTokenGenerationForRoleAssignmentsException() {
-        when(idamClient.getToken(
+        when(idamAuthClient.getToken(
                 idamProperties.getClient().getId(),
                 idamProperties.getClient().getSecret(),
                 idamProperties.getClient().getRedirectUri(),

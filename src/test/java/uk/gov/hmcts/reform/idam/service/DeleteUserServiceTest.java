@@ -60,7 +60,7 @@ class DeleteUserServiceTest {
     }
 
     @Test
-    void shouldCatchAndLogExceptionOnIdamClientError() {
+    void shouldCatchAndLogExceptionOnIdamApiClientError() {
         when(idamApiClient.deleteUser(HEADER, "userId"))
             .thenThrow(new ServerErrorException("Internal Server Error", null));
         when(staleUsersProperties.isSimulation()).thenReturn(false);
