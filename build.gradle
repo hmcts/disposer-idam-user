@@ -5,7 +5,7 @@ plugins {
   id 'jacoco'
   id 'idea'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'org.springframework.boot' version '4.0.7'
+  id 'org.springframework.boot' version '4.1.0'
   id 'org.owasp.dependencycheck' version '12.2.1'
   id 'io.freefair.lombok' version '9.5.0'
   id 'com.github.ben-manes.versions' version '0.54.0'
@@ -233,7 +233,7 @@ dependencyManagement {
     }
   }
   imports {
-    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2025.1.1'
+    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2025.1.2'
   }
 }
 
@@ -263,9 +263,11 @@ dependencies {
   implementation "com.github.hmcts:service-auth-provider-java-client:6.0.0"
   implementation "io.rest-assured:rest-assured:6.0.0"
   implementation "org.projectlombok:lombok:${versions.lombok}"
+  implementation "org.springframework.boot:spring-boot-http-converter"
   implementation "org.springframework.boot:spring-boot-starter"
   implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
   implementation "jakarta.servlet:jakarta.servlet-api"
+
 
   annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
