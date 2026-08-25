@@ -67,7 +67,7 @@ was already removed.
 ## Getting started
 
 ### Prerequisites
-- [JDK 21](https://openjdk.org/projects/jdk/21/)
+- [JDK 25](https://openjdk.org/projects/jdk/25/)
 
 ### Building the application
 
