@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.idam.client.models.TokenResponse;
 
 @FeignClient(name = "idamAuthClient", url = "${idam.auth.url}")
-@SuppressWarnings({"PMD.UseObjectForClearerAPI", "PMD.ImplicitFunctionalInterface"})
+@SuppressWarnings({"PMD.ImplicitFunctionalInterface"})
 @Component
 public interface IdamAuthClient {
 
