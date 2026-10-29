@@ -275,7 +275,7 @@ dependencies {
   compileOnly "org.projectlombok:lombok:${versions.lombok}"
 
   testImplementation "com.github.hmcts:fortify-client:1.4.10:all"
-  testImplementation "com.google.code.gson:gson:2.14.0"
+  testImplementation "com.google.code.gson:gson:2.15.0"
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "org.wiremock:wiremock-standalone:3.13.2"
 
