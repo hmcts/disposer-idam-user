@@ -285,6 +285,7 @@ dependencies {
   integrationTestImplementation "io.cucumber:cucumber-spring:${versions.cucumber}"
   integrationTestImplementation "io.cucumber:cucumber-junit-platform-engine:${versions.cucumber}"
   integrationTestImplementation "org.junit.platform:junit-platform-suite"
+  integrationTestImplementation "tools.jackson.core:jackson-databind"
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
 
